@@ -1,10 +1,4 @@
-import {
-  NavDiv,
-  StyledHeaderBtn,
-  NavContentDiv,
-  NavEmptyDiv,
-  NavTopEmptyDiv,
-} from "./Nav.styled";
+import { NavDiv, StyledHeaderBtn, NavRentContentDiv } from "./Nav.styled";
 import { useNavigate } from "react-router-dom";
 
 const RentCarNav = () => {
@@ -14,7 +8,7 @@ const RentCarNav = () => {
     <>
       <NavDiv>
         <NavTopEmptyDiv></NavTopEmptyDiv>
-        <NavContentDiv>
+        <NavRentContentDiv>
           <StyledHeaderBtn onClick={() => navi("/timerentalPage")}>
             시간별 렌트카
           </StyledHeaderBtn>
@@ -27,8 +21,7 @@ const RentCarNav = () => {
           <StyledHeaderBtn onClick={() => navi("/hotRentCar")}>
             핫딜 렌트카
           </StyledHeaderBtn>
-        </NavContentDiv>
-        <NavEmptyDiv></NavEmptyDiv>
+        </NavRentContentDiv>
       </NavDiv>
     </>
   );
