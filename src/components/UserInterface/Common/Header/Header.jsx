@@ -12,7 +12,6 @@ import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const navi = useNavigate();
-
   return (
     <>
       <StyledHeaderDiv>
@@ -31,16 +30,9 @@ const Header = () => {
           <StyledHeaderBtn>공지사항</StyledHeaderBtn>
         </StyledHomeCenterDiv>
         <StyledMemberDiv>
-          {!auth.isAuthenticated ? (
-            <>
-              <StyledHeaderBtn>로그인</StyledHeaderBtn>
-              <StyledHeaderBtn>회원가입</StyledHeaderBtn>
-            </>
-          ) : (
-            <>
-              <StyledHeaderBtn>로그아웃</StyledHeaderBtn>
-            </>
-          )}
+        <StyledHeaderBtn>로그인</StyledHeaderBtn>
+        <StyledHeaderBtn>회원가입</StyledHeaderBtn>
+        <StyledHeaderBtn>로그아웃</StyledHeaderBtn>  
         <StyledHeaderBtn>아이콘</StyledHeaderBtn>
         </StyledMemberDiv>
       </StyledHeaderDiv>
