@@ -36,7 +36,7 @@ const KakaoMap = () => {
     // Kakao 지도 API 스크립트 (services 라이브러리 포함: reverse geocoder용)
     const script = document.createElement("script");
     script.async = true;
-    const kakaoServiceKey = "서비스 키 입력후 사용바람 총 2개 넣어야됨";
+    const kakaoServiceKey = "서비스키"; // 서비스키
     script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoServiceKey}&autoload=false&libraries=services`;
     document.head.appendChild(script);
 
@@ -65,7 +65,7 @@ const KakaoMap = () => {
           userDetailedZscode,
           numOfRows = 9999
         ) {
-          const serviceKey = "서비스 키 입력후 사용바람 총 2개 넣어야됨";
+          const serviceKey = "서비스키"; // 서비스키
           const apiUrl = `https://apis.data.go.kr/B552584/EvCharger/getChargerInfo?serviceKey=${serviceKey}&pageNo=1&numOfRows=${numOfRows}&zcode=${apiZcode}`;
 
           fetch(apiUrl)
