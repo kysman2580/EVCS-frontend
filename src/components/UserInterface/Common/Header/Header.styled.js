@@ -63,3 +63,11 @@ export const LogoImg = styled.img`
     cursor: pointer;
   }
 `;
+
+export const NavLink = styled.a`
+  text-decoration: none;
+  width: 100px;
+  &:hover {
+    cursor: pointer;
+  }
+`;
