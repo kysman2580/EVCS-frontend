@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const NavDiv = styled.div`
   width: 10%;
-  hight: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
 `;

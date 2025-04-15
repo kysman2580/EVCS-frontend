@@ -7,8 +7,9 @@ const RentCarNav = () => {
   return (
     <>
       <NavDiv>
+        <NavTopEmptyDiv></NavTopEmptyDiv>
         <NavRentContentDiv>
-          <StyledHeaderBtn onClick={() => navi("/hourRentCar")}>
+          <StyledHeaderBtn onClick={() => navi("/timerentalPage")}>
             시간별 렌트카
           </StyledHeaderBtn>
           <StyledHeaderBtn onClick={() => navi("/subRentCar")}>
