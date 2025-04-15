@@ -3,6 +3,7 @@ import Header from "./components/UserInterface/Common/Header/Header";
 import Footer from "./components/UserInterface/Common/Footer/Footer";
 import Main from "./components/UserInterface/Main/Main";
 import ChargingMap from "./components/UserInterface/ChargingMap/ChargingMap";
+import Notice from "./components/UserInterface/Board/Notice/Notice";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Main />}></Route>
         <Route path="/chargingMap" element={<ChargingMap />}></Route>
+        <Route path="/notice" element={<Notice />}></Route>
       </Routes>
       <Footer />
     </>

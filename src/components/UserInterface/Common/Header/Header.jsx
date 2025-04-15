@@ -28,7 +28,9 @@ const Header = () => {
             충전소 조회
           </StyledHeaderBtn>
           <StyledHeaderBtn>뉴스</StyledHeaderBtn>
-          <StyledHeaderBtn>공지사항</StyledHeaderBtn>
+          <StyledHeaderBtn onClick={() => navi("/notice")}>
+            공지사항
+          </StyledHeaderBtn>
         </StyledHomeCenterDiv>
         <StyledMemberDiv>
           <StyledHeaderBtn>로그인</StyledHeaderBtn>
