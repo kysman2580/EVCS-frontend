@@ -5,6 +5,7 @@ export const StyledHeaderDiv = styled.header`
   width: 100%;
   height: 80px;
   display: flex;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 살짝 그림자 */
 `;
 
 export const StyledHeaderBtn = styled.button`
@@ -25,8 +26,9 @@ export const StyledLogoDiv = styled.div`
   width: 10%;
   height: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
+  margin-left: 15px;
 `;
 export const StyledHomeDiv = styled.div`
   width: 10%;
@@ -56,7 +58,7 @@ export const StyledMemberDiv = styled.div`
 `;
 
 export const LogoImg = styled.img`
-  width: 100px;
+  width: 150px;
   height: 100px;
 
   &:hover {
