@@ -9,7 +9,7 @@ function LoginPage() {
 
 
     return (
-        <body>
+        <body className="test">
             <form action="">
                 <div className="loginForm">
                     <div className="logoContainer">
