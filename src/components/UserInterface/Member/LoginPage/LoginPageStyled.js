@@ -13,6 +13,7 @@ export const StyledForm = styled.form`
 `;
 
 
+
 export const StyledInput = styled.input`
     width: 350px;
     height: 40px;
