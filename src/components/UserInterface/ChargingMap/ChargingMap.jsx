@@ -4,6 +4,7 @@ import customMarkerSrc from "/images/2.png";
 
 const KakaoMap = () => {
   const [notice, setNotice] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const { provinceMapping, detailedMapping } = mappings;
@@ -35,7 +36,7 @@ const KakaoMap = () => {
     // Kakao 지도 API 스크립트 (services 라이브러리 포함: reverse geocoder용)
     const script = document.createElement("script");
     script.async = true;
-    const kakaoServiceKey = "서비스키";
+    const kakaoServiceKey = "서비스 키 입력후 사용바람 총 2개 넣어야됨";
     script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoServiceKey}&autoload=false&libraries=services`;
     document.head.appendChild(script);
 
@@ -64,7 +65,7 @@ const KakaoMap = () => {
           userDetailedZscode,
           numOfRows = 9999
         ) {
-          const serviceKey = "서비스키";
+          const serviceKey = "서비스 키 입력후 사용바람 총 2개 넣어야됨";
           const apiUrl = `https://apis.data.go.kr/B552584/EvCharger/getChargerInfo?serviceKey=${serviceKey}&pageNo=1&numOfRows=${numOfRows}&zcode=${apiZcode}`;
 
           fetch(apiUrl)
@@ -81,8 +82,7 @@ const KakaoMap = () => {
                   const statNmNode = item.getElementsByTagName("statNm")[0];
                   const statNode = item.getElementsByTagName("stat")[0]; // 충전소 상태
                   const outputNode = item.getElementsByTagName("output")[0]; // 충전 용량
-                  const chgerTypeNode =
-                    item.getElementsByTagName("chgerType")[0]; // 충전기 타입
+                  const chgerTypeNode = item.getElementsByTagName("chgerType")[0]; // 충전기 타입
                   const noteNode = item.getElementsByTagName("note")[0]; // 주의 메시지
                   const limitYnNode = item.getElementsByTagName("limitYn")[0]; // 제한 여부 ("Y"/"N")
                   const zscodeNode = item.getElementsByTagName("zscode")[0]; // 상세 지역 코드
@@ -151,8 +151,12 @@ const KakaoMap = () => {
               } else {
                 console.error("충전소 데이터를 가져오지 못했습니다.", xmlText);
               }
+              setLoading(false);
             })
-            .catch((err) => console.error("API 호출 에러:", err));
+            .catch((err) => {
+              console.error("API 호출 에러:", err);
+              setLoading(false);
+            });
         }
 
         // 사용자 위치 획득 및 reverse geocoding
@@ -239,13 +243,24 @@ const KakaoMap = () => {
   }, []);
 
   return (
-    <div>
-      <div id="map" style={{ width: "100%", height: "700px" }}></div>
-      {notice && (
-        <div style={{ textAlign: "center", marginTop: "10px", color: "red" }}>
-          {notice}
+    <div style={{ position: 'relative' }}>
+      {loading && (
+        <div style={{
+          position: 'absolute',
+          background: 'rgba(255, 253, 253, 0.51)',
+          color: 'rgb(0, 0, 0)',
+          width: '100%',
+          height: '700px',
+          zIndex: 1000,
+          textAlign: 'center',
+          lineHeight: '700px',
+          fontSize: '64px'
+        }}>
+          로딩중...
         </div>
       )}
+      <div id="map" style={{ width: '100%', height: '700px' }}></div>
+      {notice && <div style={{ textAlign: "center", marginTop: "10px", color: "red" }}>{notice}</div>}
     </div>
   );
 };
