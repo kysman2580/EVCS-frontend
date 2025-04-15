@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import mappings from "./mappings.json";
 import customMarkerSrc from "/images/2.png";
+import { StyledMap1, StyledMap2 } from "./ChargingMap.styles";
 
 const KakaoMap = () => {
   const [notice, setNotice] = useState("");
@@ -245,22 +246,12 @@ const KakaoMap = () => {
   return (
     <div style={{ position: 'relative' }}>
       {loading && (
-        <div style={{
-          position: 'absolute',
-          background: 'rgba(255, 253, 253, 0.51)',
-          color: 'rgb(0, 0, 0)',
-          width: '100%',
-          height: '700px',
-          zIndex: 1000,
-          textAlign: 'center',
-          lineHeight: '700px',
-          fontSize: '64px'
-        }}>
+        <StyledMap1>
           로딩중...
-        </div>
+        </StyledMap1>
       )}
       <div id="map" style={{ width: '100%', height: '700px' }}></div>
-      {notice && <div style={{ textAlign: "center", marginTop: "10px", color: "red" }}>{notice}</div>}
+      {notice && <StyledMap2>{notice}</StyledMap2>}
     </div>
   );
 };

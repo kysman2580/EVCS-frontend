@@ -21,7 +21,7 @@ const Header = () => {
           </NavLink>
         </StyledLogoDiv>
         <StyledHomeCenterDiv>
-          <StyledHeaderBtn onClick={() => navi("/rentCar")}>
+          <StyledHeaderBtn onClick={() => navi("/longRentCar")}>
             렌트카
           </StyledHeaderBtn>
           <StyledHeaderBtn>커뮤니티</StyledHeaderBtn>

@@ -7,6 +7,9 @@ import RentalPage from "./components/UserInterface/RentCar/TimeRentCar/RentalPag
 import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
 import ChargingMap from "./components/UserInterface/ChargingMap/ChargingMap";
 import RentCar from "./components/UserInterface/RentCar/RentCar";
+import HotdealRentCar from "./components/UserInterface/RentCar/HotdealRentCar/HotdealRentCar";
+import LongTermRentCar from "./components/UserInterface/RentCar/LongTermRentCar/LongTermRentCar";
+import SubscribeRentCar from "./components/UserInterface/RentCar/SubscribeRentCar/SubscribeRentCar";
 
 function App() {
   return (
@@ -19,6 +22,9 @@ function App() {
         <Route path="/rentCar" element={<RentCar />}></Route>
         <Route path="/loginPage" element={<LoginPage />} />
         <Route path="/chargingMap" element={<ChargingMap />}></Route>
+        <Route path="/longRentCar" element={<LongTermRentCar />}></Route>
+        <Route path="/hotRentCar" element={<HotdealRentCar />}></Route>
+        <Route path="/subRentCar" element={<SubscribeRentCar />}></Route>
       </Routes>
       <Footer />
     </>
