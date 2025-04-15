@@ -9,7 +9,7 @@ export const RentBodyDiv = styled.div`
   margin-top: 30px;
 `;
 
-export const RentConteinerDiv = styled.div`
+export const RentContainerDiv = styled.div`
   border-top: 1px solid #a0a0a0;
   display: flex;
 `;
