@@ -29,10 +29,12 @@ const Header = () => {
             충전소 조회
           </StyledHeaderBtn>
           <StyledHeaderBtn>뉴스</StyledHeaderBtn>
-          <StyledHeaderBtn>공지사항</StyledHeaderBtn>
+          <StyledHeaderBtn onClick={() => navi("/eventBoard")}>
+            공지사항
+          </StyledHeaderBtn>
         </StyledHomeCenterDiv>
         <StyledMemberDiv>
-          f<StyledHeaderBtn>로그인</StyledHeaderBtn>
+          <StyledHeaderBtn>로그인</StyledHeaderBtn>
           <StyledHeaderBtn>회원가입</StyledHeaderBtn>
           <StyledHeaderBtn>로그아웃</StyledHeaderBtn>
           <StyledHeaderBtn>아이콘</StyledHeaderBtn>

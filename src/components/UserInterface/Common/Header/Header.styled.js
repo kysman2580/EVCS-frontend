@@ -5,6 +5,7 @@ export const StyledHeaderDiv = styled.header`
   width: 100%;
   height: 80px;
   display: flex;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 살짝 그림자 */
 `;
 
 export const StyledHeaderBtn = styled.button`

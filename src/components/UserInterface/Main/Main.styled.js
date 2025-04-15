@@ -10,6 +10,5 @@ export const MainBodyDiv = styled.div`
 `;
 
 export const MainConteinerDiv = styled.div`
-  border-top: 1px solid #a0a0a0;
   display: flex;
 `;

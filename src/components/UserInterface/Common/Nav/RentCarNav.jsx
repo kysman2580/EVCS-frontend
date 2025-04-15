@@ -3,7 +3,6 @@ import {
   StyledHeaderBtn,
   NavContentDiv,
   NavEmptyDiv,
-  NavTopEmptyDiv,
 } from "./Nav.styled";
 import { useNavigate } from "react-router-dom";
 
@@ -13,7 +12,6 @@ const RentCarNav = () => {
   return (
     <>
       <NavDiv>
-        <NavTopEmptyDiv></NavTopEmptyDiv>
         <NavContentDiv>
           <StyledHeaderBtn onClick={() => navi("/hourRentCar")}>
             시간별 렌트카
