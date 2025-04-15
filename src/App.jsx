@@ -10,10 +10,12 @@ import RentCar from "./components/UserInterface/RentCar/RentCar";
 import HotdealRentCar from "./components/UserInterface/RentCar/HotdealRentCar/HotdealRentCar";
 import LongTermRentCar from "./components/UserInterface/RentCar/LongTermRentCar/LongTermRentCar";
 import SubscribeRentCar from "./components/UserInterface/RentCar/SubscribeRentCar/SubscribeRentCar";
-
+import GlobalStyle from "./components/UserInterface/Common/Header/GlobalStyle";
+import EventBoard from "./components/UserInterface/Board/Event/EventBoard";
 function App() {
   return (
     <>
+      <GlobalStyle />
       <Header />
       <Routes>
         <Route path="/" element={<Main />}></Route>
@@ -25,6 +27,7 @@ function App() {
         <Route path="/longRentCar" element={<LongTermRentCar />}></Route>
         <Route path="/hotRentCar" element={<HotdealRentCar />}></Route>
         <Route path="/subRentCar" element={<SubscribeRentCar />}></Route>
+        <Route path="/eventBoard" element={<EventBoard />}></Route>
       </Routes>
       <Footer />
     </>
