@@ -1,19 +1,18 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route } from "react-router-dom";
+import Header from "./components/UserInterface/Common/Header/Header";
+import Footer from "./components/UserInterface/Common/Footer/Footer";
+import Main from "./components/UserInterface/Main/Main";
 
 function App() {
-
   return (
     <>
+      <Header />
       <Routes>
-        <Route />
-
+        <Route path="/" element={<Main />}></Route>
       </Routes>
-
+      <Footer />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
