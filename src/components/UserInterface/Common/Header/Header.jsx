@@ -6,21 +6,27 @@ import {
   StyledMemberDiv,
   StyledLogoDiv,
   LogoImg,
+  NavLink,
 } from "./Header.styled";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 const Header = () => {
+  const navi = useNavigate();
+
   return (
     <>
       <StyledHeaderDiv>
         <StyledLogoDiv>
-          <Link to="/">
+          <NavLink onClick={() => navi("/")}>
             <LogoImg src="/images/Logo.png" />
-          </Link>
+          </NavLink>
         </StyledLogoDiv>
         <StyledHomeCenterDiv>
           <StyledHeaderBtn>렌트카</StyledHeaderBtn>
           <StyledHeaderBtn>커뮤니티</StyledHeaderBtn>
-          <StyledHeaderBtn>충전소 조회</StyledHeaderBtn>
+          <StyledHeaderBtn onClick={() => navi("/chargingMap")}>
+            충전소 조회
+          </StyledHeaderBtn>
           <StyledHeaderBtn>뉴스</StyledHeaderBtn>
           <StyledHeaderBtn>공지사항</StyledHeaderBtn>
         </StyledHomeCenterDiv>
