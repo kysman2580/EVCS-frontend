@@ -1,5 +1,5 @@
 import "./LoginPage.css";
-import logo from "../../img/Logo.png"
+import logo from "../../../public/images/Logo.png"
 function LoginPage() {
 
 
