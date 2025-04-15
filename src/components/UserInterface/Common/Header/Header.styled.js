@@ -56,7 +56,7 @@ export const StyledMemberDiv = styled.div`
 `;
 
 export const LogoImg = styled.img`
-  width: 100px;
+  width: 150px;
   height: 100px;
 
   &:hover {
