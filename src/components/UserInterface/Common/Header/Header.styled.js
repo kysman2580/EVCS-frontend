@@ -25,8 +25,9 @@ export const StyledLogoDiv = styled.div`
   width: 10%;
   height: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
+  margin-left: 15px;
 `;
 export const StyledHomeDiv = styled.div`
   width: 10%;

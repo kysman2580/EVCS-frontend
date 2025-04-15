@@ -10,8 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "bootstrap": "^5.3.5",
+    "date-fns": "^4.1.0",
     "react": "^19.0.0",
+    "react-bootstrap": "^2.10.9",
+    "react-datepicker": "^8.3.0",
     "react-dom": "^19.0.0",
+    "react-native-date-picker": "^5.0.12",
     "react-router-dom": "^7.5.0",
     "styled-components": "^6.1.17"
   },

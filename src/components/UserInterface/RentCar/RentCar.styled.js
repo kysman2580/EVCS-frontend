@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const MainBodyDiv = styled.div`
+export const RentBodyDiv = styled.div`
   width: 90%;
   height: 900px;
   display: flex;
@@ -9,7 +9,7 @@ export const MainBodyDiv = styled.div`
   margin-top: 30px;
 `;
 
-export const MainConteinerDiv = styled.div`
+export const RentContainerDiv = styled.div`
   border-top: 1px solid #a0a0a0;
   display: flex;
 `;
