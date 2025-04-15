@@ -12,7 +12,6 @@ import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const navi = useNavigate();
-
   return (
     <>
       <StyledHeaderDiv>
@@ -22,7 +21,9 @@ const Header = () => {
           </NavLink>
         </StyledLogoDiv>
         <StyledHomeCenterDiv>
-          <StyledHeaderBtn>렌트카</StyledHeaderBtn>
+          <StyledHeaderBtn onClick={() => navi("/rentCar")}>
+            렌트카
+          </StyledHeaderBtn>
           <StyledHeaderBtn>커뮤니티</StyledHeaderBtn>
           <StyledHeaderBtn onClick={() => navi("/chargingMap")}>
             충전소 조회

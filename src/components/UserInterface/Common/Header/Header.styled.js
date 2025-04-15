@@ -25,8 +25,9 @@ export const StyledLogoDiv = styled.div`
   width: 10%;
   height: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
+  margin-left: 15px;
 `;
 export const StyledHomeDiv = styled.div`
   width: 10%;
@@ -56,7 +57,7 @@ export const StyledMemberDiv = styled.div`
 `;
 
 export const LogoImg = styled.img`
-  width: 100px;
+  width: 150px;
   height: 100px;
 
   &:hover {
