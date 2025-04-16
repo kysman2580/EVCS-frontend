@@ -13,9 +13,6 @@ import GlobalStyle from "./components/UserInterface/Common/Header/GlobalStyle";
 import EventBoard from "./components/UserInterface/Board/Event/EventBoard";
 import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
 import Notice from "./components/UserInterface/Board/Notice/Notice";
-import CarManagement from "./components/AdminInterface/RentCar/CarManagement/CarManagement";
-import InsertCar from "./components/AdminInterface/RentCar/CarManagement/InsertCar";
-import NewsMain from "./components/UserInterface/News/NewsMain";
 
 function App() {
   return (
