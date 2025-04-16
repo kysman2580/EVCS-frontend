@@ -15,6 +15,7 @@ import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
 import Notice from "./components/UserInterface/Board/Notice/Notice";
 import CarManagement from "./components/AdminInterface/RentCar/CarManagement/CarManagement";
 import InsertCar from "./components/AdminInterface/RentCar/CarManagement/InsertCar";
+import NewsMain from "./components/UserInterface/News/NewsMain";
 
 function App() {
   return (
@@ -22,8 +23,6 @@ function App() {
       <GlobalStyle />
       <Header />
       <Routes>
-
-        
         <Route path="/" element={<Main />}></Route>
         <Route path="/timerentalPage" element={<RentalPage />}></Route>
         <Route path="/loginPage" element={<LoginPage />} />
@@ -32,13 +31,15 @@ function App() {
         <Route path="/longRentCar" element={<LongTermRentCar />}></Route>
         <Route path="/hotRentCar" element={<HotdealRentCar />}></Route>
         <Route path="/subRentCar" element={<SubscribeRentCar />}></Route>
-        <Route path="/reportingPage"element={<IntegratedReportingPage />}></Route>
+        <Route path="/newsMain" element={<NewsMain />}></Route>
+        <Route
+          path="/reportingPage"
+          element={<IntegratedReportingPage />}
+        ></Route>
         {/* 아래부터는 관리자페이지만 적자 */}
         <Route path="/adminCarManagement" element={<CarManagement />}></Route>
         <Route path="/insertCar" element={<InsertCar />}></Route>
         <Route path="/adminTimeCar" element={<TimeRentCar />}></Route>
-
-
       </Routes>
       <Footer />
     </>
