@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const NavDiv = styled.div`
   width: 10%;
-  height: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
 `;
@@ -52,8 +52,10 @@ export const StyledHeaderBtn = styled.button`
   align-items: center;
   background-color: transparent;
   font-size: 20px;
+  transition: transform 0.2s ease-in-out;
 
   &:hover {
+    transform: scale(1.05);
     cursor: pointer;
     color: #7cbd1e;
   }
