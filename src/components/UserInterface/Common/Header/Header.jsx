@@ -7,7 +7,7 @@ import {
   StyledLogoDiv,
   LogoImg,
   NavLink,
-} from "./Header.styled";
+} from "./Header.styles";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
