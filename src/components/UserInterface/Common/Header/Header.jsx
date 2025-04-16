@@ -29,7 +29,7 @@ const Header = () => {
             충전소 조회
           </StyledHeaderBtn>
           <StyledHeaderBtn>뉴스</StyledHeaderBtn>
-          <StyledHeaderBtn onClick={() => navi("/eventBoard")}>
+          <StyledHeaderBtn onClick={() => navi("/notice")}>
             공지사항
           </StyledHeaderBtn>
         </StyledHomeCenterDiv>
