@@ -1,6 +1,7 @@
 import RentCarNav from "../Common/Nav/RentCarNav";
 import { RentContainerDiv, RentBodyDiv } from "./RentCar.styles";
 
+
 const RentCar = () => {
   return (
     <>

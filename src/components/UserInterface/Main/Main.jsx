@@ -1,16 +1,16 @@
-import { MainBodyDiv, MainConteinerDiv, SwiperDiv } from "./Main.styles";
+import { MainBodyDiv, MainContainerDiv, SwiperDiv } from "./Main.styles";
 import MainSwiper from "./Swiper/MainSwiper";
 
 const Main = () => {
   return (
     <>
-      <MainConteinerDiv>
+      <MainContainerDiv>
         <MainBodyDiv>
           <SwiperDiv>
             <MainSwiper></MainSwiper>
           </SwiperDiv>
         </MainBodyDiv>
-      </MainConteinerDiv>
+      </MainContainerDiv>
     </>
   );
 };
