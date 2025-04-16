@@ -13,7 +13,8 @@ import {
     StyledSocialImg,
     StyledNaverButton,
     Styled_N
-} from "./LoginPage.js"
+} from "./LoginPage.styled"
+
 
 
 

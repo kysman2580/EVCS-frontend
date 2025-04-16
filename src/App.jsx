@@ -4,7 +4,6 @@ import Footer from "./components/UserInterface/Common/Footer/Footer";
 import Main from "./components/UserInterface/Main/Main";
 import TimeRentCar from "./components/AdminInterface/RentCar/TimeRentCar/TimeRentCar";
 import RentalPage from "./components/UserInterface/RentCar/TimeRentCar/RentalPage";
-import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
 import ChargingMap from "./components/UserInterface/ChargingMap/ChargingMap";
 import RentCar from "./components/UserInterface/RentCar/RentCar";
 import HotdealRentCar from "./components/UserInterface/RentCar/HotdealRentCar/HotdealRentCar";
@@ -12,6 +11,10 @@ import LongTermRentCar from "./components/UserInterface/RentCar/LongTermRentCar/
 import SubscribeRentCar from "./components/UserInterface/RentCar/SubscribeRentCar/SubscribeRentCar";
 import GlobalStyle from "./components/UserInterface/Common/Header/GlobalStyle";
 import EventBoard from "./components/UserInterface/Board/Event/EventBoard";
+import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
+
+
+
 function App() {
   return (
     <>
