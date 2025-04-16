@@ -15,7 +15,7 @@ export const RentContainerDiv = styled.div`
   height: 100%;
 `;
 
-export const LongTermListDiv = styled.div`
+export const RentCarListDiv = styled.div`
   width: 90%;
   height: 90%;
   display: flex;
@@ -24,7 +24,7 @@ export const LongTermListDiv = styled.div`
   border: 1px solid red;
 `;
 
-export const LongTermBtnDiv = styled.div`
+export const RentCarBtnDiv = styled.div`
   width: 90%;
   height: 10%;
   display: flex;
