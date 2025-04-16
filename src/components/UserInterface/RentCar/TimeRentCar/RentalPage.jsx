@@ -2,7 +2,7 @@ import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import RentCarNav from "../../Common/Nav/RentCarNav";
-import ko from "date-fns/locale/ko";
+import CarMap from "./CarMap";
 import {
   StyledDatePicker,
   Wrapper,
@@ -56,7 +56,7 @@ const RentalPage = () => {
           <br />
 
           <H3>2. 대여위치 및 차량 설정</H3>
-
+          <CarMap />
           <br />
           <br />
 
