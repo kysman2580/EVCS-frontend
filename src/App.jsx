@@ -13,7 +13,7 @@ import SubscribeRentCar from "./components/UserInterface/RentCar/SubscribeRentCa
 import GlobalStyle from "./components/UserInterface/Common/Header/GlobalStyle";
 import EventBoard from "./components/UserInterface/Board/Event/EventBoard";
 import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
-
+import Notice from "./components/UserInterface/Board/Notice/Notice";
 
 function App() {
   return (
