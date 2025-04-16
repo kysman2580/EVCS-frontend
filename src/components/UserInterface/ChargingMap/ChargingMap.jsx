@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import mappings from "./mappings.json";
 import customMarkerSrc from "/images/2.png";
-import { StyledMap1, StyledMap2 } from "./ChargingMap.styles";
+import { LoadingMaps, GuideBook, OptionsBar, BodyMaps } from "./ChargingMap.styles";
 
 const KakaoMap = () => {
   const [notice, setNotice] = useState("");
@@ -37,7 +37,7 @@ const KakaoMap = () => {
     // Kakao 지도 API 스크립트 (services 라이브러리 포함: reverse geocoder용)
     const script = document.createElement("script");
     script.async = true;
-    const kakaoServiceKey = "서비스키"; // 서비스키
+    const kakaoServiceKey = "5e74c03d9c8cb280743fc27357083522"; // 서비스키
     script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoServiceKey}&autoload=false&libraries=services`;
     document.head.appendChild(script);
 
@@ -66,7 +66,7 @@ const KakaoMap = () => {
           userDetailedZscode,
           numOfRows = 9999
         ) {
-          const serviceKey = "서비스키"; // 서비스키
+          const serviceKey = "wKLfGPEstHWDqHLmnXYntGh%2Fkio03KXj99NNors5Ndb9n0Z%2B0%2BdISJFbjny5ex1wjBFyS7sOY%2BP1xzkrbhJbPA%3D%3D"; // 서비스키
           const apiUrl = `https://apis.data.go.kr/B552584/EvCharger/getChargerInfo?serviceKey=${serviceKey}&pageNo=1&numOfRows=${numOfRows}&zcode=${apiZcode}`;
 
           fetch(apiUrl)
@@ -244,15 +244,18 @@ const KakaoMap = () => {
   }, []);
 
   return (
-    <div style={{ position: 'relative' }}>
+    <BodyMaps>
       {loading && (
-        <StyledMap1>
+        <LoadingMaps>
           로딩중...
-        </StyledMap1>
+        </LoadingMaps>
       )}
-      <div id="map" style={{ width: '100%', height: '700px' }}></div>
-      {notice && <StyledMap2>{notice}</StyledMap2>}
-    </div>
+      <OptionsBar>
+        옵션 들어갈 예정입니다.
+      </OptionsBar>
+      <div id="map"></div>
+      {notice && <GuideBook>{notice}</GuideBook>}
+    </BodyMaps>
   );
 };
 

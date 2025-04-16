@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const StyledMap1 = styled.div`
+export const LoadingMaps = styled.div`
   position: absolute;
   background: rgba(255, 253, 253, 0.51);
   color: rgb(0, 0, 0);
@@ -12,8 +12,25 @@ export const StyledMap1 = styled.div`
   font-size: 64px;
 `;
 
-export const StyledMap2 = styled.div`
+export const GuideBook = styled.div`
   text-lign: center; 
   marginTop: 10px; 
   color: red;
+`;
+
+export const OptionsBar = styled.div`
+  width: 300px;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.83);
+  z-Index: 1001;
+  position: absolute;
+`;
+
+export const BodyMaps = styled.div`
+  position: relative;
+`;
+
+export const Maps = styled.div`
+  width: 100%;
+  height: 700px;
 `;
