@@ -1,7 +1,7 @@
 import Table from "react-bootstrap/Table";
 
-const CarManagement = () => {
-  <>
+function BasicExample() {
+  return (
     <Table striped bordered hover>
       <thead>
         <tr>
@@ -31,6 +31,7 @@ const CarManagement = () => {
         </tr>
       </tbody>
     </Table>
-  </>;
-};
-export default CarManagement;
+  );
+}
+
+export default BasicExample;
