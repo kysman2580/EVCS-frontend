@@ -27,7 +27,7 @@ export const Wrapper = styled.div`
 
 export const RentBodyDiv = styled.div`
   width: 90%;
-  height: 900px;
+  height: auto;
   margin-top: 30px;
 `;
 
