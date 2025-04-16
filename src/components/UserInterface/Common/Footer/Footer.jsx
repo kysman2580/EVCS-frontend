@@ -1,4 +1,4 @@
-import { StrledFooterDiv, StyledFooterContentDiv } from "./Footer.styled";
+import { StrledFooterDiv, StyledFooterContentDiv } from "./Footer.styles";
 
 const Footer = () => {
   return (

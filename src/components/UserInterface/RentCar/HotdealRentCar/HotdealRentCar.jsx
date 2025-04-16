@@ -1,5 +1,5 @@
 import RentCarNav from "../../Common/Nav/RentCarNav";
-import { RentContainerDiv, RentBodyDiv } from "../RentCar.styled";
+import { RentContainerDiv, RentBodyDiv } from "../RentCar.styles";
 
 const HotdealRentCar = () => {
   return (
