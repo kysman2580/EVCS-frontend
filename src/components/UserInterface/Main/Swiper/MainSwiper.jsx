@@ -3,6 +3,7 @@ import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { SwiperImg } from "./MainSwiper.styles";
 
 const MainSwiper = () => {
   return (
@@ -15,16 +16,16 @@ const MainSwiper = () => {
         pagination={{ clickable: true }}
         autoplay={{ delay: 3000, disableOnInteraction: false }}
         loop={true}
-        style={{ width: "100%", height: "200px" }}
+        style={{ width: "1000px", height: "400px" }}
       >
         <SwiperSlide>
-          <img src="images/calendar.png" alt="" />
+          <SwiperImg src="images/first_sale_img.png" alt="" />
         </SwiperSlide>
         <SwiperSlide>
-          <img src="images/1.png" alt="" />
+          <SwiperImg src="images/night_sale_img.png" alt="" />
         </SwiperSlide>
         <SwiperSlide>
-          <img src="images/2.png" alt="" />
+          <SwiperImg src="images/hot_deal_img.png" alt="" />
         </SwiperSlide>
       </Swiper>
     </>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import mappings from "./mappings.json";
-import customMarkerSrc from "/images/2.png";
+import customMarkerSrc from "/images/chargingRent.png";
 import {
   LoadingMaps,
   GuideBook,
