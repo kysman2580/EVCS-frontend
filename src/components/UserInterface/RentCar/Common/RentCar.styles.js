@@ -19,9 +19,9 @@ export const RentCarListDiv = styled.div`
   width: 90%;
   height: 90%;
   display: flex;
-  align-items: center;
-  justify-content: space-evenly;
   border: 1px solid red;
+  flex-wrap: wrap;
+  magin: 20px 20px 20px 20px;
 `;
 
 export const RentCarBtnDiv = styled.div`

@@ -5,6 +5,7 @@ import {
   RentCarListDiv,
   RentCarBtnDiv,
 } from "../Common/RentCar.styles";
+import RentCarCard from "../Common/RentCarCard";
 
 const LongTermRentCar = () => {
   return (
@@ -12,7 +13,19 @@ const LongTermRentCar = () => {
       <RentContainerDiv>
         <RentCarNav />
         <RentBodyDiv>
-          <RentCarListDiv></RentCarListDiv>
+          <RentCarListDiv>
+            <RentCarCard></RentCarCard>
+            <RentCarCard></RentCarCard>
+            <RentCarCard></RentCarCard>
+            <RentCarCard></RentCarCard>
+            <RentCarCard></RentCarCard>
+            <RentCarCard></RentCarCard>
+            <RentCarCard></RentCarCard>
+            <RentCarCard></RentCarCard>
+            <RentCarCard></RentCarCard>
+            <RentCarCard></RentCarCard>
+            <RentCarCard></RentCarCard>
+          </RentCarListDiv>
           <RentCarBtnDiv></RentCarBtnDiv>
         </RentBodyDiv>
       </RentContainerDiv>
