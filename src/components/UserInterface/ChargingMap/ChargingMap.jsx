@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import mappings from "./mappings.json";
 import customMarkerSrc from "/images/2.png";
-import { LoadingMaps, GuideBook, OptionsBar, BodyMaps } from "./ChargingMap.styles";
+import { LoadingMaps, GuideBook, OptionsBar, BodyMaps, Maps } from "./ChargingMap.styles";
 
 const KakaoMap = () => {
   const [notice, setNotice] = useState("");
@@ -253,7 +253,7 @@ const KakaoMap = () => {
       <OptionsBar>
         옵션 들어갈 예정입니다.
       </OptionsBar>
-      <div id="map"></div>
+      <Maps id="map"></Maps>
       {notice && <GuideBook>{notice}</GuideBook>}
     </BodyMaps>
   );
