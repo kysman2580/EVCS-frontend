@@ -1,13 +1,13 @@
 import RentCarNav from "../../Common/Nav/RentCarNav";
-import { RentConteinerDiv, RentBodyDiv } from "../RentCar.styled";
+import { RentContainerDiv, RentBodyDiv } from "../RentCar.styles";
 
 const LongTermRentCar = () => {
   return (
     <>
-      <RentConteinerDiv>
+      <RentContainerDiv>
         <RentCarNav />
         <RentBodyDiv>ㅎㅇㅎㅇ여긴 장기 렌트카야</RentBodyDiv>
-      </RentConteinerDiv>
+      </RentContainerDiv>
     </>
   );
 };

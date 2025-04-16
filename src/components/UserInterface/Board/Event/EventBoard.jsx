@@ -1,6 +1,6 @@
-import {} from "./EventBoard.styled";
+import {} from "./EventBoard.styles";
 import NoticeNav from "../../Common/Nav/NoticeNav";
-import { BoardContainerDiv, BoardBodyDiv } from "../Board.styled";
+import { BoardContainerDiv, BoardBodyDiv } from "../Board.styles";
 
 const EventBoard = () => {
   return (

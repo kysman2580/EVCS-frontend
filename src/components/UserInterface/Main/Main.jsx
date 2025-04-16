@@ -1,4 +1,4 @@
-import { MainBodyDiv, MainConteinerDiv } from "./Main.styled";
+import { MainBodyDiv, MainConteinerDiv } from "./Main.styles";
 
 const Main = () => {
   return (
