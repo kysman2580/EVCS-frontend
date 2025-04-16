@@ -21,6 +21,8 @@ function App() {
       <GlobalStyle />
       <Header />
       <Routes>
+
+        
         <Route path="/" element={<Main />}></Route>
         <Route path="/timerentalPage" element={<RentalPage />}></Route>
         <Route path="/loginPage" element={<LoginPage />} />
@@ -29,13 +31,12 @@ function App() {
         <Route path="/longRentCar" element={<LongTermRentCar />}></Route>
         <Route path="/hotRentCar" element={<HotdealRentCar />}></Route>
         <Route path="/subRentCar" element={<SubscribeRentCar />}></Route>
+        <Route path="/reportingPage"element={<IntegratedReportingPage />}></Route>
         {/* 아래부터는 관리자페이지만 적자 */}
         <Route path="/adminCarManagement" element={<CarManagement />}></Route>
         <Route path="/adminTimeCar" element={<TimeRentCar />}></Route>
-        <Route
-          path="/reportingPage"
-          element={<IntegratedReportingPage />}
-        ></Route>
+
+
       </Routes>
       <Footer />
     </>
