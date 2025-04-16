@@ -9,9 +9,11 @@ import RentCar from "./components/UserInterface/RentCar/RentCar";
 import HotdealRentCar from "./components/UserInterface/RentCar/HotdealRentCar/HotdealRentCar";
 import LongTermRentCar from "./components/UserInterface/RentCar/LongTermRentCar/LongTermRentCar";
 import SubscribeRentCar from "./components/UserInterface/RentCar/SubscribeRentCar/SubscribeRentCar";
+import IntegratedReportingPage from "./components/UserInterface/Report/IntegratedReportingPage";
 import GlobalStyle from "./components/UserInterface/Common/Header/GlobalStyle";
 import EventBoard from "./components/UserInterface/Board/Event/EventBoard";
 import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
+import Notice from "./components/UserInterface/Board/Notice/Notice";
 
 
 
@@ -27,10 +29,11 @@ function App() {
         <Route path="/rentCar" element={<RentCar />}></Route>
         <Route path="/loginPage" element={<LoginPage />} />
         <Route path="/chargingMap" element={<ChargingMap />}></Route>
+        <Route path="/notice" element={<Notice />}></Route>
         <Route path="/longRentCar" element={<LongTermRentCar />}></Route>
         <Route path="/hotRentCar" element={<HotdealRentCar />}></Route>
         <Route path="/subRentCar" element={<SubscribeRentCar />}></Route>
-        <Route path="/eventBoard" element={<EventBoard />}></Route>
+        <Route path="/reportingPage" element={<IntegratedReportingPage />}></Route>
       </Routes>
       <Footer />
     </>

@@ -13,7 +13,7 @@ import {
     StyledSocialImg,
     StyledNaverButton,
     Styled_N
-} from "./LoginPage.styled"
+} from "./LoginPage.styles"
 
 
 

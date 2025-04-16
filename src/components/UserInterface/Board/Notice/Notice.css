@@ -1,0 +1,66 @@
+.Notice {
+  width: 600px;
+  height: 500px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+/* 제목 */
+.Notice h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 30px;
+  border-left: 5px solid #3498db;
+  padding-left: 15px;
+}
+
+/* 테이블 래퍼 */
+.Notice-container {
+  overflow-x: auto;
+}
+
+/* 테이블 기본 스타일 */
+.Notice-container table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+/* 테이블 헤더 */
+.Notice-container th {
+  background-color: #3498db;
+  color: #ffffff;
+  padding: 16px 20px;
+  text-align: left;
+  font-weight: 600;
+}
+
+/* 테이블 셀 */
+.Notice-container td {
+  padding: 14px 20px;
+  border-top: 1px solid #ecf0f1;
+  color: #2c3e50;
+}
+
+/* 행 hover 효과 */
+.Notice-container tr:hover {
+  background-color: #ecf7ff;
+  transition: background-color 0.2s ease;
+}
+
+/* 반응형 대응 */
+@media (max-width: 768px) {
+  .Notice h1 {
+    font-size: 24px;
+  }
+
+  .Notice-container th,
+  .Notice-container td {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+}
