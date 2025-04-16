@@ -5,15 +5,14 @@ import Main from "./components/UserInterface/Main/Main";
 import TimeRentCar from "./components/AdminInterface/RentCar/TimeRentCar/TimeRentCar";
 import RentalPage from "./components/UserInterface/RentCar/TimeRentCar/RentalPage";
 import ChargingMap from "./components/UserInterface/ChargingMap/ChargingMap";
-
 import RentCar from "./components/UserInterface/RentCar/RentCar";
 import HotdealRentCar from "./components/UserInterface/RentCar/HotdealRentCar/HotdealRentCar";
 import LongTermRentCar from "./components/UserInterface/RentCar/LongTermRentCar/LongTermRentCar";
 import SubscribeRentCar from "./components/UserInterface/RentCar/SubscribeRentCar/SubscribeRentCar";
+import IntegratedReportingPage from "./components/UserInterface/Report/IntegratedReportingPage";
 import GlobalStyle from "./components/UserInterface/Common/Header/GlobalStyle";
 import EventBoard from "./components/UserInterface/Board/Event/EventBoard";
 import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
-
 
 function App() {
   return (
@@ -31,6 +30,7 @@ function App() {
         <Route path="/longRentCar" element={<LongTermRentCar />}></Route>
         <Route path="/hotRentCar" element={<HotdealRentCar />}></Route>
         <Route path="/subRentCar" element={<SubscribeRentCar />}></Route>
+        <Route path="/reportingPage" element={<IntegratedReportingPage />}></Route>
       </Routes>
       <Footer />
     </>
