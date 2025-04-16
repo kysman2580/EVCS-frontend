@@ -1,12 +1,13 @@
 import styled from "styled-components";
 
 export const MainBodyDiv = styled.div`
-  width: 90%;
+  width: 100%;
   height: 900px;
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  margin-top: 30px;
+  margin-top: 50px;
+  border: 1px solid red;
 `;
 
 export const MainContainerDiv = styled.div`
@@ -53,4 +54,35 @@ export const MainATag = styled.a`
   }
 `;
 
+// 혹시 span으로 조절 할 수도 있음.
 export const MainSpan = styled.span``;
+
+export const MainLeftDiv = styled.div`
+  border: 1px solid red;
+  width: 50%;
+  height: 100%;
+`;
+
+export const MainRightDiv = styled.div`
+  border: 1px solid red;
+  width: 50%;
+  height: 100%;
+`;
+
+export const MainNewsDiv = styled.div`
+  border: 1px solid red;
+  width: 100%;
+  height: 70%;
+`;
+
+export const MainNoitceDiv = styled.div`
+  border: 1px solid red;
+  width: 100%;
+  height: 30%;
+`;
+
+export const MainRankingDiv = styled.div`
+  border: 1px solid red;
+  width: 100%;
+  height: 100%;
+`;

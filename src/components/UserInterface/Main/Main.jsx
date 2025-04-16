@@ -6,6 +6,11 @@ import {
   MainBtnImg,
   MainATag,
   MainSpan,
+  MainLeftDiv,
+  MainRightDiv,
+  MainNewsDiv,
+  MainNoitceDiv,
+  MainRankingDiv,
 } from "./Main.styles";
 import MainSwiper from "./Swiper/MainSwiper";
 
@@ -53,7 +58,21 @@ const Main = () => {
             <MainSpan>핫딜 렌트카</MainSpan>
           </MainATag>
         </MainBtnDiv>
-        <MainBodyDiv></MainBodyDiv>
+        <MainBodyDiv>
+          <MainLeftDiv>
+            <MainNewsDiv>
+              <h1>뉴스 나오는 자리</h1>
+            </MainNewsDiv>
+            <MainNoitceDiv>
+              <h1>공지사항 나오는 자리</h1>
+            </MainNoitceDiv>
+          </MainLeftDiv>
+          <MainRightDiv>
+            <MainRankingDiv>
+              <h1>랭킹 나오는 자리</h1>
+            </MainRankingDiv>
+          </MainRightDiv>
+        </MainBodyDiv>
       </MainContainerDiv>
     </>
   );
