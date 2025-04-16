@@ -14,11 +14,14 @@ import {
     StyledNaverButton,
     Styled_N
 } from "./LoginPage.styles"
+import { useNavigate } from "react-router-dom";
 
 
 
 
 function LoginPage() {
+
+    const navi = useNavigate();
 
 
 
@@ -28,7 +31,7 @@ function LoginPage() {
         <StyledForm className="forms" action="">
             <StyledLoginForm>
                 <StyledLogoDiv >
-                    <StyledImg src="/images/Logo.png" alt="전기충만 로고" />
+                    <StyledImg src="/images/Logo.png" alt="전기충만 로고" onClick={() => navi("/")}/>
                 </StyledLogoDiv>
 
                 <StyledInputContainer>
