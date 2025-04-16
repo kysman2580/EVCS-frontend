@@ -12,8 +12,9 @@ import {
     StyledSocialDiv,
     StyledSocialImg,
     StyledNaverButton,
-    Styled_N,
-} from "./LoginPageStyled"
+    Styled_N
+} from "./LoginPage.styles"
+
 
 
 

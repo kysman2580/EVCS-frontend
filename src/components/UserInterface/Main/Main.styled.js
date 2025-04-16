@@ -9,6 +9,6 @@ export const MainBodyDiv = styled.div`
   margin-top: 30px;
 `;
 
-export const MainConteinerDiv = styled.div`
+export const MainContainerDiv = styled.div`
   display: flex;
 `;

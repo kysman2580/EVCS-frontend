@@ -1,13 +1,13 @@
-import { MainBodyDiv, MainConteinerDiv } from "./Main.styled";
+import { MainBodyDiv, MainContainerDiv } from "./Main.styled";
 
 const Main = () => {
   return (
     <>
-      <MainConteinerDiv>
+      <MainContainerDiv>
         <MainBodyDiv>
           <h1>ㅎㅇㅎㅇ</h1>
         </MainBodyDiv>
-      </MainConteinerDiv>
+      </MainContainerDiv>
     </>
   );
 };
