@@ -4,6 +4,7 @@ import {
   RentBodyDiv,
   RentCarListDiv,
   RentCarBtnDiv,
+  RentMoreButton,
 } from "../Common/RentCar.styles";
 import RentCarCard from "../Common/RentCarCard";
 
@@ -26,7 +27,9 @@ const LongTermRentCar = () => {
             <RentCarCard></RentCarCard>
             <RentCarCard></RentCarCard>
           </RentCarListDiv>
-          <RentCarBtnDiv></RentCarBtnDiv>
+          <RentCarBtnDiv>
+            <RentMoreButton>더 보기</RentMoreButton>
+          </RentCarBtnDiv>
         </RentBodyDiv>
       </RentContainerDiv>
     </>
