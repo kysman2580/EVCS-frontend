@@ -5,8 +5,10 @@ import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
 import { useState } from "react";
 import { Wrapper, H2 } from "./InsertCar.styles";
+import { useNavigate } from "react-router-dom";
 
 const InsertCar = () => {
+  const navi = useNavigate();
   const [date, setDate] = useState(new Date());
 
   return (
@@ -55,6 +57,14 @@ const InsertCar = () => {
         </Col>
         <Button variant="outline-success" className="m-4">
           등록하기
+        </Button>
+        <Button
+          size="sm"
+          onClick={() => navi(-1)}
+          variant="outline-secondary"
+          className="m-4"
+        >
+          돌아가기
         </Button>
       </Wrapper>
     </>
