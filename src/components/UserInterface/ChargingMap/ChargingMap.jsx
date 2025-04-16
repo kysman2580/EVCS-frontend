@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import mappings from "./mappings.json";
-import customMarkerSrc from "/images/2.png";
-import { LoadingMaps, GuideBook, OptionsBar, BodyMaps, Maps } from "./ChargingMap.styles";
+import customMarkerSrc from "/images/chargingRent.png";
+import {
+  LoadingMaps,
+  GuideBook,
+  OptionsBar,
+  BodyMaps,
+  Maps,
+} from "./ChargingMap.styles";
 
 const KakaoMap = () => {
   const [notice, setNotice] = useState("");
@@ -11,16 +17,18 @@ const KakaoMap = () => {
     const { provinceMapping, detailedMapping } = mappings;
 
     // stat: 충전소 상태 매핑
+    //  prettier-ignore
     const statMapping = {
-      1: "통신이상",
-      2: "충전대기",
-      3: "충전중",
-      4: "운영중지",
-      5: "점검중",
-      9: "상태미확인",
+      "1": "통신이상",
+      "2": "충전대기",
+      "3": "충전중",
+      "4": "운영중지",
+      "5": "점검중",
+      "9": "상태미확인",
     };
 
     // chgerType: 충전기 타입 매핑
+    //  prettier-ignore
     const chgerTypeMapping = {
       "01": "DC차데모",
       "02": "AC완속",
@@ -31,7 +39,7 @@ const KakaoMap = () => {
       "07": "AC3상",
       "08": "DC콤보(완속)",
       "09": "NACS",
-      10: "DC콤보+NACS",
+      "10": "DC콤보+NACS",
     };
 
     // Kakao 지도 API 스크립트 (services 라이브러리 포함: reverse geocoder용)
@@ -66,7 +74,8 @@ const KakaoMap = () => {
           userDetailedZscode,
           numOfRows = 9999
         ) {
-          const serviceKey = "wKLfGPEstHWDqHLmnXYntGh%2Fkio03KXj99NNors5Ndb9n0Z%2B0%2BdISJFbjny5ex1wjBFyS7sOY%2BP1xzkrbhJbPA%3D%3D"; // 서비스키
+          const serviceKey =
+            "wKLfGPEstHWDqHLmnXYntGh%2Fkio03KXj99NNors5Ndb9n0Z%2B0%2BdISJFbjny5ex1wjBFyS7sOY%2BP1xzkrbhJbPA%3D%3D"; // 서비스키
           const apiUrl = `https://apis.data.go.kr/B552584/EvCharger/getChargerInfo?serviceKey=${serviceKey}&pageNo=1&numOfRows=${numOfRows}&zcode=${apiZcode}`;
 
           fetch(apiUrl)
@@ -83,7 +92,8 @@ const KakaoMap = () => {
                   const statNmNode = item.getElementsByTagName("statNm")[0];
                   const statNode = item.getElementsByTagName("stat")[0]; // 충전소 상태
                   const outputNode = item.getElementsByTagName("output")[0]; // 충전 용량
-                  const chgerTypeNode = item.getElementsByTagName("chgerType")[0]; // 충전기 타입
+                  const chgerTypeNode =
+                    item.getElementsByTagName("chgerType")[0]; // 충전기 타입
                   const noteNode = item.getElementsByTagName("note")[0]; // 주의 메시지
                   const limitYnNode = item.getElementsByTagName("limitYn")[0]; // 제한 여부 ("Y"/"N")
                   const zscodeNode = item.getElementsByTagName("zscode")[0]; // 상세 지역 코드
@@ -245,14 +255,8 @@ const KakaoMap = () => {
 
   return (
     <BodyMaps>
-      {loading && (
-        <LoadingMaps>
-          로딩중...
-        </LoadingMaps>
-      )}
-      <OptionsBar>
-        옵션 들어갈 예정입니다.
-      </OptionsBar>
+      {loading && <LoadingMaps>로딩중...</LoadingMaps>}
+      <OptionsBar>옵션 들어갈 예정입니다.</OptionsBar>
       <Maps id="map"></Maps>
       {notice && <GuideBook>{notice}</GuideBook>}
     </BodyMaps>
