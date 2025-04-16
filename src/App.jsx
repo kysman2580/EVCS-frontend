@@ -29,10 +29,7 @@ function App() {
         <Route path="/hotRentCar" element={<HotdealRentCar />}></Route>
         <Route path="/subRentCar" element={<SubscribeRentCar />}></Route>
         <Route path="/newsMain" element={<NewsMain />}></Route>
-        <Route
-          path="/reportingPage"
-          element={<IntegratedReportingPage />}
-        ></Route>
+        <Route path="/reportingPage" element={<IntegratedReportingPage />}></Route>
         {/* 아래부터는 관리자페이지만 적자 */}
         <Route path="/adminCarManagement" element={<CarManagement />}></Route>
         <Route path="/insertCar" element={<InsertCar />}></Route>
