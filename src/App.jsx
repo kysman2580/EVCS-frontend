@@ -13,6 +13,7 @@ import GlobalStyle from "./components/UserInterface/Common/Header/GlobalStyle";
 import EventBoard from "./components/UserInterface/Board/Event/EventBoard";
 import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
 import Notice from "./components/UserInterface/Board/Notice/Notice";
+import NewsMain from "./components/UserInterface/News/NewsMain";
 import CarManagement from "./components/AdminInterface/RentCar/CarManagement/CarManagement";
 import InsertCar from "./components/AdminInterface/RentCar/CarManagement/InsertCar";
 
@@ -30,14 +31,15 @@ function App() {
         <Route path="/longRentCar" element={<LongTermRentCar />}></Route>
         <Route path="/hotRentCar" element={<HotdealRentCar />}></Route>
         <Route path="/subRentCar" element={<SubscribeRentCar />}></Route>
-        {/* 아래부터는 관리자페이지만 적자 */}
-        <Route path="/adminCarManagement" element={<CarManagement />}></Route>
-        <Route path="/insertCar" element={<InsertCar />}></Route>
-        <Route path="/adminTimeCar" element={<TimeRentCar />}></Route>
+        <Route path="/newsMain" element={<NewsMain />}></Route>
         <Route
           path="/reportingPage"
           element={<IntegratedReportingPage />}
         ></Route>
+        {/* 아래부터는 관리자페이지만 적자 */}
+        <Route path="/adminCarManagement" element={<CarManagement />}></Route>
+        <Route path="/insertCar" element={<InsertCar />}></Route>
+        <Route path="/adminTimeCar" element={<TimeRentCar />}></Route>
       </Routes>
       <Footer />
     </>
