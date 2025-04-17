@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../Notice/Notice.css";
+import NoticeNav from "../../Common/Nav/NoticeNav";
+import { BoardContainerDiv, BoardBodyDiv } from "../Board.styles";
 
 function Notice() {
   const [notices, setNotices] = useState(() => {

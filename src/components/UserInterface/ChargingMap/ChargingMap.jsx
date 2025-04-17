@@ -179,11 +179,11 @@ const KakaoMap = () => {
             const userLng = position.coords.longitude;
             const userLatLng = new window.kakao.maps.LatLng(userLat, userLng);
             map.setCenter(userLatLng);
-            new window.kakao.maps.Marker({
-              map: map,
-              position: userLatLng,
-              title: "현재 위치",
-            });
+            // new window.kakao.maps.Marker({
+            //   map: map,
+            //   position: userLatLng,
+            //   title: "현재 위치",
+            // });
 
             const geocoder = new window.kakao.maps.services.Geocoder();
             geocoder.coord2RegionCode(userLng, userLat, (result, status) => {

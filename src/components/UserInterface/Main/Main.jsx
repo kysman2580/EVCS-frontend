@@ -50,12 +50,12 @@ const Main = () => {
             <MainSpan>에너지 뉴스</MainSpan>
           </MainATag>
           <MainATag href="">
-            <MainBtnImg src="images/question.png" />
-            <MainSpan>문의 사항</MainSpan>
-          </MainATag>
-          <MainATag href="">
             <MainBtnImg src="images/hotDeal.png" />
             <MainSpan>핫딜 렌트카</MainSpan>
+          </MainATag>
+          <MainATag href="">
+            <MainBtnImg src="images/question.png" />
+            <MainSpan>문의 사항</MainSpan>
           </MainATag>
         </MainBtnDiv>
         <MainBodyDiv>
