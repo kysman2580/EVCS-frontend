@@ -17,29 +17,41 @@ import NewsMain from "./components/UserInterface/News/NewsMain";
 import CarManagement from "./components/AdminInterface/RentCar/CarManagement/CarManagement";
 import InsertCar from "./components/AdminInterface/RentCar/CarManagement/InsertCar";
 
+/* User, Admin Interce 분리 관련 */
+import UserLayout from "./layouts/UserLayout";
+import AdminLayout from "./layouts/AdminLayout";
+
 function App() {
   return (
     <>
       <GlobalStyle />
       <Header />
       <Routes>
-        <Route path="/" element={<Main />}></Route>
-        <Route path="/timerentalPage" element={<RentalPage />}></Route>
-        <Route path="/loginPage" element={<LoginPage />} />
-        <Route path="/chargingMap" element={<ChargingMap />}></Route>
-        <Route path="/notice" element={<Notice />}></Route>
-        <Route path="/longRentCar" element={<LongTermRentCar />}></Route>
-        <Route path="/hotRentCar" element={<HotdealRentCar />}></Route>
-        <Route path="/subRentCar" element={<SubscribeRentCar />}></Route>
-        <Route path="/newsMain" element={<NewsMain />}></Route>
-        <Route
-          path="/reportingPage"
-          element={<IntegratedReportingPage />}
-        ></Route>
+        {/* User Interface */}
+        <Route element={<UserLayout />}>
+          <Route path="/" element={<Main />}></Route>
+          <Route path="/timerentalPage" element={<RentalPage />}></Route>
+          <Route path="/loginPage" element={<LoginPage />} />
+          <Route path="/chargingMap" element={<ChargingMap />}></Route>
+          <Route path="/notice" element={<Notice />}></Route>
+          <Route path="/longRentCar" element={<LongTermRentCar />}></Route>
+          <Route path="/hotRentCar" element={<HotdealRentCar />}></Route>
+          <Route path="/subRentCar" element={<SubscribeRentCar />}></Route>
+          <Route path="/newsMain" element={<NewsMain />}></Route>
+          <Route
+            path="/reportingPage"
+            element={<IntegratedReportingPage />}
+          ></Route>
+        </Route>
+
         {/* 아래부터는 관리자페이지만 적자 */}
-        <Route path="/adminCarManagement" element={<CarManagement />}></Route>
-        <Route path="/insertCar" element={<InsertCar />}></Route>
-        <Route path="/adminTimeCar" element={<TimeRentCar />}></Route>
+        {/* Admin 페이지에서 보내는 url 은 /admin/뒤에 URL 이런식으로 보내야함. EX) /admin/insertCar  */}
+        {/* Admin Interface */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route path="/adminCarManagement" element={<CarManagement />}></Route>
+          <Route path="/insertCar" element={<InsertCar />}></Route>
+          <Route path="/adminTimeCar" element={<TimeRentCar />}></Route>
+        </Route>
       </Routes>
       <Footer />
     </>
