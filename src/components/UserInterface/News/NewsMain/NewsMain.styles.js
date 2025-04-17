@@ -199,6 +199,7 @@ export const ThumbnailLink = styled.a`
   text-decoration: none;
   color: inherit;
   display: block;
+  position: relative;
 `;
 
 // 썸네일
@@ -480,6 +481,8 @@ export const NewsDate = styled.span`
   font-size: 12px;
   margin-left: 10px;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
 `;
 
 // 더보기 버튼
@@ -513,4 +516,38 @@ export const LoadMoreButton = styled.button`
     transform: none;
     box-shadow: none;
   }
+`;
+
+// 채팅 아이콘 스타일
+export const ChatIconWrapper = styled.div`
+  position: absolute;
+  top: ${(props) => props.top || "10px"};
+  left: ${(props) => props.left || "auto"};
+  right: ${(props) => props.right || "10px"};
+  bottom: ${(props) => props.bottom || "auto"};
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  padding: ${(props) => (props.small ? "4px" : "6px")};
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.2s;
+  z-index: 2;
+
+  &:hover {
+    transform: scale(1.1);
+    background: rgba(3, 199, 90, 0.2);
+  }
+`;
+
+export const ChatIcon = styled.img`
+  width: ${(props) => (props.small ? "18px" : "22px")};
+  height: ${(props) => (props.small ? "18px" : "22px")};
+  display: block;
+`;
+
+export const NewsListChatIcon = styled.img`
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+  vertical-align: middle;
 `;

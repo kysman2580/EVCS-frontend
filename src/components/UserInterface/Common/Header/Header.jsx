@@ -24,7 +24,9 @@ const Header = () => {
           <StyledHeaderBtn onClick={() => navi("/longRentCar")}>
             렌트카
           </StyledHeaderBtn>
-          <StyledHeaderBtn>커뮤니티</StyledHeaderBtn>
+          <StyledHeaderBtn onClick={() => navi("/driveRouteBoard")}>
+            커뮤니티
+          </StyledHeaderBtn>
           <StyledHeaderBtn onClick={() => navi("/chargingMap")}>
             충전소 조회
           </StyledHeaderBtn>
