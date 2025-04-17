@@ -18,14 +18,13 @@ import CarManagement from "./components/AdminInterface/RentCar/CarManagement/Car
 import InsertCar from "./components/AdminInterface/RentCar/CarManagement/InsertCar";
 
 /* User, Admin Interce 분리 관련 */
-import UserLayout from "./layouts/UserLayout";
-import AdminLayout from "./layouts/AdminLayout";
+import UserLayout from "./components/Layout/UserInterface/UserLayout";
+import AdminLayout from "./components/Layout/AdminInterface/AdminLayout";
 
 function App() {
   return (
     <>
       <GlobalStyle />
-      <Header />
       <Routes>
         {/* User Interface */}
         <Route element={<UserLayout />}>
@@ -48,12 +47,11 @@ function App() {
         {/* Admin 페이지에서 보내는 url 은 /admin/뒤에 URL 이런식으로 보내야함. EX) /admin/insertCar  */}
         {/* Admin Interface */}
         <Route path="/admin" element={<AdminLayout />}>
-          <Route path="/adminCarManagement" element={<CarManagement />}></Route>
-          <Route path="/insertCar" element={<InsertCar />}></Route>
-          <Route path="/adminTimeCar" element={<TimeRentCar />}></Route>
+          <Route path="adminCarManagement" element={<CarManagement />}></Route>
+          <Route path="insertCar" element={<InsertCar />}></Route>
+          <Route path="adminTimeCar" element={<TimeRentCar />}></Route>
         </Route>
       </Routes>
-      <Footer />
     </>
   );
 }

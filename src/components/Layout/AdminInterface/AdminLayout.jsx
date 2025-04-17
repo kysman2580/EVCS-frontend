@@ -1,11 +1,10 @@
 import { Outlet } from "react-router-dom";
-import AdminHeader from "../components/AdminInterface/Common/AdminHeader"; // 관리자용 헤더
-import Footer from "../components/UserInterface/Common/Footer/Footer"; // 혹은 관리자엔 푸터 없애도 되고
-
+import Header from "../../UserInterface/Common/Header/Header";
+import Footer from "../../UserInterface/Common/Footer/Footer";
 export default function AdminLayout() {
   return (
     <>
-      <AdminHeader />
+      <Header />
       <Outlet />
       <Footer />
     </>
