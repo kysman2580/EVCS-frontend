@@ -39,6 +39,7 @@ function App() {
           <Route path="/hotRentCar" element={<HotdealRentCar />}></Route>
           <Route path="/subRentCar" element={<SubscribeRentCar />}></Route>
           <Route path="/newsMain" element={<NewsMain />}></Route>
+          <Route path="/newsDetail" element={<NewsDetail />}></Route>
           <Route
             path="/reportingPage"
             element={<IntegratedReportingPage />}

@@ -12,6 +12,7 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
   const [results, setResults] = useState([]);
   const [imageResults, setImageResults] = useState({});
   const [loading, setLoading] = useState(false);
+  const [delayedVisible, setDelayedVisible] = useState(false);
   const [error, setError] = useState(null);
   const [topNews, setTopNews] = useState([]);
   const [mainNews, setMainNews] = useState([]);
@@ -141,6 +142,11 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
     handleSearch();
   }, [location.key]); // location.key가 바뀌면 다시 fetch
 
+  useEffect(() => {
+    const timer = setTimeout(() => setDelayedVisible(true), 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <S.FullWidthContainer>
       <S.Container>
@@ -237,18 +243,23 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
                     <S.Metadata>{formatDate(mainNews[0].pubDate)}</S.Metadata>
                   </S.ContentInfo>
                 </S.ThumbnailLink>
-                <S.ChatIconWrapper
-                  top="20px"
-                  left="20px"
-                  right="auto"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleChatClick(mainNews[0]);
-                  }}
-                >
-                  <S.ChatIcon src="/images/chat_icon_Anggara.png" alt="Chat" />
-                </S.ChatIconWrapper>
+                {getImageUrl(mainNews[0]) !== "/lodaing.png" && (
+                  <S.ChatIconWrapper
+                    top="20px"
+                    left="20px"
+                    right="auto"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleChatClick(mainNews[0]);
+                    }}
+                  >
+                    <S.ChatIcon
+                      src="/images/chat_icon_Anggara.png"
+                      alt="Chat"
+                    />
+                  </S.ChatIconWrapper>
+                )}
               </>
             )}
           </S.MainNewsContent>
@@ -270,21 +281,23 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
                       </S.SmallMetadata>
                     </S.ContentInfo>
                   </S.ThumbnailLink>
-                  <S.ChatIconWrapper
-                    top="15px"
-                    left="15px"
-                    right="auto"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleChatClick(item);
-                    }}
-                  >
-                    <S.ChatIcon
-                      src="/images/chat_icon_Anggara.png"
-                      alt="Chat"
-                    />
-                  </S.ChatIconWrapper>
+                  {getImageUrl(item) !== "/lodaing.png" && (
+                    <S.ChatIconWrapper
+                      top="15px"
+                      left="15px"
+                      right="auto"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleChatClick(item);
+                      }}
+                    >
+                      <S.ChatIcon
+                        src="/images/chat_icon_Anggara.png"
+                        alt="Chat"
+                      />
+                    </S.ChatIconWrapper>
+                  )}
                 </S.SideItem>
               ))}
             </S.SideGrid>
@@ -307,17 +320,22 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
                     <S.NewsDate>{formatDate(item.pubDate)}</S.NewsDate>
                   </S.NewsTitle>
                 </S.NewsLink>
-                <S.ChatIconWrapper
-                  top="-5px"
-                  right="70px"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleChatClick(item);
-                  }}
-                >
-                  <S.ChatIcon src="/images/chat_icon_Anggara.png" alt="Chat" />
-                </S.ChatIconWrapper>
+                {delayedVisible && (
+                  <S.ChatIconWrapper
+                    top="-5px"
+                    right="70px"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleChatClick(item);
+                    }}
+                  >
+                    <S.ChatIcon
+                      src="/images/chat_icon_Anggara.png"
+                      alt="Chat"
+                    />
+                  </S.ChatIconWrapper>
+                )}
               </S.NewsItem>
             ))}
           </S.NewsItems>
