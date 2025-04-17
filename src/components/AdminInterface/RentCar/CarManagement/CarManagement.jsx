@@ -57,7 +57,9 @@ const CarManagement = () => {
     <>
       <Wrapper>
         <Title>차종 정보</Title>
-        <InsertBtn onClick={() => navi("/insertCar")}>차종 등록하기</InsertBtn>
+        <InsertBtn onClick={() => navi("/admin/InsertCar")}>
+          차종 등록하기
+        </InsertBtn>
 
         <TableHeader>
           <Cell width="15%">차종 번호</Cell>
