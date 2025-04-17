@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import * as S from "./NewsMain.styles";
 
-const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
+const NewsMain = ({ backendUrl = "http://localhost:8080", onArticleClick }) => {
   const [query, setQuery] = useState("전기차");
   const [results, setResults] = useState([]);
   const [imageResults, setImageResults] = useState({});
@@ -144,6 +144,16 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
+  const handleArticleClick = (article) => {
+    if (onArticleClick && article) {
+      onArticleClick({
+        title: removeHtmlTags(article.title),
+        summary: removeHtmlTags(article.description),
+        date: formatDate(article.pubDate),
+      });
+    }
+  };
+
   const handleLoadMore = () => {
     // 동작 없음
   };
@@ -178,7 +188,7 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
                   setQuery(keyword);
                   handleSearch(keyword);
                 }}
-                active={query === keyword}
+                $active={query === keyword}
               >
                 {keyword}
               </S.KeywordButton>
@@ -198,14 +208,13 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
               {topNews.map((item, index) => (
                 <S.TopNewsItem key={index}>
                   <S.ThumbnailLink
-                    href={item?.originallink || item?.link || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) =>
-                      item && handleLinkClick(item.originallink || item.link, e)
-                    }
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      item && handleArticleClick(item);
+                    }}
                   >
-                    <S.ThumbnailMedium imageUrl={getImageUrl(item)} />
+                    <S.ThumbnailMedium $imageUrl={getImageUrl(item)} />
                     <S.ContentInfo>
                       <S.Title>
                         {item ? removeHtmlTags(item.title) : "로딩 중..."}
@@ -214,6 +223,14 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
                         {item ? formatDate(item.pubDate) : "⏳"}
                       </S.Metadata>
                     </S.ContentInfo>
+                    {item && (
+                      <S.ChatIconWrapper>
+                        <S.ChatIcon
+                          src="/images/chat_icon_Anggara.png"
+                          alt="Chat"
+                        />
+                      </S.ChatIconWrapper>
+                    )}
                   </S.ThumbnailLink>
                 </S.TopNewsItem>
               ))}
@@ -226,18 +243,13 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
             <S.MainNewsSection>
               <S.MainNewsContent>
                 <S.ThumbnailLink
-                  href={mainNews[0]?.originallink || mainNews[0]?.link || "#"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) =>
-                    mainNews[0] &&
-                    handleLinkClick(
-                      mainNews[0].originallink || mainNews[0].link,
-                      e
-                    )
-                  }
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    mainNews[0] && handleArticleClick(mainNews[0]);
+                  }}
                 >
-                  <S.ThumbnailLarge imageUrl={getImageUrl(mainNews[0])} />
+                  <S.ThumbnailLarge $imageUrl={getImageUrl(mainNews[0])} />
                   <S.ContentInfo>
                     <S.Title>
                       {mainNews[0]
@@ -253,6 +265,14 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
                       {mainNews[0] ? formatDate(mainNews[0].pubDate) : "⏳"}
                     </S.Metadata>
                   </S.ContentInfo>
+                  {mainNews[0] && (
+                    <S.ChatIconWrapper>
+                      <S.ChatIcon
+                        src="/images/chat_icon_Anggara.png"
+                        alt="Chat"
+                      />
+                    </S.ChatIconWrapper>
+                  )}
                 </S.ThumbnailLink>
               </S.MainNewsContent>
 
@@ -261,15 +281,13 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
                   {mainNews.slice(1).map((item, index) => (
                     <S.SideItem key={index}>
                       <S.ThumbnailLink
-                        href={item?.originallink || item?.link || "#"}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) =>
-                          item &&
-                          handleLinkClick(item.originallink || item.link, e)
-                        }
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          item && handleArticleClick(item);
+                        }}
                       >
-                        <S.ThumbnailSmall imageUrl={getImageUrl(item)} />
+                        <S.ThumbnailSmall $imageUrl={getImageUrl(item)} />
                         <S.ContentInfo>
                           <S.SmallTitle>
                             {item ? removeHtmlTags(item.title) : "로딩 중..."}
@@ -278,6 +296,15 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
                             {item ? formatDate(item.pubDate) : "⏳"}
                           </S.SmallMetadata>
                         </S.ContentInfo>
+                        {item && (
+                          <S.ChatIconWrapper $small>
+                            <S.ChatIcon
+                              src="/images/chat_icon_Anggara.png"
+                              alt="Chat"
+                              $small
+                            />
+                          </S.ChatIconWrapper>
+                        )}
                       </S.ThumbnailLink>
                     </S.SideItem>
                   ))}
@@ -292,18 +319,22 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
                 {listNews.map((item, index) => (
                   <S.NewsItem key={index}>
                     <S.NewsLink
-                      href={item?.originallink || item?.link || "#"}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) =>
-                        item &&
-                        handleLinkClick(item.originallink || item.link, e)
-                      }
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        item && handleArticleClick(item);
+                      }}
                     >
                       <S.NewsTitle>
                         {item ? removeHtmlTags(item.title) : "로딩 중..."}
                         <S.NewsDate>
                           {item ? formatDate(item.pubDate) : "⏳"}
+                          {item && (
+                            <S.NewsListChatIcon
+                              src="/images/chat_icon_Anggara.png"
+                              alt="Chat"
+                            />
+                          )}
                         </S.NewsDate>
                       </S.NewsTitle>
                     </S.NewsLink>

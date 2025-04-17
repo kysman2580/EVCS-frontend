@@ -127,15 +127,15 @@ export const KeywordButton = styled.button`
   padding: 8px 16px;
   border: none;
   border-radius: 20px;
-  background-color: ${(props) => (props.active ? "#03c75a" : "#e0e0e0")};
-  color: ${(props) => (props.active ? "white" : "#333")};
-  font-weight: ${(props) => (props.active ? "bold" : "normal")};
+  background-color: ${(props) => (props.$active ? "#03c75a" : "#e0e0e0")};
+  color: ${(props) => (props.$active ? "white" : "#333")};
+  font-weight: ${(props) => (props.$active ? "bold" : "normal")};
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
   &:hover {
-    background-color: ${(props) => (props.active ? "#02b350" : "#d0d0d0")};
+    background-color: ${(props) => (props.$active ? "#02b350" : "#d0d0d0")};
     transform: translateY(-2px);
   }
 `;
@@ -199,6 +199,7 @@ export const ThumbnailLink = styled.a`
   text-decoration: none;
   color: inherit;
   display: block;
+  position: relative;
 `;
 
 // 썸네일
@@ -209,7 +210,7 @@ export const ThumbnailSmall = styled.div`
   background-size: cover;
   background-position: center;
   background-image: ${(props) =>
-    props.imageUrl ? `url(${props.imageUrl})` : "none"};
+    props.$imageUrl ? `url(${props.$imageUrl})` : "none"};
   transition: opacity 0.3s;
 
   ${ThumbnailLink}:hover & {
@@ -225,7 +226,7 @@ export const ThumbnailMedium = styled.div`
   background-size: cover;
   background-position: center;
   background-image: ${(props) =>
-    props.imageUrl ? `url(${props.imageUrl})` : "none"};
+    props.$imageUrl ? `url(${props.$imageUrl})` : "none"};
   transition: opacity 0.3s;
 
   ${ThumbnailLink}:hover & {
@@ -241,7 +242,7 @@ export const ThumbnailLarge = styled.div`
   background-size: cover;
   background-position: center;
   background-image: ${(props) =>
-    props.imageUrl ? `url(${props.imageUrl})` : "none"};
+    props.$imageUrl ? `url(${props.$imageUrl})` : "none"};
   transition: opacity 0.3s;
   border-radius: 5px;
 
@@ -480,6 +481,8 @@ export const NewsDate = styled.span`
   font-size: 12px;
   margin-left: 10px;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
 `;
 
 // 더보기 버튼
@@ -513,4 +516,36 @@ export const LoadMoreButton = styled.button`
     transform: none;
     box-shadow: none;
   }
+`;
+
+// 채팅 아이콘 스타일
+export const ChatIconWrapper = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  padding: ${(props) => (props.$small ? "4px" : "6px")};
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.2s;
+  z-index: 2;
+
+  &:hover {
+    transform: scale(1.1);
+    background: rgba(3, 199, 90, 0.2);
+  }
+`;
+
+export const ChatIcon = styled.img`
+  width: ${(props) => (props.$small ? "18px" : "22px")};
+  height: ${(props) => (props.$small ? "18px" : "22px")};
+  display: block;
+`;
+
+export const NewsListChatIcon = styled.img`
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+  vertical-align: middle;
 `;
