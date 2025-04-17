@@ -13,6 +13,7 @@ import GlobalStyle from "./components/UserInterface/Common/Header/GlobalStyle";
 import EventBoard from "./components/UserInterface/Board/Event/EventBoard";
 import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
 import Notice from "./components/UserInterface/Board/Notice/Notice";
+import NoticeDetail from "./components/UserInterface/Board/Notice/NoticeDetail";
 import NewsMain from "./components/UserInterface/News/NewsMain/NewsMain";
 import NewsDetail from "./components/UserInterface/News/NewsDetail/NewsDetail";
 import CarManagement from "./components/AdminInterface/RentCar/CarManagement/CarManagement";
@@ -47,15 +48,14 @@ function App() {
         </Route>
 
         {/* 아래부터는 관리자페이지만 적자 */}
+
         {/* Admin 페이지에서 보내는 url 은 /admin/뒤에 URL 이런식으로 보내야함. EX) /admin/insertCar  */}
         {/* Admin Interface */}
         <Route path="/admin" element={<AdminLayout />}>
-          <Route
-            path="/admin/CarManagement"
-            element={<CarManagement />}
-          ></Route>
-          <Route path="/admin/InsertCar" element={<InsertCar />}></Route>
-          <Route path="/admin/TimeCar" element={<TimeRentCar />}></Route>
+          <Route path="CarManagement" element={<CarManagement />}></Route>
+          <Route path="InsertCar" element={<InsertCar />}></Route>
+          <Route path="TimeCar" element={<TimeRentCar />}></Route>
+          <Route path="notice/:id" element={<NoticeDetail />}></Route>
         </Route>
       </Routes>
     </>
