@@ -19,9 +19,8 @@ export const RentCarListDiv = styled.div`
   width: 90%;
   height: 90%;
   display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  border: 1px solid red;
+  flex-wrap: wrap;
+  magin: 20px 20px 20px 20px;
 `;
 
 export const RentCarBtnDiv = styled.div`
@@ -30,5 +29,20 @@ export const RentCarBtnDiv = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  border: 1px solid red;
+`;
+
+export const RentMoreButton = styled.button`
+  background: #03c75a;
+  border: none;
+  border-radius: 5%;
+  width: 100px;
+  height: 36px;
+  cursor: pointer;
+  right: 5px;
+  font-size: 18px;
+  color: white;
+
+  &:hover {
+    background-color: rgb(86, 250, 160);
+  }
 `;

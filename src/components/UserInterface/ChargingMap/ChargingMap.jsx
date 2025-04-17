@@ -12,13 +12,28 @@ import {
 const KakaoMap = () => {
   const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(true);
+  // 밑에 2개 로딩중 같이 때가면됨
+  const baseText = "로딩중...";
+  const [displayText, setDisplayText] = useState(baseText.slice(0, 1));
+  // 로딩 요기
 
   useEffect(() => {
     if (!window.kakao) {
       console.error("Kakao Maps API 스크립트가 로드되지 않았습니다.");
       return;
     }
-
+    // 로딩 구현할시 밑에 때가면됨
+    let index = 1;
+    const interval = setInterval(() => {
+      // baseText에서 0부터 index까지의 부분 문자열 표시
+      setDisplayText(baseText.slice(0, index));
+      index++;
+      // index가 baseText의 길이를 초과하면 1로 초기화하여 반복
+      if (index > baseText.length) {
+        index = 1;
+      }
+    }, 50);
+    // 요 위에 까지 로딩
     window.kakao.maps.load(() => {
       const { provinceMapping, detailedMapping } = mappings;
 
@@ -164,11 +179,11 @@ const KakaoMap = () => {
             const userLng = position.coords.longitude;
             const userLatLng = new window.kakao.maps.LatLng(userLat, userLng);
             map.setCenter(userLatLng);
-            new window.kakao.maps.Marker({
-              map: map,
-              position: userLatLng,
-              title: "현재 위치",
-            });
+            // new window.kakao.maps.Marker({
+            //   map: map,
+            //   position: userLatLng,
+            //   title: "현재 위치",
+            // });
 
             const geocoder = new window.kakao.maps.services.Geocoder();
             geocoder.coord2RegionCode(userLng, userLat, (result, status) => {
@@ -228,7 +243,7 @@ const KakaoMap = () => {
 
   return (
     <BodyMaps>
-      {loading && <LoadingMaps>로딩중...</LoadingMaps>}
+      {loading && <LoadingMaps>{displayText}</LoadingMaps>}
       <OptionsBar>옵션 들어갈 예정입니다.</OptionsBar>
       <Maps id="map"></Maps>
       {notice && <GuideBook>{notice}</GuideBook>}

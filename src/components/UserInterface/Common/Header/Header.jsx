@@ -30,7 +30,9 @@ const Header = () => {
           <StyledHeaderBtn onClick={() => navi("/chargingMap")}>
             충전소 조회
           </StyledHeaderBtn>
-          <StyledHeaderBtn>뉴스</StyledHeaderBtn>
+          <StyledHeaderBtn onClick={() => navi("/newsMain")}>
+            뉴스
+          </StyledHeaderBtn>
           <StyledHeaderBtn onClick={() => navi("/notice")}>
             공지사항
           </StyledHeaderBtn>
