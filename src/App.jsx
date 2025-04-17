@@ -1,6 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import Header from "./components/UserInterface/Common/Header/Header";
-import Footer from "./components/UserInterface/Common/Footer/Footer";
+import AdminMain from "./components/AdminInterface/Main/AdminMain";
 import Main from "./components/UserInterface/Main/Main";
 import TimeRentCar from "./components/AdminInterface/RentCar/TimeRentCar/TimeRentCar";
 import RentalPage from "./components/UserInterface/RentCar/TimeRentCar/RentalPage";
@@ -10,7 +9,6 @@ import LongTermRentCar from "./components/UserInterface/RentCar/LongTermRentCar/
 import SubscribeRentCar from "./components/UserInterface/RentCar/SubscribeRentCar/SubscribeRentCar";
 import IntegratedReportingPage from "./components/UserInterface/Report/IntegratedReportingPage";
 import GlobalStyle from "./components/UserInterface/Common/Header/GlobalStyle";
-import EventBoard from "./components/UserInterface/Board/Event/EventBoard";
 import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
 import Notice from "./components/UserInterface/Board/Notice/Notice";
 import NewsMain from "./components/UserInterface/News/NewsMain";
@@ -47,6 +45,7 @@ function App() {
         {/* Admin 페이지에서 보내는 url 은 /admin/뒤에 URL 이런식으로 보내야함. EX) /admin/insertCar  */}
         {/* Admin Interface */}
         <Route path="/admin" element={<AdminLayout />}>
+          <Route path="main" element={<AdminMain />}></Route>
           <Route path="adminCarManagement" element={<CarManagement />}></Route>
           <Route path="insertCar" element={<InsertCar />}></Route>
           <Route path="adminTimeCar" element={<TimeRentCar />}></Route>

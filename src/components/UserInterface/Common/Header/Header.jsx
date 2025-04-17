@@ -40,6 +40,9 @@ const Header = () => {
           <StyledHeaderBtn>회원가입</StyledHeaderBtn>
           <StyledHeaderBtn>로그아웃</StyledHeaderBtn>
           <StyledHeaderBtn>아이콘</StyledHeaderBtn>
+          <StyledHeaderBtn onClick={() => navi("/admin/main")}>
+            관리자페이지로
+          </StyledHeaderBtn>
         </StyledMemberDiv>
       </StyledHeaderDiv>
     </>
