@@ -88,7 +88,9 @@ function Notice() {
             {notices.map((notice, index) => (
               <tr
                 key={index}
-                onClick={() => (window.location.href = `/notice/${index}`)} // 행 클릭 시 이동
+                onClick={() =>
+                  (window.location.href = `/admin/notice/${index}`)
+                } // 행 클릭 시 이동
                 style={{ cursor: "pointer" }}
               >
                 <td>{notice.title}</td>

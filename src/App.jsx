@@ -50,13 +50,10 @@ function App() {
         {/* Admin 페이지에서 보내는 url 은 /admin/뒤에 URL 이런식으로 보내야함. EX) /admin/insertCar  */}
         {/* Admin Interface */}
         <Route path="/admin" element={<AdminLayout />}>
-          <Route
-            path="/admin/CarManagement"
-            element={<CarManagement />}
-          ></Route>
-          <Route path="/admin/InsertCar" element={<InsertCar />}></Route>
-          <Route path="/admin/TimeCar" element={<TimeRentCar />}></Route>
-          <Route path="/admin/notice/:id" element={<NoticeDetail />}></Route>
+          <Route path="CarManagement" element={<CarManagement />}></Route>
+          <Route path="InsertCar" element={<InsertCar />}></Route>
+          <Route path="TimeCar" element={<TimeRentCar />}></Route>
+          <Route path="notice/:id" element={<NoticeDetail />}></Route>
         </Route>
       </Routes>
     </>
