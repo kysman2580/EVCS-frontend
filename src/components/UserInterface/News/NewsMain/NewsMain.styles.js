@@ -521,8 +521,10 @@ export const LoadMoreButton = styled.button`
 // 채팅 아이콘 스타일
 export const ChatIconWrapper = styled.div`
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: ${(props) => props.top || "10px"};
+  left: ${(props) => props.left || "auto"};
+  right: ${(props) => props.right || "10px"};
+  bottom: ${(props) => props.bottom || "auto"};
   background: rgba(255, 255, 255, 0.9);
   border-radius: 50%;
   padding: ${(props) => (props.small ? "4px" : "6px")};
