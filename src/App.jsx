@@ -14,7 +14,8 @@ import EventBoard from "./components/UserInterface/Board/Event/EventBoard";
 import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
 import Notice from "./components/UserInterface/Board/Notice/Notice";
 import NoticeDetail from "./components/UserInterface/Board/Notice/NoticeDetail";
-import NewsMain from "./components/UserInterface/News/NewsMain";
+import NewsMain from "./components/UserInterface/News/NewsMain/NewsMain";
+import NewsDetail from "./components/UserInterface/News/NewsDetail/NewsDetail";
 import CarManagement from "./components/AdminInterface/RentCar/CarManagement/CarManagement";
 import InsertCar from "./components/AdminInterface/RentCar/CarManagement/InsertCar";
 import DRBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteBoard/drBoard";
@@ -39,6 +40,7 @@ function App() {
           <Route path="/hotRentCar" element={<HotdealRentCar />}></Route>
           <Route path="/subRentCar" element={<SubscribeRentCar />}></Route>
           <Route path="/newsMain" element={<NewsMain />}></Route>
+          <Route path="/newsDetail" element={<NewsDetail />}></Route>
           <Route
             path="/reportingPage"
             element={<IntegratedReportingPage />}
