@@ -4,9 +4,9 @@ import {
   RentBodyDiv,
   RentCarListDiv,
   RentCarBtnDiv,
-} from "../Common/RentCar.styles";
+} from "../RentCarCommon/RentCar.styles";
 
-import RentCarCard from "../Common/RentCarCard";
+import RentCarCard from "../RentCarCommon/RentCarCard";
 
 const LongTermRentCar = () => {
   return (
