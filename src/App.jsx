@@ -56,7 +56,7 @@ function App() {
           ></Route>
           <Route path="/admin/InsertCar" element={<InsertCar />}></Route>
           <Route path="/admin/TimeCar" element={<TimeRentCar />}></Route>
-          <Route path="/admin/notice/:id" element={<NoticeDetail />} />
+          <Route path="/admin/notice/:id" element={<NoticeDetail />}></Route>
         </Route>
       </Routes>
     </>
