@@ -16,6 +16,7 @@ import Notice from "./components/UserInterface/Board/Notice/Notice";
 import NewsMain from "./components/UserInterface/News/NewsMain";
 import CarManagement from "./components/AdminInterface/RentCar/CarManagement/CarManagement";
 import InsertCar from "./components/AdminInterface/RentCar/CarManagement/InsertCar";
+import DRBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteBoard/drBoard";
 
 /* User, Admin Interce 분리 관련 */
 import UserLayout from "./components/Layout/UserInterface/UserLayout";
@@ -57,9 +58,12 @@ function App() {
         {/* Admin 페이지에서 보내는 url 은 /admin/뒤에 URL 이런식으로 보내야함. EX) /admin/insertCar  */}
         {/* Admin Interface */}
         <Route path="/admin" element={<AdminLayout />}>
-          <Route path="adminCarManagement" element={<CarManagement />}></Route>
-          <Route path="insertCar" element={<InsertCar />}></Route>
-          <Route path="adminTimeCar" element={<TimeRentCar />}></Route>
+          <Route
+            path="/admin/CarManagement"
+            element={<CarManagement />}
+          ></Route>
+          <Route path="/admin/InsertCar" element={<InsertCar />}></Route>
+          <Route path="/admin/TimeCar" element={<TimeRentCar />}></Route>
         </Route>
       </Routes>
     </>
