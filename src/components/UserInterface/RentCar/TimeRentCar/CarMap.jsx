@@ -8,6 +8,10 @@ const Map = styled.div`
   margin: 50px auto;
   border: 2px solid black;
   border-radius: 1em;
+
+  // 달력 api 짤려서 추가 kkm
+  position: relative;
+  z-index: 1; /* 지도는 밑으로 */
 `;
 
 const CarMap = () => {
@@ -40,6 +44,7 @@ const CarMap = () => {
         // 커스텀 오버레이에 표시할 컨텐츠 입니다
         // 커스텀 오버레이는 아래와 같이 사용자가 자유롭게 컨텐츠를 구성하고 이벤트를 제어할 수 있기 때문에
         // 별도의 이벤트 메소드를 제공하지 않습니다
+
         const positions = [
           {
             content: `
