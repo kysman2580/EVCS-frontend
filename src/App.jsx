@@ -16,7 +16,6 @@ import NewsDetail from "./components/UserInterface/News/NewsDetail/NewsDetail";
 import CarManagement from "./components/AdminInterface/RentCar/CarManagement/CarManagement";
 import InsertCar from "./components/AdminInterface/RentCar/CarManagement/InsertCar";
 import DRBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteBoard/drBoard";
-import NoticeDetail from "./components/AdminInterface/Board/Notice/NoticeDetail";
 
 /* User, Admin Interce 분리 관련 */
 import UserLayout from "./components/Layout/UserInterface/UserLayout";
@@ -66,7 +65,6 @@ function App() {
               ></Route>
               <Route path="insertCar" element={<InsertCar />}></Route>
               <Route path="adminTimeCar" element={<TimeRentCar />}></Route>
-              <Route path="notice/:id" element={<NoticeDetail />}></Route>
             </Route>
           </Route>
         </Routes>
