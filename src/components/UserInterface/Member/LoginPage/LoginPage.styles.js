@@ -18,6 +18,7 @@ export const StyledInput = styled.input`
     width: 350px;
     height: 40px;
     padding-left: 20px;
+    font-family: auto;
 `;
 
 
