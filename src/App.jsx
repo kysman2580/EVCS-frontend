@@ -11,7 +11,6 @@ import IntegratedReportingPage from "./components/UserInterface/Report/Integrate
 import GlobalStyle from "./components/UserInterface/Common/Header/GlobalStyle";
 import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
 import Notice from "./components/UserInterface/Board/Notice/Notice";
-import NoticeDetail from "./components/UserInterface/Board/Notice/NoticeDetail";
 import NewsMain from "./components/UserInterface/News/NewsMain/NewsMain";
 import NewsDetail from "./components/UserInterface/News/NewsDetail/NewsDetail";
 import CarManagement from "./components/AdminInterface/RentCar/CarManagement/CarManagement";
@@ -54,7 +53,6 @@ function App() {
           <Route path="adminCarManagement" element={<CarManagement />}></Route>
           <Route path="insertCar" element={<InsertCar />}></Route>
           <Route path="adminTimeCar" element={<TimeRentCar />}></Route>
-          <Route path="notice/:id" element={<NoticeDetail />}></Route>
         </Route>
       </Routes>
     </>
