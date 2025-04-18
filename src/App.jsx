@@ -35,11 +35,13 @@ function App() {
           <Route element={<UserLayout />}>
             <Route path="/" element={<Main />}></Route>
             <Route path="/timerentalPage" element={<RentalPage />}></Route>
+
             <Route path="/driveRouteBoard" element={<DRBoard />}></Route>
             <Route
               path="/driveRouteInsertBoard"
               element={<DRInsertBoard />}
             ></Route>
+
             <Route path="/loginPage" element={<LoginPage />} />
             <Route path="/chargingMap" element={<ChargingMap />}></Route>
             <Route path="/notice" element={<Notice />}></Route>
