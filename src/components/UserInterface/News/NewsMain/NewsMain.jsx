@@ -1,25 +1,37 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import * as S from "./NewsMain.styles";
+import {
+  TopNewsItem,
+  MainNewsItem,
+  SideNewsItem,
+  ListNewsItem,
+  SearchBar,
+  removeHtmlTags,
+  formatDate,
+} from "./NewsItemComponents";
 
+// 뉴스 메인 컴포넌트
 const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
   const navigate = useNavigate();
-  const location = useLocation(); // ✅ 현재 URL 감지
-  const [query, setQuery] = useState("전기차");
-  const [results, setResults] = useState([]);
-  const [imageResults, setImageResults] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [delayedVisible, setDelayedVisible] = useState(false);
-  const [error, setError] = useState(null);
-  const [topNews, setTopNews] = useState([]);
-  const [mainNews, setMainNews] = useState([]);
-  const [listNews, setListNews] = useState([]);
+  const location = useLocation();
 
+  // 상태 관리
+  const [query, setQuery] = useState("전기차"); // 기본 검색어 설정
+  const [results, setResults] = useState([]); // 검색 결과 저장
+  const [imageResults, setImageResults] = useState({}); // 기사별 이미지 저장
+  const [loading, setLoading] = useState(false); // 로딩 상태
+  const [delayedVisible, setDelayedVisible] = useState(false); // 3초 후 표시되는 UI 요소
+  const [error, setError] = useState(null); // 에러 메시지 저장
+  const [topNews, setTopNews] = useState([]); // 상위 뉴스
+  const [mainNews, setMainNews] = useState([]); // 주요 뉴스
+  const [listNews, setListNews] = useState([]); // 뉴스 리스트
+
+  // 검색 가능한 키워드 목록
   const keywords = ["전기차", "에너지", "태양광", "풍력", "수소"];
 
+  // 뉴스 검색 함수
   const handleSearch = (searchQuery = query) => {
     if (!searchQuery.trim()) return;
 
@@ -28,7 +40,7 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
 
     const timeoutId = setTimeout(() => {
       setError("뉴스 요청 중 오류 발생");
-    }, 10000);
+    }, 10000); // 10초 후 오류 메시지 표시
 
     axios
       .get(`${backendUrl}/api/naver-news`, {
@@ -38,12 +50,19 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
         clearTimeout(timeoutId);
         const newsItems = res.data.items || [];
 
-        setTopNews(newsItems.slice(0, 3));
-        setMainNews(newsItems.slice(3, 8));
-        setListNews(newsItems.slice(0, 10));
-        setResults(newsItems);
+        // 중복된 제목 제거
+        const uniqueNews = Array.from(
+          new Map(
+            newsItems.map((item) => [removeHtmlTags(item.title), item])
+          ).values()
+        );
 
-        fetchUpToNImages(newsItems, 8, () => {
+        setTopNews(uniqueNews.slice(0, 3));
+        setMainNews(uniqueNews.slice(3, 8));
+        setListNews(uniqueNews.slice(0, 10));
+        setResults(uniqueNews);
+
+        fetchUpToNImages(uniqueNews, 8, () => {
           setLoading(false);
         });
       })
@@ -55,6 +74,7 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
       });
   };
 
+  // 최대 N개의 이미지 검색
   const fetchUpToNImages = (articles, maxImages, callback) => {
     const imageCache = { ...imageResults };
     let index = 0;
@@ -77,7 +97,7 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
       const cleanTitle = removeHtmlTags(article.title);
       const searchKeywords = extractKeywords(cleanTitle);
       if (!searchKeywords) {
-        imageCache[article.title] = "/lodaing.png";
+        imageCache[article.title] = "/loading.png";
         setTimeout(processNext, 100);
         return;
       }
@@ -89,13 +109,13 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
         .then((res) => {
           const items = res.data.items;
           imageCache[article.title] =
-            items?.[0]?.thumbnail || items?.[0]?.link || "/lodaing.png";
+            items?.[0]?.thumbnail || items?.[0]?.link || "/loading.png";
           successCount++;
           setTimeout(processNext, 100);
         })
         .catch((err) => {
           console.error("이미지 검색 오류:", err);
-          imageCache[article.title] = "/lodaing.png";
+          imageCache[article.title] = "/loading.png";
           setTimeout(processNext, 100);
         });
     };
@@ -103,29 +123,26 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
     processNext();
   };
 
+  // 뉴스 제목에서 키워드를 추출하는 함수
   const extractKeywords = (title) => {
     const clean = title
-      .replace(/<[^>]+>/g, "")
-      .replace(/[^가-힣a-zA-Z0-9 ]/g, "");
-    const stopwords = ["보도", "한다", "이다", "및", "관련", "위해"];
+      .replace(/<[^>]+>/g, "") // HTML 태그 제거
+      .replace(/[^가-힣a-zA-Z0-9 ]/g, ""); // 특수 문자 제거
+    const stopwords = ["보도", "한다", "이다", "및", "관련", "위해"]; // 불필요한 단어 제거
     const words = clean
       .split(" ")
       .filter((w) => w.length >= 2 && !stopwords.includes(w));
-    return words.slice(0, 2).join(" ");
+    return words.slice(0, 2).join(" "); // 최대 2개의 키워드 추출
   };
 
-  const removeHtmlTags = (text) => (text ? text.replace(/<[^>]+>/g, "") : "");
-  const formatDate = (dateString) => {
-    if (!dateString) return "날짜 정보 없음";
-    const date = new Date(dateString);
-    return `${date.getFullYear()}. ${date.getMonth() + 1}. ${date.getDate()}.`;
-  };
-
+  // 이미지 URL을 가져오는 함수
   const getImageUrl = (item) => {
-    if (!item) return "/lodaing.png";
-    return imageResults[item.title] || "/lodaing.png";
+    return item && imageResults[item.title]
+      ? imageResults[item.title]
+      : "/loading.png";
   };
 
+  // 뉴스 상세 페이지로 이동
   const handleChatClick = (item) => {
     const query = new URLSearchParams({
       title: item.title,
@@ -137,210 +154,100 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
     navigate(`/newsDetail?${query}`);
   };
 
-  // ✅ 뒤로가기 시에도 다시 불러오도록
+  // 뒤로 가기 시에도 뉴스 다시 검색
   useEffect(() => {
+    setLoading(true);
     handleSearch();
-  }, [location.key]); // location.key가 바뀌면 다시 fetch
 
-  useEffect(() => {
     const timer = setTimeout(() => setDelayedVisible(true), 3000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [location.key]);
+
+  // 뉴스 섹션 렌더링 함수
+  const renderTopNewsSection = () => (
+    <>
+      <S.SectionHeader>
+        <S.SectionIcon>|</S.SectionIcon> 주요 뉴스
+      </S.SectionHeader>
+      <S.TopNewsContainer>
+        {topNews.map((item, index) => (
+          <TopNewsItem
+            key={index}
+            item={item}
+            getImageUrl={getImageUrl}
+            onChatClick={handleChatClick}
+          />
+        ))}
+      </S.TopNewsContainer>
+    </>
+  );
+
+  const renderMainNewsSection = () => (
+    <>
+      <S.SectionHeader>
+        <S.SectionIcon>|</S.SectionIcon> 오늘의 주요 기사
+      </S.SectionHeader>
+      <S.MainNewsSection>
+        <S.MainNewsContent>
+          {mainNews[0] && (
+            <MainNewsItem
+              item={mainNews[0]}
+              getImageUrl={getImageUrl}
+              onChatClick={handleChatClick}
+            />
+          )}
+        </S.MainNewsContent>
+
+        <S.SideContent>
+          <S.SideGrid>
+            {mainNews.slice(1).map((item, index) => (
+              <SideNewsItem
+                key={index}
+                item={item}
+                getImageUrl={getImageUrl}
+                onChatClick={handleChatClick}
+              />
+            ))}
+          </S.SideGrid>
+        </S.SideContent>
+      </S.MainNewsSection>
+    </>
+  );
+
+  const renderNewsList = () => (
+    <S.NewsList>
+      <S.NewsHeader>뉴스 리스트</S.NewsHeader>
+      <S.NewsItems>
+        {listNews.map((item, index) => (
+          <ListNewsItem
+            key={index}
+            item={item}
+            delayedVisible={delayedVisible}
+            onChatClick={handleChatClick}
+          />
+        ))}
+      </S.NewsItems>
+      <S.LoadMoreButton onClick={() => {}}>더보기</S.LoadMoreButton>
+    </S.NewsList>
+  );
 
   return (
     <S.FullWidthContainer>
       <S.Container>
         <S.PageHeader>뉴스 검색</S.PageHeader>
 
-        <S.SearchContainer>
-          <S.SearchBarWrapper>
-            <S.SearchInput
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSearch()}
-              placeholder="검색어를 입력하세요"
-            />
-            <S.SearchButton onClick={handleSearch}>🔍</S.SearchButton>
-          </S.SearchBarWrapper>
-
-          <S.KeywordButtonContainer>
-            {keywords.map((keyword) => (
-              <S.KeywordButton
-                key={keyword}
-                onClick={() => {
-                  setQuery(keyword);
-                  handleSearch(keyword);
-                }}
-                active={query === keyword}
-              >
-                {keyword}
-              </S.KeywordButton>
-            ))}
-          </S.KeywordButtonContainer>
-        </S.SearchContainer>
+        <SearchBar
+          query={query}
+          setQuery={setQuery}
+          handleSearch={handleSearch}
+          keywords={keywords}
+        />
 
         {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
 
-        {/* 주요 뉴스 */}
-        <S.SectionHeader>
-          <S.SectionIcon>|</S.SectionIcon> 주요 뉴스
-        </S.SectionHeader>
-        <S.TopNewsContainer>
-          {topNews.map((item, index) => (
-            <S.TopNewsItem key={index} style={{ position: "relative" }}>
-              <S.ThumbnailLink
-                href={item?.originallink || item?.link || "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <S.ThumbnailMedium imageUrl={getImageUrl(item)} />
-                <S.ContentInfo>
-                  <S.Title>
-                    {item ? removeHtmlTags(item.title) : "로딩 중..."}
-                  </S.Title>
-                  <S.Metadata>
-                    {item ? formatDate(item.pubDate) : "⏳"}
-                  </S.Metadata>
-                </S.ContentInfo>
-              </S.ThumbnailLink>
-              {item && getImageUrl(item) !== "/lodaing.png" && (
-                <S.ChatIconWrapper
-                  top="10px"
-                  left="10px"
-                  right="auto"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleChatClick(item);
-                  }}
-                >
-                  <S.ChatIcon src="/images/chat_icon_Anggara.png" alt="Chat" />
-                </S.ChatIconWrapper>
-              )}
-            </S.TopNewsItem>
-          ))}
-        </S.TopNewsContainer>
-
-        {/* 오늘의 주요 기사 */}
-        <S.SectionHeader>
-          <S.SectionIcon>|</S.SectionIcon> 오늘의 주요 기사
-        </S.SectionHeader>
-        <S.MainNewsSection>
-          <S.MainNewsContent style={{ position: "relative" }}>
-            {mainNews[0] && (
-              <>
-                <S.ThumbnailLink
-                  href={mainNews[0]?.originallink || mainNews[0]?.link || "#"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <S.ThumbnailLarge imageUrl={getImageUrl(mainNews[0])} />
-                  <S.ContentInfo>
-                    <S.Title>{removeHtmlTags(mainNews[0].title)}</S.Title>
-                    <S.Description>
-                      {removeHtmlTags(mainNews[0].description)}
-                    </S.Description>
-                    <S.Metadata>{formatDate(mainNews[0].pubDate)}</S.Metadata>
-                  </S.ContentInfo>
-                </S.ThumbnailLink>
-                {getImageUrl(mainNews[0]) !== "/lodaing.png" && (
-                  <S.ChatIconWrapper
-                    top="20px"
-                    left="20px"
-                    right="auto"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleChatClick(mainNews[0]);
-                    }}
-                  >
-                    <S.ChatIcon
-                      src="/images/chat_icon_Anggara.png"
-                      alt="Chat"
-                    />
-                  </S.ChatIconWrapper>
-                )}
-              </>
-            )}
-          </S.MainNewsContent>
-
-          <S.SideContent>
-            <S.SideGrid>
-              {mainNews.slice(1).map((item, index) => (
-                <S.SideItem key={index} style={{ position: "relative" }}>
-                  <S.ThumbnailLink
-                    href={item?.originallink || item?.link || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <S.ThumbnailSmall imageUrl={getImageUrl(item)} />
-                    <S.ContentInfo>
-                      <S.SmallTitle>{removeHtmlTags(item.title)}</S.SmallTitle>
-                      <S.SmallMetadata>
-                        {formatDate(item.pubDate)}
-                      </S.SmallMetadata>
-                    </S.ContentInfo>
-                  </S.ThumbnailLink>
-                  {getImageUrl(item) !== "/lodaing.png" && (
-                    <S.ChatIconWrapper
-                      top="15px"
-                      left="15px"
-                      right="auto"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleChatClick(item);
-                      }}
-                    >
-                      <S.ChatIcon
-                        src="/images/chat_icon_Anggara.png"
-                        alt="Chat"
-                      />
-                    </S.ChatIconWrapper>
-                  )}
-                </S.SideItem>
-              ))}
-            </S.SideGrid>
-          </S.SideContent>
-        </S.MainNewsSection>
-
-        {/* 뉴스 리스트 */}
-        <S.NewsList>
-          <S.NewsHeader>뉴스 리스트</S.NewsHeader>
-          <S.NewsItems>
-            {listNews.map((item, index) => (
-              <S.NewsItem key={index} style={{ position: "relative" }}>
-                <S.NewsLink
-                  href={item?.originallink || item?.link || "#"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <S.NewsTitle>
-                    {removeHtmlTags(item.title)}
-                    <S.NewsDate>{formatDate(item.pubDate)}</S.NewsDate>
-                  </S.NewsTitle>
-                </S.NewsLink>
-                {delayedVisible && (
-                  <S.ChatIconWrapper
-                    top="-5px"
-                    right="70px"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleChatClick(item);
-                    }}
-                  >
-                    <S.ChatIcon
-                      src="/images/chat_icon_Anggara.png"
-                      alt="Chat"
-                    />
-                  </S.ChatIconWrapper>
-                )}
-              </S.NewsItem>
-            ))}
-          </S.NewsItems>
-          <S.LoadMoreButton onClick={() => {}}>더보기</S.LoadMoreButton>
-        </S.NewsList>
+        {renderTopNewsSection()}
+        {renderMainNewsSection()}
+        {renderNewsList()}
       </S.Container>
     </S.FullWidthContainer>
   );
