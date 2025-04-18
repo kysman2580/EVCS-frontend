@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../Notice/Notice.css";
-import NoticeNav from "../../Common/Nav/NoticeNav";
-import { BoardContainerDiv, BoardBodyDiv } from "../Board.styles";
 
 function Notice() {
   const [notices, setNotices] = useState(() => {
@@ -11,13 +9,15 @@ function Notice() {
       ? JSON.parse(saved)
       : [
           {
-            title: "안녕하세요 공지사항 입니다. ",
+            title: "안녕하세요 공지사항 입니다.",
             date: "2025.07.05",
             author: "admin",
             content: "이것은 예시 공지사항 내용입니다.",
           },
         ];
   });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     localStorage.setItem("notices", JSON.stringify(notices));
@@ -72,7 +72,7 @@ function Notice() {
 
   return (
     <>
-      <div style={{ width: "10%" }}>{/* nav 들어갈자리 */}</div>
+      <div style={{ width: "10%" }}>{/* nav 들어갈 자리 */}</div>
       <div style={{ width: "90%" }}>
         <div className="Notice">
           <h1>공지사항</h1>
@@ -89,20 +89,23 @@ function Notice() {
               </thead>
               <tbody>
                 {notices.map((notice, index) => (
-                  <tr
-                    key={index}
-                    onClick={() =>
-                      (window.location.href = `/admin/notice/${index}`)
-                    } // 행 클릭 시 이동
-                    style={{ cursor: "pointer" }}
-                  >
-                    <td>{notice.title}</td>
+                  <tr key={index}>
+                    <td
+                      onClick={() => navigate(`/admin/notice/${index}`)} // ✅ 이렇게 수정
+                      style={{
+                        cursor: "pointer",
+                        color: "blue",
+                        textDecoration: "underline",
+                      }}
+                    >
+                      {notice.title}
+                    </td>
                     <td>{notice.date}</td>
                     <td>{notice.author}</td>
                     <td>
                       <button
                         onClick={(e) => {
-                          e.stopPropagation(); // 상세페이지로 이동 막기
+                          e.stopPropagation(); // 이벤트 버블링 방지
                           handleDelete(index);
                         }}
                       >
@@ -112,7 +115,7 @@ function Notice() {
                     <td>
                       <button
                         onClick={(e) => {
-                          e.stopPropagation(); // 상세페이지로 이동 막기
+                          e.stopPropagation();
                           handleEdit(index);
                         }}
                       >

@@ -10,7 +10,7 @@ import SubscribeRentCar from "./components/UserInterface/RentCar/SubscribeRentCa
 import IntegratedReportingPage from "./components/UserInterface/Report/IntegratedReportingPage";
 import GlobalStyle from "./components/UserInterface/Common/Header/GlobalStyle";
 import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
-import Notice from "./components/UserInterface/Board/Notice/Notice";
+import Notice from "./components/UserInterface/Board/Notice/UserNotice";
 import NewsMain from "./components/UserInterface/News/NewsMain/NewsMain";
 import NewsDetail from "./components/UserInterface/News/NewsDetail/NewsDetail";
 import CarManagement from "./components/AdminInterface/RentCar/CarManagement/CarManagement";
@@ -20,6 +20,7 @@ import DRBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteBoar
 /* User, Admin Interce 분리 관련 */
 import UserLayout from "./components/Layout/UserInterface/UserLayout";
 import AdminLayout from "./components/Layout/AdminInterface/AdminLayout";
+import NoticeDetail from "./components/AdminInterface/Board/Notice/NoticeDetail";
 
 function App() {
   return (
@@ -53,6 +54,8 @@ function App() {
           <Route path="adminCarManagement" element={<CarManagement />}></Route>
           <Route path="insertCar" element={<InsertCar />}></Route>
           <Route path="adminTimeCar" element={<TimeRentCar />}></Route>
+          <Route path="notice" element={<Notice />} />
+          <Route path="notice/:id" element={<NoticeDetail />} />
         </Route>
       </Routes>
     </>
