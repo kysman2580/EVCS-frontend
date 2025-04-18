@@ -73,9 +73,8 @@ const NewsDetail = () => {
         <S.ArticleContent>
           <S.ArticleCategory>카테고리</S.ArticleCategory>
           <S.ArticleText>
-            <div>기사의 제목</div>
-            <div>{article.title}</div>
-            <div>기사의 요약 내용</div>
+            <h2>{article.title}</h2>
+            <h5>기사의 요약 내용</h5>
             <div>{article.description}</div>
             <div>기사 날짜</div>
             <div>{article.pubDate}</div>
