@@ -10,6 +10,13 @@ import {
   Cell,
 } from "./CarManagement.styles";
 
+/* nav 관련 애들 */
+import AdminRentCarNav from "../../AdminCommon/AdminNav/AdminRentCarNav";
+import {
+  RentContainerDiv,
+  RentBodyDiv,
+} from "../AdminRentCarCommon/AdminRentCar.styles";
+
 const CarManagement = () => {
   const navi = useNavigate();
   const [page, setPage] = useState(0);
@@ -55,55 +62,60 @@ const CarManagement = () => {
 
   return (
     <>
-      <Wrapper>
-        <Title>차종 정보</Title>
-        <InsertBtn onClick={() => navi("/admin/InsertCar")}>
-          차종 등록하기
-        </InsertBtn>
+      <RentContainerDiv>
+        <AdminRentCarNav />
+        <RentBodyDiv>
+          <Wrapper>
+            <Title>차종 정보</Title>
+            <InsertBtn onClick={() => navi("/admin/insertCar")}>
+              차종 등록하기
+            </InsertBtn>
 
-        <TableHeader>
-          <Cell width="15%">차종 번호</Cell>
-          <Cell width="15%">차종명</Cell>
-          <Cell width="15%">출시일</Cell>
-          <Cell width="15%">제조사</Cell>
-          <Cell width="20%">배터리용량</Cell>
-          <Cell width="20%">등록일시</Cell>
-        </TableHeader>
+            <TableHeader>
+              <Cell width="15%">차종 번호</Cell>
+              <Cell width="15%">차종명</Cell>
+              <Cell width="15%">출시일</Cell>
+              <Cell width="15%">제조사</Cell>
+              <Cell width="20%">배터리용량</Cell>
+              <Cell width="20%">등록일시</Cell>
+            </TableHeader>
 
-        {/* {electricCarList.map((board) => (
+            {/* {electricCarList.map((board) => (
           <Row key={board.boardNo}>
-            <Cell width="10%">{board.boardNo}</Cell>
-            <Cell
-              onClick={() => btnHandler(board.boardNo)}
-              style={{ cursor: "pointer" }}
-              width="50%"
-            >
-              {board.boardTitle}
-            </Cell>
-            <Cell width="20%">{board.boardWriter}</Cell>
-            <Cell width="20%">{board.createDate}</Cell>
+          <Cell width="10%">{board.boardNo}</Cell>
+          <Cell
+          onClick={() => btnHandler(board.boardNo)}
+          style={{ cursor: "pointer" }}
+          width="50%"
+          >
+          {board.boardTitle}
+          </Cell>
+          <Cell width="20%">{board.boardWriter}</Cell>
+          <Cell width="20%">{board.createDate}</Cell>
           </Row>
-        ))} */}
+          ))} */}
 
-        <div style={{ textAlign: "center", marginTop: "30px" }}>
-          <button onClick={Previous}>이전</button>
+            <div style={{ textAlign: "center", marginTop: "30px" }}>
+              <button onClick={Previous}>이전</button>
 
-          {pageNumbers.map((num) => (
-            <button
-              key={num}
-              onClick={() => setPage(num)}
-              style={{
-                margin: "0 5px",
-                fontWeight: page === num ? "bold" : "normal",
-              }}
-            >
-              {num}
-            </button>
-          ))}
+              {pageNumbers.map((num) => (
+                <button
+                  key={num}
+                  onClick={() => setPage(num)}
+                  style={{
+                    margin: "0 5px",
+                    fontWeight: page === num ? "bold" : "normal",
+                  }}
+                >
+                  {num}
+                </button>
+              ))}
 
-          <button onClick={Next}>다음</button>
-        </div>
-      </Wrapper>
+              <button onClick={Next}>다음</button>
+            </div>
+          </Wrapper>
+        </RentBodyDiv>
+      </RentContainerDiv>
     </>
   );
 };
