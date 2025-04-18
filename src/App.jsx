@@ -21,6 +21,7 @@ import DRBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteBoar
 /* User, Admin Interce 분리 관련 */
 import UserLayout from "./components/Layout/UserInterface/UserLayout";
 import AdminLayout from "./components/Layout/AdminInterface/AdminLayout";
+import DRInsertBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteInsertBoard/DRInsertBoard";
 
 function App() {
   return (
@@ -31,6 +32,11 @@ function App() {
         <Route element={<UserLayout />}>
           <Route path="/" element={<Main />}></Route>
           <Route path="/timerentalPage" element={<RentalPage />}></Route>
+          <Route path="/driveRouteBoard" element={<DRBoard />}></Route>
+          <Route
+            path="/driveRouteInsertBoard"
+            element={<DRInsertBoard />}
+          ></Route>
           <Route path="/loginPage" element={<LoginPage />} />
           <Route path="/chargingMap" element={<ChargingMap />}></Route>
           <Route path="/notice" element={<Notice />}></Route>
@@ -51,9 +57,9 @@ function App() {
         {/* Admin Interface */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route path="main" element={<AdminMain />}></Route>
-          <Route path="adminCarManagement" element={<CarManagement />}></Route>
+          <Route path="carManagement" element={<CarManagement />}></Route>
           <Route path="insertCar" element={<InsertCar />}></Route>
-          <Route path="adminTimeCar" element={<TimeRentCar />}></Route>
+          <Route path="timeCar" element={<TimeRentCar />}></Route>
           <Route path="notice/:id" element={<NoticeDetail />}></Route>
         </Route>
       </Routes>
