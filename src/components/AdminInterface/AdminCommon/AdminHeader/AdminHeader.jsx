@@ -25,7 +25,9 @@ const Header = () => {
             렌트카
           </StyledHeaderBtn>
           <StyledHeaderBtn>커뮤니티</StyledHeaderBtn>
-          <StyledHeaderBtn>공지사항</StyledHeaderBtn>
+          <StyledHeaderBtn onClick={() => navi("/admin/notice/")}>
+            공지사항
+          </StyledHeaderBtn>
           <StyledHeaderBtn>회원관리</StyledHeaderBtn>
         </StyledHomeCenterDiv>
         <StyledMemberDiv>
