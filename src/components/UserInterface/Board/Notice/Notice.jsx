@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import "../Notice/Notice.css";
 import NoticeNav from "../../Common/Nav/NoticeNav";
 import { BoardContainerDiv, BoardBodyDiv } from "../Board.styles";
@@ -19,55 +18,14 @@ function Notice() {
         ];
   });
 
+  const [selectedNoticeIndex, setSelectedNoticeIndex] = useState(null);
+
   useEffect(() => {
     localStorage.setItem("notices", JSON.stringify(notices));
   }, [notices]);
 
-  const [showForm, setShowForm] = useState(false);
-  const [newNotice, setNewNotice] = useState({
-    title: "",
-    date: "",
-    author: "",
-    content: "",
-  });
-
-  const [editIndex, setEditIndex] = useState(null);
-
-  // 입력값 변경 처리
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setNewNotice({ ...newNotice, [name]: value });
-  };
-
-  // 등록 버튼 클릭 시 실행
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const { title, date, author, content } = newNotice;
-    if (title && date && author && content) {
-      if (editIndex !== null) {
-        const updated = [...notices];
-        updated[editIndex] = newNotice;
-        setNotices(updated);
-        setEditIndex(null);
-      } else {
-        setNotices([newNotice, ...notices]);
-      }
-      setNewNotice({ title: "", date: "", author: "", content: "" });
-      setShowForm(false);
-    } else {
-      alert("모든 항목을 입력해주세요.");
-    }
-  };
-
-  // 공지 삭제 처리
-  const handleDelete = (index) => {
-    setNotices(notices.filter((_, i) => i !== index));
-  };
-
-  const handleEdit = (index) => {
-    setNewNotice(notices[index]);
-    setEditIndex(index);
-    setShowForm(true);
+  const handleRowClick = (index) => {
+    setSelectedNoticeIndex(index === selectedNoticeIndex ? null : index); // 클릭된 항목 다시 누르면 닫기
   };
 
   return (
