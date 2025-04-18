@@ -12,14 +12,18 @@ import {
 const KakaoMap = () => {
   const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(true);
+  const [loadErring, setLoadErring] = useState(false);
   // 밑에 2개 로딩중 같이 때가면됨
   const baseText = "로딩중...";
+  const ErrText = "Kakao Maps API 오류 입니다 \n 관리자에게 문의해주세요!";
   const [displayText, setDisplayText] = useState(baseText.slice(0, 1));
   // 로딩 요기
 
   useEffect(() => {
     if (!window.kakao) {
       console.error("Kakao Maps API 스크립트가 로드되지 않았습니다.");
+      setLoading(false);
+      setLoadErring(true);
       return;
     }
     // 로딩 구현할시 밑에 때가면됨
@@ -84,7 +88,7 @@ const KakaoMap = () => {
         numOfRows = 9999
       ) {
         const serviceKey =
-          "wKLfGPEstHWDqHLmnXYntGh%2Fkio03KXj99NNors5Ndb9n0Z%2B0%2BdISJFbjny5ex1wjBFyS7sOY%2BP1xzkrbhJbPA%3D%3D";
+          "wKLfGPEstHWDqHLmnXYntGh%2Fkio03KXj99NNors5Ndb9n0Z%2B0%2BdISJFbjny5ex1wjBFyS7sOY%2BP1xzkrbhJbPA%3D%3Dd";
         const apiUrl = `https://apis.data.go.kr/B552584/EvCharger/getChargerInfo?serviceKey=${serviceKey}&pageNo=1&numOfRows=${numOfRows}&zcode=${apiZcode}`;
 
         fetch(apiUrl)
@@ -244,6 +248,7 @@ const KakaoMap = () => {
   return (
     <BodyMaps>
       {loading && <LoadingMaps>{displayText}</LoadingMaps>}
+      {loadErring && <div>{ErrText}</div>}
       <OptionsBar>옵션 들어갈 예정입니다.</OptionsBar>
       <Maps id="map"></Maps>
       {notice && <GuideBook>{notice}</GuideBook>}

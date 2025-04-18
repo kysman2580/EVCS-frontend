@@ -22,7 +22,7 @@ const Header = () => {
           </NavLink>
         </StyledLogoDiv>
         <StyledHomeCenterDiv>
-          <StyledHeaderBtn onClick={() => navi("/longRentCar")}>
+          <StyledHeaderBtn onClick={() => navi("/timerentalPage")}>
             렌트카
           </StyledHeaderBtn>
           <StyledHeaderBtn onClick={() => navi("/driveRouteBoard")}>

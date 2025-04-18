@@ -6,15 +6,15 @@ export const LoadingMaps = styled.div`
   color: rgb(0, 0, 0);
   width: 100%;
   height: 700px;
-  z-Index: 1000;
+  z-index: 1000;
   text-align: center;
   line-height: 700px;
   font-size: 64px;
 `;
 
 export const GuideBook = styled.div`
-  text-lign: center; 
-  marginTop: 10px; 
+  text-lign: center;
+  margintop: 10px;
   color: red;
 `;
 
@@ -22,7 +22,7 @@ export const OptionsBar = styled.div`
   width: 300px;
   height: 300px;
   background: rgba(255, 255, 255, 0.83);
-  z-Index: 1001;
+  z-index: 1001;
   position: absolute;
 `;
 
