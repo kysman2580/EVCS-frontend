@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
@@ -89,25 +91,30 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
       const cleanTitle = removeHtmlTags(article.title);
       const searchKeywords = extractKeywords(cleanTitle);
       if (!searchKeywords) {
-        imageCache[article.title] = "/loading.png";
+        imageCache[article.title] = "/images/loading.png";
         setTimeout(processNext, 100);
         return;
       }
 
-      axios
-        .get(`${backendUrl}/api/naver-image`, {
-          params: { query: searchKeywords },
-        })
+      const imageRequest = axios.get(`${backendUrl}/api/naver-image`, {
+        params: { query: searchKeywords },
+      });
+
+      const timeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Image request timeout")), 5000)
+      );
+
+      Promise.race([imageRequest, timeout])
         .then((res) => {
-          const items = res.data.items;
+          const items = res.data?.items || [];
           imageCache[article.title] =
-            items?.[0]?.thumbnail || items?.[0]?.link || "/loading.png";
+            items[0]?.thumbnail || items[0]?.link || "/images/loading.png";
           successCount++;
           setTimeout(processNext, 100);
         })
         .catch((err) => {
-          console.error("이미지 검색 오류:", err);
-          imageCache[article.title] = "/loading.png";
+          console.error("이미지 검색 오류:", err.message);
+          imageCache[article.title] = "/images/loading.png";
           setTimeout(processNext, 100);
         });
     };
@@ -129,7 +136,7 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
   const getImageUrl = (item) => {
     return item && imageResults[item.title]
       ? imageResults[item.title]
-      : "/loading.png";
+      : "/images/loading.png";
   };
 
   const handleChatClick = (item) => {
