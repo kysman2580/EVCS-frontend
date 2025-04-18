@@ -4,13 +4,14 @@ import "react-datepicker/dist/react-datepicker.css";
 import RentCarNav from "../../Common/Nav/RentCarNav";
 import CarMap from "./CarMap";
 import {
-  StyledDatePicker,
   Wrapper,
   RentBodyDiv,
   RentContainerDiv,
   H1,
   H3,
 } from "./RentalPage.styles";
+
+import { StyledDatePicker } from "../RentCarCommon/RentCar.styles";
 
 const RentalPage = () => {
   const [startDate, setStartDate] = useState(new Date());

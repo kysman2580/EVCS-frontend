@@ -9,11 +9,14 @@ import {
   RentCarYearSpan,
   RentCarPlaceSpan,
 } from "./RentCarCard.styles";
+import { useNavigate } from "react-router-dom";
 
 const RentCarCard = () => {
+  const navi = useNavigate();
+
   return (
     <>
-      <RentCarCardContainer>
+      <RentCarCardContainer onClick={() => navi("/LongTermRentDetail")}>
         <RentCarCardImgDiv>
           <RentCarCardImg src="images/model_Y.png"></RentCarCardImg>
         </RentCarCardImgDiv>

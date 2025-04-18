@@ -8,6 +8,10 @@ const Map = styled.div`
   margin: 50px auto;
   border: 2px solid black;
   border-radius: 1em;
+
+  // 달력 api 짤려서 추가 kkm
+  position: relative;
+  z-index: 1; /* 지도는 밑으로 */
 `;
 
 const CarMap = () => {
