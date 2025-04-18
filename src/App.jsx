@@ -53,7 +53,6 @@ function App() {
           </Route>
 
           {/* 아래부터는 관리자페이지만 적자 */}
-
           {/* Admin 페이지에서 보내는 url 은 /admin/뒤에 URL 이런식으로 보내야함. EX) /admin/insertCar  */}
           {/* Admin Interface */}
           <Route path="/admin" element={<AdminRoute />}>
