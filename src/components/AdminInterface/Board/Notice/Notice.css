@@ -3,7 +3,6 @@
   height: 500px;
   margin: 0 auto;
   font-family: Arial, sans-serif;
-  padding-top: 40px;
 }
 
 /* 제목 */
@@ -79,9 +78,4 @@
   border: none;
   border-radius: 6px;
   cursor: pointer;
-}
-
-.Notice-content {
-  white-space: pre-line;
-  line-height: 1.6;
 }
