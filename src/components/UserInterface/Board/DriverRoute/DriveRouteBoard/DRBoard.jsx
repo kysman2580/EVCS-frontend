@@ -6,6 +6,7 @@ import DriveEtaTwoToneIcon from "@mui/icons-material/DriveEtaTwoTone";
 import InsertPhotoRoundedIcon from "@mui/icons-material/InsertPhotoRounded";
 import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
@@ -43,6 +44,7 @@ import {
 const DRBoard = () => {
   const [openContentModal, setOpenContentModal] = useState(false);
   const [openCommentModal, setOpenCommentModal] = useState(false);
+  const [heart, setHeart] = useState(false);
   const navi = useNavigate();
 
   return (
@@ -71,12 +73,20 @@ const DRBoard = () => {
                 <Img src="images/calendar.png" alt="dk" />
               </Images>
               <PostIcon>
-                <FavoriteBorderIcon
-                  style={{ marginRight: "10px", cursor: "pointer" }}
-                />
+                {heart ? (
+                  <FavoriteRoundedIcon
+                    style={{ marginRight: "10px", cursor: "pointer" }}
+                    onClick={() => setHeart(false)}
+                  />
+                ) : (
+                  <FavoriteBorderIcon
+                    style={{ marginRight: "10px", cursor: "pointer" }}
+                    onClick={() => setHeart(true)}
+                  />
+                )}
                 <ChatIcon
-                  onClick={() => setOpenCommentModal(true)}
                   style={{ cursor: "pointer" }}
+                  onClick={() => setOpenCommentModal(true)}
                 />
               </PostIcon>
               <Content>
