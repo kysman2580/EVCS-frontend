@@ -1,4 +1,5 @@
 import Button from "react-bootstrap/Button";
+import Slider from "react-slick";
 import DriveRouteBoardNav from "../../../Common/Nav/DriveRouteBoardNav";
 import ChatIcon from "@mui/icons-material/Chat";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -7,8 +8,9 @@ import InsertPhotoRoundedIcon from "@mui/icons-material/InsertPhotoRounded";
 import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
+import AutoAwesomeMotionOutlinedIcon from "@mui/icons-material/AutoAwesomeMotionOutlined";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import {
   H1,
@@ -40,12 +42,46 @@ import {
   InsertComment,
   Commentarea,
 } from "./DRBoard.styles";
+import { CustomPrev, CustomNext } from "../CustomSlids/CustomStildes";
 
 const DRBoard = () => {
   const [openContentModal, setOpenContentModal] = useState(false);
   const [openCommentModal, setOpenCommentModal] = useState(false);
   const [heart, setHeart] = useState(false);
+  const ref = useRef(null);
+  const [imagesUrl, setImagesUrl] = useState([]);
   const navi = useNavigate();
+
+  const fileHandler = () => {
+    if (ref.current) {
+      ref.current.value = null;
+      ref.current.click();
+    }
+  };
+
+  const handleImageChange = (e) => {
+    const images = e.target.files;
+    let imagesUrlList = [...imagesUrl];
+    let imageLengh = images.length > 10 ? 10 : images.length;
+
+    for (let i = 0; i < imageLengh; i++) {
+      const currentImageUrl = URL.createObjectURL(images[i]);
+      imagesUrlList.push(currentImageUrl);
+    }
+    setImagesUrl(imagesUrlList);
+    console.log(imagesUrlList);
+  };
+
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    swipe: false,
+    nextArrow: <CustomNext />,
+    prevArrow: <CustomPrev />,
+  };
 
   return (
     <>
@@ -131,6 +167,7 @@ const DRBoard = () => {
             </ContentBox>
           </Wrapper>
 
+          {/* 게시물 만들기기 모달 */}
           {openContentModal && (
             <ModalWrapper>
               <CloseBtn onClick={() => setOpenContentModal(false)}>
@@ -143,7 +180,63 @@ const DRBoard = () => {
                 </ModalHeader>
                 <ModalContent>
                   <LeftContent>
-                    <InsertPhotoRoundedIcon /> 사진을 선택해주세요
+                    <input
+                      style={{ display: "none" }}
+                      type="file"
+                      ref={ref}
+                      onChange={handleImageChange}
+                      accept="image/*"
+                      multiple
+                    />
+                    {imagesUrl.length === 0 && (
+                      <>
+                        <InsertPhotoRoundedIcon />
+                        <Button variant="primary" onClick={fileHandler}>
+                          사진을 선택해주세요
+                        </Button>
+                      </>
+                    )}
+                    {imagesUrl.length != 0 && (
+                      <>
+                        <div
+                          className="slider-container"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                          }}
+                        >
+                          <Slider {...settings}>
+                            {imagesUrl.map((url, index) => (
+                              <div style={{}} key={index}>
+                                <img
+                                  src={url}
+                                  style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    objectFit: "cover", // 잘리지 않게
+                                  }}
+                                  alt={`preview-${index}`}
+                                />
+                              </div>
+                            ))}
+                          </Slider>
+                        </div>
+                        <AutoAwesomeMotionOutlinedIcon
+                          style={{
+                            position: "absolute",
+                            bottom: "10px",
+                            right: "10px",
+                            fontSize: "30px",
+                            color: "#fff",
+                            backgroundColor: "rgba(0,0,0,0.4)",
+                            borderRadius: "50%",
+                            padding: "5px",
+                            cursor: "pointer",
+                          }}
+                          onClick={fileHandler}
+                        />
+                      </>
+                    )}
                   </LeftContent>
                   <RightContent>
                     <DriveRoute>드라이브 루트 선택하기</DriveRoute>
@@ -156,6 +249,7 @@ const DRBoard = () => {
             </ModalWrapper>
           )}
 
+          {/* 댓글 모달 */}
           {openCommentModal && (
             <ModalWrapper>
               <CloseBtn onClick={() => setOpenCommentModal(false)}>
@@ -168,7 +262,7 @@ const DRBoard = () => {
                   </LeftContent>
                   <RightContent>
                     <SeeDriveRoute>드라이브 루트 보기</SeeDriveRoute>
-                    <Comments>댓글댓글글</Comments>
+                    <Comments>댓글댓글</Comments>
                     <InsertComment>
                       <Commentarea type="text" placeholder="댓글 달기.." />
                       <CommentSubmit>게시</CommentSubmit>
