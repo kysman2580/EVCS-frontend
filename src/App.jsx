@@ -15,15 +15,14 @@ import NewsMain from "./components/UserInterface/News/NewsMain/NewsMain";
 import NewsDetail from "./components/UserInterface/News/NewsDetail/NewsDetail";
 import CarManagement from "./components/AdminInterface/RentCar/CarManagement/CarManagement";
 import InsertCar from "./components/AdminInterface/RentCar/CarManagement/InsertCar";
-import DRBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteBoard/drBoard";
 
 /* User, Admin Interce 분리 관련 */
 import UserLayout from "./components/Layout/UserInterface/UserLayout";
 import AdminLayout from "./components/Layout/AdminInterface/AdminLayout";
-import DRInsertBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteInsertBoard/DRInsertBoard";
 import LongTermRentCarDetail from "./components/UserInterface/RentCar/LongTermRentCar/LongTermRentCarDetail";
 import { AuthProvider } from "./components/UserInterface/Context/AuthContext/AuthContext";
 import AdminRoute from "./components/UserInterface/Common/AdminRoute/AdminRoute";
+import DRBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteBoard/DRBoard";
 
 function App() {
   return (
@@ -37,10 +36,6 @@ function App() {
             <Route path="/timerentalPage" element={<RentalPage />}></Route>
 
             <Route path="/driveRouteBoard" element={<DRBoard />}></Route>
-            <Route
-              path="/driveRouteInsertBoard"
-              element={<DRInsertBoard />}
-            ></Route>
 
             <Route path="/loginPage" element={<LoginPage />} />
             <Route path="/chargingMap" element={<ChargingMap />}></Route>
