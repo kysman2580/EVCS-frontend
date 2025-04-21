@@ -98,19 +98,17 @@ export const ModalLabel = styled.div`
   transform: translate(-50%, -50%);
   background-color: white;
   z-index: 1000;
-  border: 1px solid grey;
+  border-radius: 2rem;
 `;
 
 export const ModalHeader = styled.div`
   display: flex;
   height: 5%;
-  border: 1px solid black;
   justify-content: center;
   align-items: center;
   position: relative;
   width: 100%;
   font-weight: bold;
-  border-bottom: 1px solid black;
 `;
 
 export const ModalSubmit = styled.button`
@@ -131,12 +129,11 @@ export const ModalSubmit = styled.button`
 export const ModalContent = styled.div`
   display: flex;
   height: 95%;
-  border: 1px solid black;
   font-weight: bold;
 `;
 
 export const LeftContent = styled.div`
-  border: 1px solid black;
+  border-top: 1px solid black;
   width: 60%;
   height: 100%;
   display: flex;
@@ -146,7 +143,7 @@ export const LeftContent = styled.div`
 `;
 
 export const RightContent = styled.div`
-  border: 1px solid black;
+  border-top: 1px solid black;
   width: 40%;
   height: 100%;
   font-weight: bold;
@@ -154,17 +151,23 @@ export const RightContent = styled.div`
 
 export const DriveRoute = styled.div`
   height: 5%;
-  border: 1px solid black;
+  border-left: 1px solid black;
 `;
 
 export const DriveContent = styled.div`
   height: 95%;
-  border: 1px solid black;
+  border-left: 1px solid black;
 `;
 
 export const Textarea = styled.textarea`
   width: 100%;
-  height: 100%;
+  height: 90%;
+  border: none;
+  resize: none;
+  &:focus {
+    outline: none;
+    border: none;
+  }
 `;
 
 // 댓글 모달달
