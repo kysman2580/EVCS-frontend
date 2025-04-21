@@ -1,8 +1,7 @@
-// NewsItemComponents.js - 재사용 가능한 컴포넌트 파일
 import React from "react";
 import * as S from "./NewsMain.styles";
 
-// 뉴스 아이템을 위한 공통 유틸리티 함수
+// 공통 유틸리티 함수
 export const getLink = (item) => item?.originallink || item?.link || "#";
 
 export const removeHtmlTags = (text) =>
@@ -15,8 +14,15 @@ export const formatDate = (dateString) => {
 };
 
 // 채팅 아이콘 컴포넌트
-export const ChatIcon = ({ item, getImageUrl, position, onChatClick }) => {
-  if (!item || getImageUrl(item) === "/lodaing.png") return null;
+export const ChatIcon = ({
+  item,
+  getImageUrl,
+  position,
+  onChatClick,
+  loading,
+}) => {
+  if (!item || getImageUrl(item) === "/loading.png") return null;
+  if (loading) return null; // 로딩 중이면 숨기기
 
   return (
     <S.ChatIconWrapper
@@ -34,7 +40,7 @@ export const ChatIcon = ({ item, getImageUrl, position, onChatClick }) => {
   );
 };
 
-// 기본 뉴스 항목 컴포넌트
+// 공통 뉴스 아이템 베이스
 export const NewsItemBase = ({
   item,
   children,
@@ -42,6 +48,7 @@ export const NewsItemBase = ({
   ThumbnailComponent,
   position = {},
   onChatClick,
+  loading, // 추가
 }) => {
   if (!item) return null;
 
@@ -61,13 +68,14 @@ export const NewsItemBase = ({
         getImageUrl={getImageUrl}
         position={position}
         onChatClick={onChatClick}
+        loading={loading} // 전달
       />
     </div>
   );
 };
 
-// 주요 뉴스 아이템
-export const TopNewsItem = ({ item, getImageUrl, onChatClick }) => (
+// 상단 뉴스 카드
+export const TopNewsItem = ({ item, getImageUrl, onChatClick, loading }) => (
   <S.TopNewsItem style={{ position: "relative" }}>
     <NewsItemBase
       item={item}
@@ -75,6 +83,7 @@ export const TopNewsItem = ({ item, getImageUrl, onChatClick }) => (
       ThumbnailComponent={<S.ThumbnailMedium imageUrl={getImageUrl(item)} />}
       position={{ top: "10px", left: "10px" }}
       onChatClick={onChatClick}
+      loading={loading}
     >
       <S.Title>{item ? removeHtmlTags(item.title) : "로딩 중..."}</S.Title>
       <S.Metadata>{item ? formatDate(item.pubDate) : "⏳"}</S.Metadata>
@@ -82,14 +91,15 @@ export const TopNewsItem = ({ item, getImageUrl, onChatClick }) => (
   </S.TopNewsItem>
 );
 
-// 메인 뉴스 아이템
-export const MainNewsItem = ({ item, getImageUrl, onChatClick }) => (
+// 메인 뉴스 카드
+export const MainNewsItem = ({ item, getImageUrl, onChatClick, loading }) => (
   <NewsItemBase
     item={item}
     getImageUrl={getImageUrl}
     ThumbnailComponent={<S.ThumbnailLarge imageUrl={getImageUrl(item)} />}
-    position={{ top: "20px", left: "20px" }}
+    position={{ top: "10px", left: "10px" }}
     onChatClick={onChatClick}
+    loading={loading}
   >
     <S.Title>{removeHtmlTags(item.title)}</S.Title>
     <S.Description>{removeHtmlTags(item.description)}</S.Description>
@@ -97,8 +107,8 @@ export const MainNewsItem = ({ item, getImageUrl, onChatClick }) => (
   </NewsItemBase>
 );
 
-// 사이드 뉴스 아이템
-export const SideNewsItem = ({ item, getImageUrl, onChatClick }) => (
+// 사이드 뉴스 카드
+export const SideNewsItem = ({ item, getImageUrl, onChatClick, loading }) => (
   <S.SideItem style={{ position: "relative" }}>
     <NewsItemBase
       item={item}
@@ -106,6 +116,7 @@ export const SideNewsItem = ({ item, getImageUrl, onChatClick }) => (
       ThumbnailComponent={<S.ThumbnailSmall imageUrl={getImageUrl(item)} />}
       position={{ top: "5px", left: "5px" }}
       onChatClick={onChatClick}
+      loading={loading}
     >
       <S.SmallTitle>{removeHtmlTags(item.title)}</S.SmallTitle>
       <S.SmallMetadata>{formatDate(item.pubDate)}</S.SmallMetadata>
@@ -113,8 +124,8 @@ export const SideNewsItem = ({ item, getImageUrl, onChatClick }) => (
   </S.SideItem>
 );
 
-// 리스트 뉴스 아이템
-export const ListNewsItem = ({ item, delayedVisible, onChatClick }) => (
+// 뉴스 리스트 카드
+export const ListNewsItem = ({ item, onChatClick, loading }) => (
   <S.NewsItem key={item.title} style={{ position: "relative" }}>
     <S.NewsLink href={getLink(item)} target="_blank" rel="noopener noreferrer">
       <S.NewsTitle>
@@ -122,8 +133,10 @@ export const ListNewsItem = ({ item, delayedVisible, onChatClick }) => (
         <S.NewsDate>{formatDate(item.pubDate)}</S.NewsDate>
       </S.NewsTitle>
     </S.NewsLink>
-    {delayedVisible && (
+    {!loading && (
       <S.ChatIconWrapper
+        top="-5px"
+        right="70px"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
