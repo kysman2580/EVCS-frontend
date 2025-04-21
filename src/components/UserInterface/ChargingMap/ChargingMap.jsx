@@ -12,7 +12,13 @@ import {
 const KakaoMap = () => {
   const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(true);
-  const [loadErring, setLoadErring] = useState(false);
+  const [kakaoloadErring, setKakaoLoadErring] = useState(false);
+  const [evloadErring, setEvLoadErring] = useState(false);
+  const EvErrText = "EV 관련 에러코드 : 00";
+  // EV 관련 에러 코드 정리
+  // 00 = api 호출키 이상함 or 데이터 가져오지 못함
+  // 01 = 정상 적으로 호출 하였으나 상태 코드가 없음
+  // 02 = 정상 적으로 호출 상태코드가 존재 하지만 정상을 뜻하는 00 코드가 아님
   // 밑에 2개 로딩중 같이 때가면됨
   const baseText = "로딩중...";
   const ErrText = "Kakao Maps API 오류 입니다 \n 관리자에게 문의해주세요!";
@@ -23,7 +29,7 @@ const KakaoMap = () => {
     if (!window.kakao) {
       console.error("Kakao Maps API 스크립트가 로드되지 않았습니다.");
       setLoading(false);
-      setLoadErring(true);
+      setKakaoLoadErring(true);
       return;
     }
     // 로딩 구현할시 밑에 때가면됨
@@ -88,7 +94,7 @@ const KakaoMap = () => {
         numOfRows = 9999
       ) {
         const serviceKey =
-          "wKLfGPEstHWDqHLmnXYntGh%2Fkio03KXj99NNors5Ndb9n0Z%2B0%2BdISJFbjny5ex1wjBFyS7sOY%2BP1xzkrbhJbPA%3D%3Dd";
+          "wKLfGPEstHWDqHLmnXYntGh%2Fkio03KXj99NNors5Ndb9n0Z%2B0%2BdISJFbjny5ex1wjBFyS7sOY%2BP1xzkrbhJbPA%3D%3D";
         const apiUrl = `https://apis.data.go.kr/B552584/EvCharger/getChargerInfo?serviceKey=${serviceKey}&pageNo=1&numOfRows=${numOfRows}&zcode=${apiZcode}`;
 
         fetch(apiUrl)
@@ -96,8 +102,31 @@ const KakaoMap = () => {
           .then((xmlText) => {
             const parser = new DOMParser();
             const xmlDoc = parser.parseFromString(xmlText, "application/xml");
+            const headers = xmlDoc.getElementsByTagName("header");
             const items = xmlDoc.getElementsByTagName("item");
+            if (headers.length > 0) {
+              const header = headers[0];
+              const resultCodeElems = header.getElementsByTagName("resultCode");
+              // resultCode 요소 자체가 없거나, 텍스트가 빈 문자열이면 에러 처리
+              if (
+                resultCodeElems.length === 0 ||
+                !resultCodeElems[0].textContent.trim()
+              ) {
+                EvErrText("EV 관련 에러코드 : 01"); // 요소가 없거나 값이 비어있음
+                setLoading(false);
+                setEvLoadErring(true);
+              } else {
+                // 실제 코드 값을 꺼내서
+                const code = resultCodeElems[0].textContent.trim();
 
+                // "00"이 아닐 때만 에러 처리
+                if (code !== "00") {
+                  EvErrText("EV 관련 에러코드 : 02");
+                  setLoading(false);
+                  setEvLoadErring(true);
+                }
+              }
+            }
             if (items.length > 0) {
               for (let i = 0; i < items.length; i++) {
                 const item = items[i];
@@ -110,7 +139,7 @@ const KakaoMap = () => {
                 const noteNode = item.getElementsByTagName("note")[0];
                 const limitYnNode = item.getElementsByTagName("limitYn")[0];
                 const zscodeNode = item.getElementsByTagName("zscode")[0];
-
+                const resultCode = item.getElementsByTagName("resultCode")[0];
                 // 제한 충전소는 건너뜁니다.
                 if (limitYnNode && limitYnNode.textContent === "Y") continue;
 
@@ -166,12 +195,15 @@ const KakaoMap = () => {
               }
             } else {
               console.error("충전소 데이터를 가져오지 못했습니다.", xmlText);
+              setLoading(false);
+              setEvLoadErring(true);
             }
             setLoading(false);
           })
           .catch((err) => {
             console.error("API 호출 에러:", err);
             setLoading(false);
+            setEvLoadErring(true);
           });
       }
 
@@ -248,7 +280,8 @@ const KakaoMap = () => {
   return (
     <BodyMaps>
       {loading && <LoadingMaps>{displayText}</LoadingMaps>}
-      {loadErring && <div>{ErrText}</div>}
+      {kakaoloadErring && <div>{ErrText}</div>}
+      {evloadErring && <div>{EvErrText}</div>}
       <OptionsBar>옵션 들어갈 예정입니다.</OptionsBar>
       <Maps id="map"></Maps>
       {notice && <GuideBook>{notice}</GuideBook>}
