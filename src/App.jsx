@@ -17,7 +17,9 @@ import ChargingMap from "./components/UserInterface/ChargingMap/ChargingMap";
 import IntegratedReportingPage from "./components/UserInterface/Report/IntegratedReportingPage";
 
 /* 게시판 페이지 관련 */
-import Notice from "./components/UserInterface/Board/Notice/UserNotice";
+import UserNotice from "./components/UserInterface/Board/Notice/UserNotice";
+import AdminNotice from "./components/AdminInterface/Board/Notice/Notice";
+import NoticeDetail from "./components/AdminInterface/Board/Notice/NoticeDetail";
 
 /* 회원관련 */
 import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
@@ -58,7 +60,7 @@ function App() {
             <Route path="/chargingMap" element={<ChargingMap />}></Route>
 
             {/* 게시판 페이지 관련 */}
-            <Route path="/notice" element={<Notice />}></Route>
+            <Route path="/notice" element={<UserNotice />}></Route>
 
             {/* 회원관련 */}
             <Route path="/loginPage" element={<LoginPage />} />
@@ -109,7 +111,8 @@ function App() {
               ></Route>
 
               {/* 게시판 페이지 관련 */}
-              <Route path="notice" element={<Notice />}></Route>
+              <Route path="notice" element={<AdminNotice />} />
+              <Route path="notice/:id" element={<NoticeDetail />} />
             </Route>
           </Route>
         </Routes>

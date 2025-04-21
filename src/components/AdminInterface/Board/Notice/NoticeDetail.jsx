@@ -1,8 +1,9 @@
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 function NoticeDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const notices = JSON.parse(localStorage.getItem("notices") || "[]");
   const notice = notices[parseInt(id)];
 
