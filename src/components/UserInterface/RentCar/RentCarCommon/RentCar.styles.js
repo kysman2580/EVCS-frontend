@@ -12,7 +12,7 @@ export const RentBodyDiv = styled.div`
 
 export const RentContainerDiv = styled.div`
   display: flex;
-  height: 100%;
+  height: 1000px;
 `;
 
 export const RentCarListDiv = styled.div`
@@ -63,6 +63,7 @@ export const StyledDatePicker = styled.div`
 
   .react-datepicker-wrapper {
     margin: 40px;
+    width: 100%;
   }
 
   /* 달력 api 짤려서 추가 kkm */
@@ -154,4 +155,22 @@ export const StyledDatePicker = styled.div`
     padding: 0;
     margin: 0;
   }
+`;
+
+export const RentCarDetailContentDiv = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const RentDetailBodyDiv = styled.div`
+  width: 100%;
+  height: 100%px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-evenly;
+  margin-top: 30px;
 `;

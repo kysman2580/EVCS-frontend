@@ -1,18 +1,18 @@
 import styled from "styled-components";
 
 export const RentBodyDiv = styled.div`
-  width: 90%;
+  width: 100%;
   height: 700px;
   display: flex;
   align-items: center;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: start;
   margin-top: 30px;
 `;
 
 export const RentContainerDiv = styled.div`
   display: flex;
-  height: 100%;
+  height: 800px;
 `;
 
 export const RentCarListDiv = styled.div`
