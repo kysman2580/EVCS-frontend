@@ -68,7 +68,26 @@ export const RentContainerDiv = styled.div`
   display: flex;
 `;
 
-export const ModalWrapper = styled.div``;
+// 게시물 만들기 모달
+
+export const ModalWrapper = styled.div`
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999;
+`;
+
+export const CloseBtn = styled.div`
+  display: flex;
+  justify-content: end;
+  margin-top: 80px;
+  margin-right: 30px;
+  cursor: pointer;
+  color: white;
+`;
 
 export const ModalLabel = styled.div`
   width: 1000px;
@@ -79,19 +98,17 @@ export const ModalLabel = styled.div`
   transform: translate(-50%, -50%);
   background-color: white;
   z-index: 1000;
-  border: 1px solid grey;
+  border-radius: 2rem;
 `;
 
 export const ModalHeader = styled.div`
   display: flex;
   height: 5%;
-  border: 1px solid black;
   justify-content: center;
   align-items: center;
   position: relative;
   width: 100%;
   font-weight: bold;
-  border-bottom: 1px solid black;
 `;
 
 export const ModalSubmit = styled.button`
@@ -112,12 +129,11 @@ export const ModalSubmit = styled.button`
 export const ModalContent = styled.div`
   display: flex;
   height: 95%;
-  border: 1px solid black;
   font-weight: bold;
 `;
 
 export const LeftContent = styled.div`
-  border: 1px solid black;
+  border-top: 1px solid black;
   width: 60%;
   height: 100%;
   display: flex;
@@ -127,8 +143,55 @@ export const LeftContent = styled.div`
 `;
 
 export const RightContent = styled.div`
-  border: 1px solid black;
+  border-top: 1px solid black;
   width: 40%;
   height: 100%;
+  font-weight: bold;
+`;
+
+export const DriveRoute = styled.div`
+  height: 5%;
+  border-left: 1px solid black;
+`;
+
+export const DriveContent = styled.div`
+  height: 95%;
+  border-left: 1px solid black;
+`;
+
+export const Textarea = styled.textarea`
+  width: 100%;
+  height: 90%;
+  border: none;
+  resize: none;
+  &:focus {
+    outline: none;
+    border: none;
+  }
+`;
+
+// 댓글 모달달
+export const SeeDriveRoute = styled.div`
+  height: 5%;
+`;
+export const Comments = styled.div`
+  height: 80%;
+`;
+
+export const InsertComment = styled.div`
+  height: 15%;
+  display: flex;
+  border-top: 1px solid black;
+`;
+
+export const Commentarea = styled.textarea`
+  width: 80%;
+  border: none;
+`;
+
+export const CommentSubmit = styled.div`
+  height: 20%;
+  border: none;
+  color: #2962ff;
   font-weight: bold;
 `;
