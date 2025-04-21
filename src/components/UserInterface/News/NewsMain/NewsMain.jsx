@@ -16,7 +16,6 @@ import {
 
 const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
   const navigate = useNavigate();
-  const location = useLocation();
 
   const [query, setQuery] = useState("전기차");
   const [results, setResults] = useState([]);
@@ -41,7 +40,7 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
 
     axios
       .get(`${backendUrl}/api/naver-news`, {
-        params: { query: searchQuery, display: 20, start: 1 },
+        params: { query: searchQuery, display: 100, start: 1 },
       })
       .then((res) => {
         clearTimeout(timeoutId);
@@ -153,7 +152,7 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
   useEffect(() => {
     setLoading(true);
     handleSearch();
-  }, [location.key]);
+  }, []);
 
   const renderTopNewsSection = () => (
     <>
