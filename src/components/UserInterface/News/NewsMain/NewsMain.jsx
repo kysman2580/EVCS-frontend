@@ -139,14 +139,16 @@ const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
   };
 
   const handleChatClick = (item) => {
-    const query = new URLSearchParams({
-      title: item.title,
-      description: item.description,
-      pubDate: item.pubDate,
-      originallink: item.originallink || item.link || "",
-      imageUrl: getImageUrl(item),
-    }).toString();
-    navigate(`/newsDetail?${query}`);
+    navigate("/newsDetail", {
+      state: {
+        title: removeHtmlTags(item.title),
+        description: removeHtmlTags(item.description),
+        pubDate: formatDate(item.pubDate),
+        imageUrl: getImageUrl(item),
+        originallink: item.originallink,
+        query: query,
+      },
+    });
   };
 
   useEffect(() => {
