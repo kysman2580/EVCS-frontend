@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../Notice/Notice.css";
+import "../Notice/UserNotice.css";
 import NoticeNav from "../../Common/Nav/NoticeNav";
 import { BoardContainerDiv, BoardBodyDiv } from "../Board.styles";
 function Notice() {
