@@ -13,9 +13,9 @@ import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
 import Notice from "./components/UserInterface/Board/Notice/UserNotice";
 import NewsMain from "./components/UserInterface/News/NewsMain/NewsMain";
 import NewsDetail from "./components/UserInterface/News/NewsDetail/NewsDetail";
+
 import CarManagement from "./components/AdminInterface/RentCar/CarManagement/CarManagement";
 import InsertCar from "./components/AdminInterface/RentCar/CarManagement/InsertCar";
-import DRBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteBoard/drBoard";
 
 /* User, Admin Interce 분리 관련 */
 import UserLayout from "./components/Layout/UserInterface/UserLayout";
