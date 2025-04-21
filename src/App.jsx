@@ -10,7 +10,7 @@ import SubscribeRentCar from "./components/UserInterface/RentCar/SubscribeRentCa
 import IntegratedReportingPage from "./components/UserInterface/Report/IntegratedReportingPage";
 import GlobalStyle from "./components/UserInterface/Common/Header/GlobalStyle";
 import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
-import Notice from "./components/UserInterface/Board/Notice/UserNotice";
+import UserNotice from "./components/UserInterface/Board/Notice/UserNotice";
 import NewsMain from "./components/UserInterface/News/NewsMain/NewsMain";
 import NewsDetail from "./components/UserInterface/News/NewsDetail/NewsDetail";
 import CarManagement from "./components/AdminInterface/RentCar/CarManagement/CarManagement";
@@ -23,6 +23,8 @@ import LongTermRentCarDetail from "./components/UserInterface/RentCar/LongTermRe
 import { AuthProvider } from "./components/UserInterface/Context/AuthContext/AuthContext";
 import AdminRoute from "./components/UserInterface/Common/AdminRoute/AdminRoute";
 import DRBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteBoard/DRBoard";
+import AdminNotice from "./components/AdminInterface/Board/Notice/Notice";
+import NoticeDetail from "./components/AdminInterface/Board/Notice/NoticeDetail";
 
 function App() {
   return (
@@ -37,7 +39,7 @@ function App() {
             <Route path="/driveRouteBoard" element={<DRBoard />}></Route>
             <Route path="/loginPage" element={<LoginPage />} />
             <Route path="/chargingMap" element={<ChargingMap />}></Route>
-            <Route path="/notice" element={<Notice />}></Route>
+            <Route path="/notice" element={<UserNotice />} />
             <Route path="/longRentCar" element={<LongTermRentCar />}></Route>
             <Route
               path="/LongTermRentDetail"
@@ -62,6 +64,8 @@ function App() {
               <Route path="carManagement" element={<CarManagement />}></Route>
               <Route path="insertCar" element={<InsertCar />}></Route>
               <Route path="timeCar" element={<TimeRentCar />}></Route>
+              <Route path="notice" element={<AdminNotice />} />
+              <Route path="notice/:id" element={<NoticeDetail />} />
             </Route>
           </Route>
         </Routes>
