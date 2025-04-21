@@ -1,18 +1,18 @@
 import React from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 function NoticeDetail() {
   const { id } = useParams();
-  const notices = JSON.parse(localStorage.getItem("notices")) || [];
-  const notice = notices[id];
+  const notices = JSON.parse(localStorage.getItem("notices") || "[]");
+  const notice = notices[parseInt(id)];
 
   if (!notice) {
     return <p>공지사항을 찾을 수 없습니다.</p>;
   }
 
   return (
-    <div className="NoticeDetail">
-      <h2>{notice.title}</h2>
+    <div style={{ padding: "20px" }}>
+      <h1>{notice.title}</h1>
       <p>
         <strong>작성일:</strong> {notice.date}
       </p>
@@ -21,8 +21,9 @@ function NoticeDetail() {
       </p>
       <hr />
       <p>{notice.content}</p>
-      <br />
-      <Link to="/notice">← 목록으로 돌아가기</Link>
+      <button onClick={() => navigate(-1)} style={{ marginTop: "20px" }}>
+        목록으로 돌아가기
+      </button>
     </div>
   );
 }
