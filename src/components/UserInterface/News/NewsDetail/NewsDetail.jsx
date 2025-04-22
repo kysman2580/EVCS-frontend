@@ -20,6 +20,9 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
   });
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const [likeCount, setLikeCount] = useState(0);
+  const [hateCount, setHateCount] = useState(0);
+  const [bookmarked, setBookmarked] = useState(false);
 
   useEffect(() => {
     console.log("location.state 확인:", location.state);
@@ -27,28 +30,26 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
     if (!title || !originallink) return;
 
     axios
-      .get(`${backendUrl}/api/news/detail`, {
-        params: { title, originUrl: originallink },
+      .post(`${backendUrl}/api/news/detail`, {
+        title,
+        originUrl: originallink,
+        description,
+        imageUrl,
+        pubDate,
+        query,
       })
       .then((res) => {
-        if (!res.data.exists) {
-          axios
-            .post(`${backendUrl}/api/news/insert`, {
-              title,
-              originUrl: originallink,
-              description,
-              imageUrl,
-              pubDate,
-              query,
-            })
-            .then((insertRes) => {
-              setComments(insertRes.data.comments);
-              // 좋아요/싫어요/북마크도 여기에
-            });
-        } else {
-          setComments(res.data.comments);
-          // 좋아요/싫어요/북마크도 세팅
-        }
+        const data = res.data;
+
+        setComments(data.comments);
+        setLikeCount(data.likeCount); // ✅ 좋아요 수
+        setHateCount(data.hateCount); // ✅ 싫어요 수
+        setBookmarked(data.bookmarked); // ✅ 북마크 여부
+
+        console.log(likeCount, hateCount, bookmarked);
+      })
+      .catch((err) => {
+        console.error("뉴스 상세 요청 실패:", err);
       });
   }, []);
 

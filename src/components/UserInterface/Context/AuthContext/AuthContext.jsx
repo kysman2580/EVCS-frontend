@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
     isLoggedIn: true, // or false
     user: {
       id: "admin001",
-      name: "관리자",
+      name: "홍길동",
       role: "admin", // 또는 "user"
     },
   });
