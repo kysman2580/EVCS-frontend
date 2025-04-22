@@ -4,8 +4,7 @@ import AdminMain from "./components/AdminInterface/Main/AdminMain";
 import Main from "./components/UserInterface/Main/Main";
 
 /* 드라이빙 루뜨 관련 */
-import DRBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteBoard/DRBoard";
-
+import DRBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteBoard/drBoard";
 /* 누스 관련 */
 import NewsMain from "./components/UserInterface/News/NewsMain/NewsMain";
 import NewsDetail from "./components/UserInterface/News/NewsDetail/NewsDetail";
@@ -52,6 +51,9 @@ function App() {
           {/* User Interface */}
           <Route element={<UserLayout />}>
             <Route path="/" element={<Main />}></Route>
+            <Route path="/timerentalPage" element={<RentalPage />}></Route>
+            <Route path="/driveRouteBoard" element={<DRBoard />}></Route>
+            <Route path="/loginPage" element={<LoginPage />} />
 
             {/* 드라이빙 루뜨 관련 */}
             <Route path="/driveRouteBoard" element={<DRBoard />}></Route>
