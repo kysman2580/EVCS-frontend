@@ -9,7 +9,6 @@ import {
   NavLink,
 } from "./Header.styles";
 import { useNavigate } from "react-router-dom";
-import LoginPage from "../../Member/LoginPage/LoginPage";
 
 const Header = () => {
   const navi = useNavigate();
@@ -40,7 +39,7 @@ const Header = () => {
         </StyledHomeCenterDiv>
         <StyledMemberDiv>
           <StyledHeaderBtn onClick={() => navi("/loginPage")}>로그인</StyledHeaderBtn>
-          <StyledHeaderBtn>회원가입</StyledHeaderBtn>
+          <StyledHeaderBtn onClick={() => navi("/signUpPage")}>회원가입</StyledHeaderBtn>
           <StyledHeaderBtn>로그아웃</StyledHeaderBtn>
           <StyledHeaderBtn>아이콘</StyledHeaderBtn>
           <StyledHeaderBtn onClick={() => navi("/admin/main")}>

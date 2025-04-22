@@ -21,6 +21,31 @@ export const StyledInput = styled.input`
     font-family: auto;
 `;
 
+export const SendCodeButton = styled.button`
+position: absolute;
+top: 0;
+right: 50;
+height: 40px;
+width: 65px;
+border: none;
+background-color: #4caf50;
+color: white;
+font-weight: bold;
+cursor: pointer;
+margin-left: 10px;
+border-radius: 5px;
+
+    &:hover{
+        
+    }
+
+`;
+
+export const EmailInputWrapper = styled.div`
+position: relative;
+width: 350px;
+`;
+
 
 
 export const StyledFindDiv = styled.div`
