@@ -79,3 +79,29 @@
   border-radius: 6px;
   cursor: pointer;
 }
+
+.NoticeDetail {
+  width: 600px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #fdfdfd;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+
+.Notice-search input {
+  margin-bottom: 15px;
+  padding: 8px;
+  width: 300px;
+}
+
+.Notice-pagination {
+  margin: 20px 0;
+}
+
+.Notice-pagination button {
+  padding: 5px 10px;
+  margin: 0 2px;
+  cursor: pointer;
+}

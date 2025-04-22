@@ -8,17 +8,14 @@ const RentCarNav = () => {
     <>
       <NavDiv>
         <NavRentContentDiv>
-          <StyledHeaderBtn onClick={() => navi("/timerentalPage")}>
-            시간별 렌트카
+          <StyledHeaderBtn onClick={() => navi("/admin/carManagement")}>
+            차종 관리
           </StyledHeaderBtn>
-          <StyledHeaderBtn onClick={() => navi("/subRentCar")}>
-            구독 렌트카
+          <StyledHeaderBtn onClick={() => navi("/admin/adminLongTermRentCar")}>
+            렌트카 관리
           </StyledHeaderBtn>
-          <StyledHeaderBtn onClick={() => navi("/longRentCar")}>
-            장기 렌트카
-          </StyledHeaderBtn>
-          <StyledHeaderBtn onClick={() => navi("/hotRentCar")}>
-            핫딜 렌트카
+          <StyledHeaderBtn onClick={() => navi("/admin/main")}>
+            핫딜 렌트카 관리
           </StyledHeaderBtn>
         </NavRentContentDiv>
       </NavDiv>
