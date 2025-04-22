@@ -14,7 +14,7 @@ const KakaoMap = () => {
   const [loading, setLoading] = useState(true);
   const [kakaoloadErring, setKakaoLoadErring] = useState(false);
   const [evloadErring, setEvLoadErring] = useState(false);
-  const EvErrText = "EV 관련 에러코드 : 00";
+  const EvErrText = "EV 정보를 불러오기 실패하였습니다.";
   // EV 관련 에러 코드 정리
   // 00 = api 호출키 이상함 or 데이터 가져오지 못함
   // 01 = 정상 적으로 호출 하였으나 상태 코드가 없음
@@ -112,7 +112,6 @@ const KakaoMap = () => {
                 resultCodeElems.length === 0 ||
                 !resultCodeElems[0].textContent.trim()
               ) {
-                EvErrText("EV 관련 에러코드 : 01"); // 요소가 없거나 값이 비어있음
                 setLoading(false);
                 setEvLoadErring(true);
               } else {
@@ -121,7 +120,6 @@ const KakaoMap = () => {
 
                 // "00"이 아닐 때만 에러 처리
                 if (code !== "00") {
-                  EvErrText("EV 관련 에러코드 : 02");
                   setLoading(false);
                   setEvLoadErring(true);
                 }
@@ -139,7 +137,6 @@ const KakaoMap = () => {
                 const noteNode = item.getElementsByTagName("note")[0];
                 const limitYnNode = item.getElementsByTagName("limitYn")[0];
                 const zscodeNode = item.getElementsByTagName("zscode")[0];
-                const resultCode = item.getElementsByTagName("resultCode")[0];
                 // 제한 충전소는 건너뜁니다.
                 if (limitYnNode && limitYnNode.textContent === "Y") continue;
 
@@ -194,7 +191,7 @@ const KakaoMap = () => {
                 }
               }
             } else {
-              console.error("충전소 데이터를 가져오지 못했습니다.", xmlText);
+              //console.error("충전소 데이터를 가져오지 못했습니다.", xmlText);
               setLoading(false);
               setEvLoadErring(true);
             }
@@ -280,8 +277,8 @@ const KakaoMap = () => {
   return (
     <BodyMaps>
       {loading && <LoadingMaps>{displayText}</LoadingMaps>}
-      {kakaoloadErring && <div>{ErrText}</div>}
-      {evloadErring && <div>{EvErrText}</div>}
+      {kakaoloadErring && <LoadingMaps>{ErrText}</LoadingMaps>}
+      {evloadErring && <LoadingMaps>{EvErrText}</LoadingMaps>}
       <OptionsBar>옵션 들어갈 예정입니다.</OptionsBar>
       <Maps id="map"></Maps>
       {notice && <GuideBook>{notice}</GuideBook>}

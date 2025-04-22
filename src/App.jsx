@@ -14,6 +14,7 @@ import ChargingMap from "./components/UserInterface/ChargingMap/ChargingMap";
 
 /* 신고 관련 */
 import IntegratedReportingPage from "./components/UserInterface/Report/IntegratedReportingPage";
+import Report from "./components/UserInterface/Report/Report";
 
 /* 게시판 페이지 관련 */
 import UserNotice from "./components/UserInterface/Board/Notice/UserNotice";
@@ -33,16 +34,17 @@ import HotdealRentCar from "./components/UserInterface/RentCar/HotdealRentCar/Ho
 import RentalPage from "./components/UserInterface/RentCar/TimeRentCar/RentalPage";
 import TimeRentCar from "./components/AdminInterface/RentCar/TimeRentCar/TimeRentCar";
 import AdminLongTermRentCar from "./components/AdminInterface/RentCar/LongTermRentCar/AdminLongTermRentCar";
+import AdminRentCarEnrollPage from "./components/AdminInterface/RentCar/LongTermRentCar/AdminRentCarEnrollPage";
+import AdminRentCarUpdatePage from "./components/AdminInterface/RentCar/LongTermRentCar/AdminRentCarUpdatePage";
 
 /* User, Admin Interce 분리 관련 */
 import UserLayout from "./components/Layout/UserInterface/UserLayout";
 import AdminLayout from "./components/Layout/AdminInterface/AdminLayout";
 import { AuthProvider } from "./components/UserInterface/Context/AuthContext/AuthContext";
 import AdminRoute from "./components/UserInterface/Common/AdminRoute/AdminRoute";
-import AdminRentCarEnrollPage from "./components/AdminInterface/RentCar/LongTermRentCar/AdminRentCarEnrollPage";
-import AdminRentCarUpdatePage from "./components/AdminInterface/RentCar/LongTermRentCar/AdminRentCarUpdatePage";
 
 function App() {
+  const currentUser = "홍길동";
   return (
     <>
       <GlobalStyle />
@@ -68,6 +70,12 @@ function App() {
             <Route path="/loginPage" element={<LoginPage />} />
 
             {/* 신고 관련 */}
+            <Route
+              path="/report"
+              element={
+                <Report useDummyData={true} currentUser={currentUser}></Report>
+              }
+            ></Route>
             <Route
               path="/reportingPage"
               element={<IntegratedReportingPage />}
