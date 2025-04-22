@@ -85,7 +85,10 @@ const KakaoMap = () => {
       );
 
       // 정보창 객체 생성
-      const infoWindow = new window.kakao.maps.InfoWindow({ zIndex: 1 });
+      const infoWindow = new window.kakao.maps.InfoWindow({
+        zIndex: 1,
+        removable: true, // ← 닫기(X)
+      });
 
       // EV 충전소 API 호출 함수
       function fetchEVChargerInfo(
@@ -169,7 +172,6 @@ const KakaoMap = () => {
                     title: title,
                     image: customMarkerImage,
                   });
-
                   // 마커 클릭 시 정보창 표시
                   window.kakao.maps.event.addListener(
                     marker,
@@ -179,7 +181,7 @@ const KakaoMap = () => {
                       <div style="padding:5px; width:250px;">
                         <strong>${title}</strong><br/>
                         상태: ${statText}<br/>
-                        충전 용량: ${outputValue}<br/>
+                        충전 용량: ${outputValue} kW<br/>
                         충전기 타입: ${chgerTypeText}<br/>
                         ${noteText ? `<br/>주의사항: ${noteText}` : ""}
                       </div>
@@ -262,14 +264,16 @@ const KakaoMap = () => {
           },
           (error) => {
             console.error("사용자 위치 확인 실패:", error);
-            setNotice("사용자 위치 비동의로 서울시 100개의 위치만 출력됩니다.");
-            fetchEVChargerInfo("11", null, 100);
+            setNotice(
+              "사용자 위치 확인 실패 서울시 1000개의 위치만 출력됩니다."
+            );
+            fetchEVChargerInfo("11", null, 1000);
           }
         );
       } else {
         console.error("Geolocation 미지원");
-        setNotice("사용자 위치 비동의로 서울시 100개의 위치만 출력됩니다.");
-        fetchEVChargerInfo("11", null, 100);
+        setNotice("사용자 위치 비동의로 서울시 1000개의 위치만 출력됩니다.");
+        fetchEVChargerInfo("11", null, 1000);
       }
     });
   }, []);

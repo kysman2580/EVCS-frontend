@@ -44,7 +44,6 @@ import { AuthProvider } from "./components/UserInterface/Context/AuthContext/Aut
 import AdminRoute from "./components/UserInterface/Common/AdminRoute/AdminRoute";
 
 function App() {
-  const currentUser = "홍길동";
   return (
     <>
       <GlobalStyle />
@@ -70,12 +69,7 @@ function App() {
             <Route path="/loginPage" element={<LoginPage />} />
 
             {/* 신고 관련 */}
-            <Route
-              path="/report"
-              element={
-                <Report useDummyData={true} currentUser={currentUser}></Report>
-              }
-            ></Route>
+            <Route path="/report" element={<Report useDummyData={true} />} />
             <Route
               path="/reportingPage"
               element={<IntegratedReportingPage />}

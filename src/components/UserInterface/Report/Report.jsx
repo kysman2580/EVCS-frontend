@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // Report2는 스타일드 컨테이너입니다.
 import { Report2 } from "./Report.styled";
+import { useAuth } from "../Context/AuthContext/AuthContext";
 import axios from "axios";
 
 // 개발 및 테스트용 더미 데이터 (신고자와 피의자 모두 사람)
@@ -62,18 +63,15 @@ const dummyReports = [
   },
 ];
 
-/**
- * Report 컴포넌트
- * @param {boolean} useDummyData - true: 더미 데이터 사용, false: 백엔드 API 호출
- * @param {string} currentUser - 현재 로그인된 사용자 이름
- */
-const Report = ({ useDummyData = true, currentUser }) => {
+const Report = ({ useDummyData = true }) => {
   const navi = useNavigate();
-  const [reports, setReports] = useState([]);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const { auth } = useAuth(); // ← 여기서 auth 꺼내고
+  const currentUser = auth.user.name; // ← name을 currentUser로 사용
 
-  // 필터 상태
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [titleQuery, setTitleQuery] = useState("");
@@ -81,24 +79,19 @@ const Report = ({ useDummyData = true, currentUser }) => {
   // 데이터 로드 (현재 사용자 기준)
   useEffect(() => {
     if (useDummyData) {
-      // 현재 사용자가 신고한 데이터만 초기 로드
-      const userReports = dummyReports.filter(
-        (r) => r.reporter === currentUser
-      );
-      setReports(userReports);
+      setReports(dummyReports.filter((r) => r.reporter === currentUser));
       return;
     }
     const fetchReports = async () => {
       setLoading(true);
       setError(null);
       try {
-        // API 호출 시 reporter 파라미터 포함
-        const response = await axios.get("/api/reports", {
+        const { data } = await axios.get("/api/reports", {
           params: { reporter: currentUser, page: 0, size: 10 },
         });
-        setReports(response.data);
+        setReports(data);
       } catch (err) {
-        console.error("신고 내역 불러오기 실패:", err);
+        console.error(err);
         setError("신고 내역을 불러오는 중 오류가 발생했습니다.");
       } finally {
         setLoading(false);
@@ -107,43 +100,41 @@ const Report = ({ useDummyData = true, currentUser }) => {
     fetchReports();
   }, [useDummyData, currentUser]);
 
-  // 검색/필터 핸들러
+  // 검색/필터
   const handleSearch = () => {
     if (useDummyData) {
       let filtered = dummyReports.filter((r) => r.reporter === currentUser);
-      if (titleQuery) {
+      if (titleQuery)
         filtered = filtered.filter((r) => r.title.includes(titleQuery));
-      }
-      if (startDate) {
+      if (startDate)
         filtered = filtered.filter((r) => r.applicationDate >= startDate);
-      }
-      if (endDate) {
+      if (endDate)
         filtered = filtered.filter((r) => r.applicationDate <= endDate);
-      }
       setReports(filtered);
-    } else {
-      setLoading(true);
-      setError(null);
-      axios
-        .get("/api/reports", {
-          params: {
-            reporter: currentUser,
-            title: titleQuery || undefined,
-            startDate: startDate || undefined,
-            endDate: endDate || undefined,
-            page: 0,
-            size: 10,
-          },
-        })
-        .then((res) => setReports(res.data))
-        .catch((err) => {
-          console.error("검색 중 오류:", err);
-          setError("검색 중 오류가 발생했습니다.");
-        })
-        .finally(() => setLoading(false));
+      return;
     }
+    setLoading(true);
+    setError(null);
+    axios
+      .get("/api/reports", {
+        params: {
+          reporter: currentUser,
+          title: titleQuery || undefined,
+          startDate: startDate || undefined,
+          endDate: endDate || undefined,
+          page: 0,
+          size: 10,
+        },
+      })
+      .then((res) => setReports(res.data))
+      .catch((err) => {
+        console.error(err);
+        setError("검색 중 오류가 발생했습니다.");
+      })
+      .finally(() => setLoading(false));
   };
 
+  // 기간 단축 버튼
   const handlePreset = (days) => {
     const end = new Date();
     const start = new Date();
@@ -152,15 +143,13 @@ const Report = ({ useDummyData = true, currentUser }) => {
     setEndDate(end.toISOString().slice(0, 10));
   };
 
-  const handleRowClick = (boardNo) => {
-    navi(`/reports/${boardNo}`);
-  };
+  // 행 클릭
+  const handleRowClick = (boardNo) => navi(`/reports/${boardNo}`);
 
   return (
     <Report2>
-      <h2>내 신고 내역</h2>
+      <h2>내 신고 내역 ({currentUser})</h2>
 
-      {/* 검색 필터 섹션 */}
       <div className="report-filters">
         <input
           type="date"
@@ -210,17 +199,14 @@ const Report = ({ useDummyData = true, currentUser }) => {
               </tr>
             </thead>
             <tbody>
-              {reports.map((report) => (
-                <tr
-                  key={report.boardNo}
-                  onClick={() => handleRowClick(report.boardNo)}
-                >
-                  <td>{report.displayId}</td>
-                  <td className="report-title">{report.title}</td>
-                  <td>{report.reporter}</td>
-                  <td>{report.defendant}</td>
-                  <td>{report.applicationDate}</td>
-                  <td>{report.status}</td>
+              {reports.map((r) => (
+                <tr key={r.boardNo} onClick={() => handleRowClick(r.boardNo)}>
+                  <td>{r.displayId}</td>
+                  <td className="report-title">{r.title}</td>
+                  <td>{r.reporter}</td>
+                  <td>{r.defendant}</td>
+                  <td>{r.applicationDate}</td>
+                  <td>{r.status}</td>
                 </tr>
               ))}
             </tbody>
