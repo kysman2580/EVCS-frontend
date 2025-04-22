@@ -105,3 +105,70 @@
   margin: 0 2px;
   cursor: pointer;
 }
+
+/* 상세 내용 카드 */
+.Notice-detail-card {
+  margin-top: 30px;
+  padding: 25px 30px;
+  background: linear-gradient(135deg, #eaf6ff, #fdfdff);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  animation: slideDown 0.4s ease;
+  position: relative;
+}
+
+/* 헤더와 닫기 버튼 */
+.Notice-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.Notice-detail-header h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #34495e;
+}
+
+.Notice-detail-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #888;
+  transition: color 0.2s ease;
+}
+.Notice-detail-close:hover {
+  color: #e74c3c;
+}
+
+/* 메타 정보 */
+.Notice-detail-meta {
+  margin: 12px 0;
+  font-size: 14px;
+  color: #555;
+  display: flex;
+  gap: 15px;
+}
+
+/* 내용 */
+.Notice-detail-content {
+  font-size: 16px;
+  color: #2c3e50;
+  line-height: 1.6;
+  margin-top: 10px;
+  white-space: pre-wrap;
+}
+
+/* 슬라이드 애니메이션 */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
