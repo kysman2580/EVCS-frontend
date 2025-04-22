@@ -9,12 +9,12 @@ import {
   Pagination,
 } from "react-bootstrap";
 
-import NoticeNav from "../../Common/Nav/NoticeNav";
-import { BoardContainerDiv, BoardBodyDiv } from "../Board.styles";
+import NoticeNav from "../../AdminCommon/AdminNav/AdminNoitceNav";
+import "./AdminEventBoard.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const EventBoard = () => {
+const AdminEventBoard = () => {
   const navigate = useNavigate();
   const [searchType, setSearchType] = useState("title");
   const [searchText, setSearchText] = useState("");
@@ -32,7 +32,7 @@ const EventBoard = () => {
       evnetNo: 2,
       title: "첫 사용자 할인 이벤트~ 처음이시면 아 싸다 싸 미쳐따",
       author: "운영팀",
-      date: "2025-04-18",
+      date: "2025-04-20",
       image: "/event/first_sale_img.png",
       content: "전기충만 처음 이용하시나요? 그럼 할인받으세요 ~",
     },
@@ -40,7 +40,7 @@ const EventBoard = () => {
       evnetNo: 3,
       title: "밤에는 싸게 싸게 타고 노세요 이거 안타면 바보다 바보",
       author: "마케팅팀",
-      date: "2025-04-15",
+      date: "2025-04-20",
       image: "/event/night_sale_img.png",
       content: "야간에는 싸게 싸게 경치좀 보자",
     },
@@ -51,7 +51,7 @@ const EventBoard = () => {
   };
   return (
     <>
-      <BoardContainerDiv>
+      <div className="EventContainerDiv">
         <NoticeNav />
         <div style={{ width: "100%" }}>
           <div
@@ -70,7 +70,7 @@ const EventBoard = () => {
                     <option>내용</option>
                   </Form.Select>
                 </Col>
-                <Col md={9}>
+                <Col md={8}>
                   <Form.Control placeholder="검색어 입력" />
                 </Col>
                 <Col md={1}>
@@ -80,6 +80,15 @@ const EventBoard = () => {
                     onClick={handleSearch}
                   >
                     검색
+                  </Button>
+                </Col>
+                <Col md={1}>
+                  <Button
+                    className="w-100"
+                    variant="dark"
+                    onClick={() => navigate("/admin/goAdminEventEnrollForm")}
+                  >
+                    등록하기
                   </Button>
                 </Col>
               </Row>
@@ -115,7 +124,7 @@ const EventBoard = () => {
                               key={post.evnetNo}
                               style={{ cursor: "pointer" }}
                               onClick={() =>
-                                navigate("/goEventDetailPage", {
+                                navigate("/admin/goAdminEventDetailPage", {
                                   state: { post }, // ← 여기서 객체 넘기기
                                 })
                               }
@@ -134,7 +143,6 @@ const EventBoard = () => {
               </Row>
             </Container>
 
-            {/* ⬇️ 항상 아래 고정처럼 보이게 만드는 페이징 */}
             <footer className="footer-pagination mt-auto">
               <Pagination className="justify-content-center mb-0">
                 <Pagination.Item active>{1}</Pagination.Item>
@@ -143,9 +151,9 @@ const EventBoard = () => {
             </footer>
           </div>
         </div>
-      </BoardContainerDiv>
+      </div>
     </>
   );
 };
 
-export default EventBoard;
+export default AdminEventBoard;

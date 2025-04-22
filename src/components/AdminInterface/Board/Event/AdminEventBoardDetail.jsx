@@ -1,0 +1,79 @@
+import NoticeNav from "../../AdminCommon/AdminNav/AdminNoitceNav";
+import { Container, Row, Col, Card, Button } from "react-bootstrap";
+import { BoardContainerDiv } from "../../../UserInterface/Board/Board.styles";
+import { useNavigate, useLocation } from "react-router-dom";
+
+const AdminEventBoardDetail = () => {
+  const location = useLocation();
+  const post = location.state?.post;
+  const navigate = useNavigate();
+
+  return (
+    <>
+      <BoardContainerDiv style={{ height: "900px" }}>
+        <NoticeNav />
+        <div style={{ width: "100%" }}>
+          <Container className="my-5">
+            <Row className="justify-content-center">
+              <Col md={8}>
+                <Card className="p-4">
+                  {/* 사진 */}
+                  <div className="text-center mb-4">
+                    <img
+                      src={post.image}
+                      alt="이벤트 이미지"
+                      className="img-fluid rounded"
+                      style={{ maxHeight: "200px", objectFit: "cover" }}
+                    />
+                  </div>
+
+                  {/* 제목 */}
+                  <div className="mb-3">
+                    <strong>이벤트 제목:</strong>
+                    <div className="border rounded p-2 mt-1 bg-light">
+                      {post.title}
+                    </div>
+                  </div>
+
+                  {/* 내용 */}
+                  <div className="mb-4">
+                    <strong>이벤트 내용:</strong>
+                    <div
+                      className="border rounded p-3 mt-1 bg-light"
+                      style={{ minHeight: "300px" }}
+                    >
+                      {post.content}
+                    </div>
+                  </div>
+
+                  {/* 목록으로 돌아가기 */}
+                  <Row className="my-3">
+                    <Col className="text-start">
+                      <Button variant="secondary" onClick={() => navigate(-1)}>
+                        목록으로
+                      </Button>
+                    </Col>
+                    <Col className="text-end">
+                      <Button
+                        variant="dark"
+                        onClick={() =>
+                          navigate("/admin/goAdminEventUpdateForm", {
+                            state: { post }, // ← 여기서 객체 넘기기
+                          })
+                        }
+                      >
+                        수정하기
+                      </Button>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+            </Row>
+          </Container>
+        </div>
+      </BoardContainerDiv>
+    </>
+  );
+};
+
+export default AdminEventBoardDetail;

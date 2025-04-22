@@ -19,13 +19,13 @@ const MainSwiper = () => {
         style={{ width: "1000px", height: "400px" }}
       >
         <SwiperSlide>
-          <SwiperImg src="images/first_sale_img.png" alt="" />
+          <SwiperImg src="event/first_sale_img.png" alt="" />
         </SwiperSlide>
         <SwiperSlide>
-          <SwiperImg src="images/night_sale_img.png" alt="" />
+          <SwiperImg src="event/night_sale_img.png" alt="" />
         </SwiperSlide>
         <SwiperSlide>
-          <SwiperImg src="images/hot_deal_img.png" alt="" />
+          <SwiperImg src="event/hot_deal_img.png" alt="" />
         </SwiperSlide>
       </Swiper>
     </>
