@@ -117,7 +117,7 @@ function Notice() {
           {/* 검색창 */}
           <input
             type="text"
-            placeholder="제목 또는 작성자 검색"
+            placeholder="제목 또는 작성일시,작성자 검색"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             style={{ marginBottom: "10px", padding: "5px", width: "250px" }}
