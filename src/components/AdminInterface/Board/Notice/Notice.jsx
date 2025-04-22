@@ -88,7 +88,8 @@ function Notice() {
   const filteredNotices = notices.filter(
     (n) =>
       n.title.toLowerCase().includes(search.toLowerCase()) ||
-      n.author.toLowerCase().includes(search.toLowerCase())
+      n.author.toLowerCase().includes(search.toLowerCase()) ||
+      n.date.toLowerCase().includes(search.toLowerCase())
   );
 
   // 페이지네이션 관련
@@ -112,6 +113,16 @@ function Notice() {
       <div style={{ width: "90%" }}>
         <div className="Notice">
           <h1>공지사항</h1>
+
+          {/* 검색창 */}
+          <input
+            type="text"
+            placeholder="제목 또는 작성일시,작성자 검색"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{ marginBottom: "10px", padding: "5px", width: "250px" }}
+          />
+
           <div className="Notice-container">
             <table>
               <thead>
