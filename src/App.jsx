@@ -15,6 +15,7 @@ import ChargingMap from "./components/UserInterface/ChargingMap/ChargingMap";
 /* 신고 관련 */
 import IntegratedReportingPage from "./components/UserInterface/Report/IntegratedReportingPage";
 import Report from "./components/UserInterface/Report/Report";
+import AdminReport from "./components/UserInterface/Report/adminReport";
 
 /* 게시판 페이지 관련 */
 import UserNotice from "./components/UserInterface/Board/Notice/UserNotice";
@@ -69,7 +70,7 @@ function App() {
             <Route path="/loginPage" element={<LoginPage />} />
 
             {/* 신고 관련 */}
-            <Route path="/report" element={<Report useDummyData={true} />} />
+            <Route path="/report/*" element={<Report useDummyData={true} />} />
             <Route
               path="/reportingPage"
               element={<IntegratedReportingPage />}
@@ -117,6 +118,12 @@ function App() {
               {/* 게시판 페이지 관련 */}
               <Route path="notice" element={<AdminNotice />} />
               <Route path="notice/:id" element={<NoticeDetail />} />
+
+              {/* 신고 관련*/}
+              <Route
+                path="/admin/adminReport/*"
+                element={<AdminReport useDummyData={true} />}
+              />
             </Route>
           </Route>
         </Routes>
