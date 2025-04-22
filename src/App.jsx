@@ -25,8 +25,10 @@ import AdminRoute from "./components/UserInterface/Common/AdminRoute/AdminRoute"
 import DRBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteBoard/DRBoard";
 import AdminNotice from "./components/AdminInterface/Board/Notice/Notice";
 import NoticeDetail from "./components/AdminInterface/Board/Notice/NoticeDetail";
+import Report from "./components/UserInterface/Report/Report";
 
 function App() {
+  const currentUser = "홍길동";
   return (
     <>
       <GlobalStyle />
@@ -49,6 +51,12 @@ function App() {
             <Route path="/subRentCar" element={<SubscribeRentCar />}></Route>
             <Route path="/newsMain" element={<NewsMain />}></Route>
             <Route path="/newsDetail" element={<NewsDetail />}></Route>
+            <Route
+              path="/report"
+              element={
+                <Report useDummyData={true} currentUser={currentUser}></Report>
+              }
+            ></Route>
             <Route
               path="/reportingPage"
               element={<IntegratedReportingPage />}
