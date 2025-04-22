@@ -11,7 +11,7 @@ import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import AutoAwesomeMotionOutlinedIcon from "@mui/icons-material/AutoAwesomeMotionOutlined";
 import { useNavigate } from "react-router-dom";
 import { useRef, useState } from "react";
-
+import DriveRouteMap from "../DriveRouteMap/DriveRouteMap";
 import {
   H1,
   H3,
@@ -42,11 +42,13 @@ import {
   InsertComment,
   Commentarea,
 } from "./DRBoard.styles";
-import { CustomPrev, CustomNext } from "../CustomSlids/CustomStildes";
+import { CustomPrev, CustomNext } from "../CustomSlides/CustomStildes";
 
 const DRBoard = () => {
   const [openContentModal, setOpenContentModal] = useState(false);
   const [openCommentModal, setOpenCommentModal] = useState(false);
+  const [openMapModal, setOpenMapModal] = useState(false);
+
   const [heart, setHeart] = useState(false);
   const ref = useRef(null);
   const [imagesUrl, setImagesUrl] = useState([]);
@@ -213,7 +215,7 @@ const DRBoard = () => {
                                   style={{
                                     width: "100%",
                                     height: "100%",
-                                    objectFit: "cover", // 잘리지 않게
+                                    objectFit: "cover",
                                   }}
                                   alt={`preview-${index}`}
                                 />
@@ -239,12 +241,31 @@ const DRBoard = () => {
                     )}
                   </LeftContent>
                   <RightContent>
-                    <DriveRoute>드라이브 루트 선택하기</DriveRoute>
+                    <DriveRoute
+                      onClick={() => setOpenMapModal(true)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      드라이브 루트 선택하기
+                    </DriveRoute>
                     <DriveContent>
                       <Textarea type="text" placeholder="내용을 작성해주세요" />
                     </DriveContent>
                   </RightContent>
                 </ModalContent>
+              </ModalLabel>
+            </ModalWrapper>
+          )}
+
+          {/* 드라이브 경로 모달 */}
+          {openMapModal && (
+            <ModalWrapper>
+              <CloseBtn onClick={() => setOpenMapModal(false)}>
+                <CloseRoundedIcon style={{ fontSize: "40px" }} />
+              </CloseBtn>
+              <ModalLabel>
+                <ModalHeader>드라이브 경로 선택</ModalHeader>
+
+                <DriveRouteMap style={{}} />
               </ModalLabel>
             </ModalWrapper>
           )}
