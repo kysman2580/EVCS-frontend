@@ -125,25 +125,20 @@ function Notice() {
               </thead>
               <tbody>
                 {paginatedNotices.map((notice, index) => (
-                  <tr key={startIndex + index}>
-                    <td
-                      onClick={() =>
-                        navigate(`/admin/notice/${startIndex + index}`)
-                      }
-                      style={{
-                        cursor: "pointer",
-                        color: "black",
-                        textDecoration: "none",
-                      }}
-                    >
-                      {notice.title}
-                    </td>
+                  <tr
+                    key={startIndex + index}
+                    onClick={() =>
+                      navigate(`/admin/notice/${startIndex + index}`, "_blank")
+                    }
+                    style={{ cursor: "pointer" }}
+                  >
+                    <td>{notice.title}</td>
                     <td>{notice.date}</td>
                     <td>{notice.author}</td>
                     <td>
                       <button
                         onClick={(e) => {
-                          e.stopPropagation();
+                          e.stopPropagation(); // 행 클릭 방지
                           handleDelete(startIndex + index);
                         }}
                       >
@@ -153,7 +148,7 @@ function Notice() {
                     <td>
                       <button
                         onClick={(e) => {
-                          e.stopPropagation();
+                          e.stopPropagation(); // 행 클릭 방지
                           handleEdit(startIndex + index);
                         }}
                       >
@@ -168,6 +163,21 @@ function Notice() {
 
           {/* 페이지네이션 */}
           <div className="Notice-pagination">
+            {/* 처음 페이지로 이동 */}
+            <button
+              onClick={() => handlePageChange(1)}
+              disabled={currentPage === 1}
+            >
+              ◀ 처음
+            </button>
+
+            {/* 이전 페이지 */}
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              ◀ 이전
+            </button>
             {Array.from({ length: totalPages }, (_, i) => (
               <button
                 key={i}
@@ -180,6 +190,21 @@ function Notice() {
                 {i + 1}
               </button>
             ))}
+            {/* 다음 페이지 */}
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              다음 ▶
+            </button>
+
+            {/* 마지막 페이지로 이동 */}
+            <button
+              onClick={() => handlePageChange(totalPages)}
+              disabled={currentPage === totalPages}
+            >
+              끝 ▶
+            </button>
           </div>
 
           {/* 작성 버튼 */}
