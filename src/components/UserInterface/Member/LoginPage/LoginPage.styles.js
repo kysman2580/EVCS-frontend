@@ -34,9 +34,14 @@ font-weight: bold;
 cursor: pointer;
 margin-left: 10px;
 border-radius: 5px;
+font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+font-size: 13px;
+
 
     &:hover{
-        
+        color:rgb(255, 255, 255);
+        background-color:rgb(73, 168, 76);
+        transform: scale(1.05);
     }
 
 `;
@@ -53,6 +58,7 @@ export const StyledFindDiv = styled.div`
     justify-content: center;
     align-items: center;
     margin-top: 20px;
+    padding: 4px 8px;
 `;
 
 
@@ -61,10 +67,13 @@ export const Styled_a = styled.a`
     color: gray;
     cursor: pointer;
     margin: 12px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    
 
     &:hover{
     text-decoration: none;
-    border-bottom: solid 1px black;
+    transform: scale(1.05);
+
     }
 `;
 
@@ -122,12 +131,44 @@ export const StyledLoginButton = styled.button`
     width: 380px;
     height: 45px;
     border-radius: 10px;
-    border: solid 1px gray;
+    border: solid 1px;
+    background-color: #4caf50;
+    color: white;
     margin-top: 10px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 
     display: flex;
     justify-content: center;
     align-items: center;
+
+    &:hover{
+        color:rgb(255, 255, 255);
+        background-color:rgb(73, 168, 76);
+        transform: scale(1.05);
+    }
+`;
+
+
+export const StyledSignUpButton = styled.button`
+    width: 350px;
+    height: 45px;
+    border-radius: 10px;
+    border: solid 1px gray;
+    margin-top: 30px;
+    background-color: #4caf50;
+    color: white;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    border: solid 1px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:hover{
+        color:rgb(255, 255, 255);
+        background-color:rgb(73, 168, 76);
+        transform: scale(1.05);
+    }
 `;
 
 
@@ -174,3 +215,30 @@ export const Styled_N = styled.label`
 
 
 
+/* 인증코드 입력 스타일 */
+export const VerificationWrapper = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 65px;
+`;
+
+export const VerifyButton = styled.button`
+  position: relative;
+  height: 40px;
+  width: 55px;
+  border: none;
+  background-color:rgb(19, 42, 60);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 10px;
+  border-radius: 5px;
+  font-size: 13px;
+
+  &:hover {
+    background-color: #0b7dda;
+    transform: scale(1.05);
+  }
+`;
