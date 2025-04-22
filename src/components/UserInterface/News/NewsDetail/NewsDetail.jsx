@@ -1,24 +1,14 @@
-"use client";
-
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import * as S from "./NewsDetail.styles";
+import { Button } from "react-bootstrap";
+import axios from "axios";
 
-const NewsDetail = () => {
-  const [searchParams] = useSearchParams();
-  const safeDecode = (value) => {
-    try {
-      return decodeURIComponent(value || "");
-    } catch {
-      return value || "";
-    }
-  };
-
-  const title = safeDecode(searchParams.get("title"));
-  const description = safeDecode(searchParams.get("description"));
-  const pubDate = safeDecode(searchParams.get("pubDate"));
-  const imageUrl = safeDecode(searchParams.get("imageUrl"));
-  const originallink = safeDecode(searchParams.get("originallink"));
+const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { title, description, pubDate, imageUrl, originallink, query } =
+    location.state || {};
 
   const [article] = useState({
     title,
@@ -26,9 +16,41 @@ const NewsDetail = () => {
     pubDate,
     imageUrl,
     originallink,
+    query,
   });
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+
+  useEffect(() => {
+    console.log("location.state 확인:", location.state);
+
+    if (!title || !originallink) return;
+
+    axios
+      .get(`${backendUrl}/api/news/detail`, {
+        params: { title, originUrl: originallink },
+      })
+      .then((res) => {
+        if (!res.data.exists) {
+          axios
+            .post(`${backendUrl}/api/news/insert`, {
+              title,
+              originUrl: originallink,
+              description,
+              imageUrl,
+              pubDate,
+              query,
+            })
+            .then((insertRes) => {
+              setComments(insertRes.data.comments);
+              // 좋아요/싫어요/북마크도 여기에
+            });
+        } else {
+          setComments(res.data.comments);
+          // 좋아요/싫어요/북마크도 세팅
+        }
+      });
+  }, []);
 
   const handleAddComment = () => {
     if (!newComment.trim()) return;
@@ -64,21 +86,18 @@ const NewsDetail = () => {
 
   return (
     <S.Container>
-      <S.BoardTitle>토론 게시판</S.BoardTitle>
       <S.ArticleTitle>
-        <strong>{article.title}</strong>
+        <strong>토론 게시판</strong>
       </S.ArticleTitle>
 
       <S.ArticleBox>
         <S.ArticleContent>
-          <S.ArticleCategory>카테고리</S.ArticleCategory>
+          <S.ArticleCategory>{article.query}</S.ArticleCategory>
+          <S.ArticleCategory>{article.pubDate}</S.ArticleCategory>
           <S.ArticleText>
-            <div>기사의 제목</div>
-            <div>{article.title}</div>
-            <div>기사의 요약 내용</div>
+            <h2>{article.title}</h2>
+            <h5>기사의 요약 내용</h5>
             <div>{article.description}</div>
-            <div>기사 날짜</div>
-            <div>{article.pubDate}</div>
             <div>기사 이미지</div>
             <img
               src={article.imageUrl}
@@ -95,6 +114,16 @@ const NewsDetail = () => {
             </a>
           </S.ArticleText>
           <S.ArticleActions>
+            <Button
+              style={{
+                backgroundColor: "#03c75a",
+                color: "#fff",
+                border: "none",
+              }}
+              onClick={() => navigate(-1)}
+            >
+              뒤로가기
+            </Button>
             <S.ActionButton>좋아요</S.ActionButton>
             <S.ActionButton>싫어요</S.ActionButton>
           </S.ArticleActions>
