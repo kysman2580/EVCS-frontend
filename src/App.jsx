@@ -13,9 +13,10 @@ import NewsDetail from "./components/UserInterface/News/NewsDetail/NewsDetail";
 import ChargingMap from "./components/UserInterface/ChargingMap/ChargingMap";
 
 /* 신고 관련 */
-import IntegratedReportingPage from "./components/UserInterface/Report/IntegratedReportingPage";
-import Report from "./components/UserInterface/Report/Report";
-import AdminReport from "./components/UserInterface/Report/adminReport";
+import IntegratedReportingPage from "./components/UserInterface/Report/IntegratedReportingPage/IntegratedReportingPage";
+import Report from "./components/UserInterface/Report/Report/Report";
+import AdminReport from "./components/AdminInterface/Report/AdminReport";
+import ReportDetail from "./components/UserInterface/Report/ReportDetail/ReportDetail";
 
 /* 게시판 페이지 관련 */
 import UserNotice from "./components/UserInterface/Board/Notice/UserNotice";
@@ -75,6 +76,10 @@ function App() {
               path="/reportingPage"
               element={<IntegratedReportingPage />}
             ></Route>
+            <Route
+              path="/reports/:boardNo"
+              element={<ReportDetail useDummyData={true} />}
+            />
 
             {/* 누스 관련 */}
             <Route path="/newsMain" element={<NewsMain />}></Route>
