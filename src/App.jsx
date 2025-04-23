@@ -4,8 +4,7 @@ import AdminMain from "./components/AdminInterface/Main/AdminMain";
 import Main from "./components/UserInterface/Main/Main";
 
 /* 드라이빙 루뜨 관련 */
-import DRBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteBoard/DRBoard";
-
+import DRBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteBoard/drBoard";
 /* 누스 관련 */
 import NewsMain from "./components/UserInterface/News/NewsMain/NewsMain";
 import NewsDetail from "./components/UserInterface/News/NewsDetail/NewsDetail";
@@ -15,12 +14,19 @@ import ChargingMap from "./components/UserInterface/ChargingMap/ChargingMap";
 
 /* 신고 관련 */
 import IntegratedReportingPage from "./components/UserInterface/Report/IntegratedReportingPage";
+import Report from "./components/UserInterface/Report/Report";
+import AdminReport from "./components/UserInterface/Report/adminReport";
 
 /* 게시판 페이지 관련 */
 import UserNotice from "./components/UserInterface/Board/Notice/UserNotice";
 import AdminNotice from "./components/AdminInterface/Board/Notice/Notice";
 import NoticeDetail from "./components/AdminInterface/Board/Notice/NoticeDetail";
 import EventBoard from "./components/UserInterface/Board/Event/EventBoard";
+import EventBoardDetail from "./components/UserInterface/Board/Event/EventBoardDetail";
+import AdminEventBoard from "./components/AdminInterface/Board/Event/AdminEventBoard";
+import AdminEventBoardDetail from "./components/AdminInterface/Board/Event/AdminEventBoardDetail";
+import AdminEventBoardUpdateForm from "./components/AdminInterface/Board/Event/AdminEventBoardUpdateForm";
+import AdminEventBoardEnrollForm from "./components/AdminInterface/Board/Event/AdminEventBoardEnrollForm";
 
 /* 회원관련 */
 import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
@@ -35,19 +41,14 @@ import HotdealRentCar from "./components/UserInterface/RentCar/HotdealRentCar/Ho
 import RentalPage from "./components/UserInterface/RentCar/TimeRentCar/RentalPage";
 import TimeRentCar from "./components/AdminInterface/RentCar/TimeRentCar/TimeRentCar";
 import AdminLongTermRentCar from "./components/AdminInterface/RentCar/LongTermRentCar/AdminLongTermRentCar";
+import AdminRentCarEnrollPage from "./components/AdminInterface/RentCar/LongTermRentCar/AdminRentCarEnrollPage";
+import AdminRentCarUpdatePage from "./components/AdminInterface/RentCar/LongTermRentCar/AdminRentCarUpdatePage";
 
 /* User, Admin Interce 분리 관련 */
 import UserLayout from "./components/Layout/UserInterface/UserLayout";
 import AdminLayout from "./components/Layout/AdminInterface/AdminLayout";
 import { AuthProvider } from "./components/UserInterface/Context/AuthContext/AuthContext";
 import AdminRoute from "./components/UserInterface/Common/AdminRoute/AdminRoute";
-import AdminRentCarEnrollPage from "./components/AdminInterface/RentCar/LongTermRentCar/AdminRentCarEnrollPage";
-import AdminRentCarUpdatePage from "./components/AdminInterface/RentCar/LongTermRentCar/AdminRentCarUpdatePage";
-import EventBoardDetail from "./components/UserInterface/Board/Event/EventBoardDetail";
-import AdminEventBoard from "./components/AdminInterface/Board/Event/AdminEventBoard";
-import AdminEventBoardDetail from "./components/AdminInterface/Board/Event/AdminEventBoardDetail";
-import AdminEventBoardUpdateForm from "./components/AdminInterface/Board/Event/AdminEventBoardUpdateForm";
-import AdminEventBoardEnrollForm from "./components/AdminInterface/Board/Event/AdminEventBoardEnrollForm";
 
 function App() {
   return (
@@ -57,7 +58,7 @@ function App() {
         <Routes>
           {/* User Interface */}
           <Route element={<UserLayout />}>
-            <Route path="/" element={<Main />} />
+            <Route path="/" element={<Main />}></Route>
 
             {/* 드라이빙 루뜨 관련 */}
             <Route path="/driveRouteBoard" element={<DRBoard />} />
@@ -69,11 +70,13 @@ function App() {
             <Route path="/notice" element={<UserNotice />} />
             <Route path="/eventBoard" element={<EventBoard />} />
             <Route path="/goEventDetailPage/*" element={<EventBoardDetail />} />
+            <Route path="/timerentalPage" element={<RentalPage />}></Route>
 
             {/* 회원관련 */}
             <Route path="/loginPage" element={<LoginPage />} />
 
             {/* 신고 관련 */}
+            <Route path="/report/*" element={<Report useDummyData={true} />} />
             <Route
               path="/reportingPage"
               element={<IntegratedReportingPage />}
@@ -133,6 +136,11 @@ function App() {
               <Route
                 path="goAdminEventEnrollForm"
                 element={<AdminEventBoardEnrollForm />}
+              />
+              {/* 신고 관련*/}
+              <Route
+                path="/admin/adminReport/*"
+                element={<AdminReport useDummyData={true} />}
               />
             </Route>
           </Route>

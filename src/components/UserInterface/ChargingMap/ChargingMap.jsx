@@ -14,7 +14,7 @@ const KakaoMap = () => {
   const [loading, setLoading] = useState(true);
   const [kakaoloadErring, setKakaoLoadErring] = useState(false);
   const [evloadErring, setEvLoadErring] = useState(false);
-  const EvErrText = "EV 관련 에러코드 : 00";
+  const EvErrText = "EV 정보를 불러오기 실패하였습니다.";
   // EV 관련 에러 코드 정리
   // 00 = api 호출키 이상함 or 데이터 가져오지 못함
   // 01 = 정상 적으로 호출 하였으나 상태 코드가 없음
@@ -85,7 +85,10 @@ const KakaoMap = () => {
       );
 
       // 정보창 객체 생성
-      const infoWindow = new window.kakao.maps.InfoWindow({ zIndex: 1 });
+      const infoWindow = new window.kakao.maps.InfoWindow({
+        zIndex: 1,
+        removable: true, // ← 닫기(X)
+      });
 
       // EV 충전소 API 호출 함수
       function fetchEVChargerInfo(
@@ -112,7 +115,6 @@ const KakaoMap = () => {
                 resultCodeElems.length === 0 ||
                 !resultCodeElems[0].textContent.trim()
               ) {
-                EvErrText("EV 관련 에러코드 : 01"); // 요소가 없거나 값이 비어있음
                 setLoading(false);
                 setEvLoadErring(true);
               } else {
@@ -121,7 +123,6 @@ const KakaoMap = () => {
 
                 // "00"이 아닐 때만 에러 처리
                 if (code !== "00") {
-                  EvErrText("EV 관련 에러코드 : 02");
                   setLoading(false);
                   setEvLoadErring(true);
                 }
@@ -139,7 +140,6 @@ const KakaoMap = () => {
                 const noteNode = item.getElementsByTagName("note")[0];
                 const limitYnNode = item.getElementsByTagName("limitYn")[0];
                 const zscodeNode = item.getElementsByTagName("zscode")[0];
-                const resultCode = item.getElementsByTagName("resultCode")[0];
                 // 제한 충전소는 건너뜁니다.
                 if (limitYnNode && limitYnNode.textContent === "Y") continue;
 
@@ -172,7 +172,6 @@ const KakaoMap = () => {
                     title: title,
                     image: customMarkerImage,
                   });
-
                   // 마커 클릭 시 정보창 표시
                   window.kakao.maps.event.addListener(
                     marker,
@@ -182,7 +181,7 @@ const KakaoMap = () => {
                       <div style="padding:5px; width:250px;">
                         <strong>${title}</strong><br/>
                         상태: ${statText}<br/>
-                        충전 용량: ${outputValue}<br/>
+                        충전 용량: ${outputValue} kW<br/>
                         충전기 타입: ${chgerTypeText}<br/>
                         ${noteText ? `<br/>주의사항: ${noteText}` : ""}
                       </div>
@@ -194,7 +193,7 @@ const KakaoMap = () => {
                 }
               }
             } else {
-              console.error("충전소 데이터를 가져오지 못했습니다.", xmlText);
+              //console.error("충전소 데이터를 가져오지 못했습니다.", xmlText);
               setLoading(false);
               setEvLoadErring(true);
             }
@@ -265,14 +264,16 @@ const KakaoMap = () => {
           },
           (error) => {
             console.error("사용자 위치 확인 실패:", error);
-            setNotice("사용자 위치 비동의로 서울시 100개의 위치만 출력됩니다.");
-            fetchEVChargerInfo("11", null, 100);
+            setNotice(
+              "사용자 위치 확인 실패 서울시 1000개의 위치만 출력됩니다."
+            );
+            fetchEVChargerInfo("11", null, 1000);
           }
         );
       } else {
         console.error("Geolocation 미지원");
-        setNotice("사용자 위치 비동의로 서울시 100개의 위치만 출력됩니다.");
-        fetchEVChargerInfo("11", null, 100);
+        setNotice("사용자 위치 비동의로 서울시 1000개의 위치만 출력됩니다.");
+        fetchEVChargerInfo("11", null, 1000);
       }
     });
   }, []);
@@ -280,8 +281,8 @@ const KakaoMap = () => {
   return (
     <BodyMaps>
       {loading && <LoadingMaps>{displayText}</LoadingMaps>}
-      {kakaoloadErring && <div>{ErrText}</div>}
-      {evloadErring && <div>{EvErrText}</div>}
+      {kakaoloadErring && <LoadingMaps>{ErrText}</LoadingMaps>}
+      {evloadErring && <LoadingMaps>{EvErrText}</LoadingMaps>}
       <OptionsBar>옵션 들어갈 예정입니다.</OptionsBar>
       <Maps id="map"></Maps>
       {notice && <GuideBook>{notice}</GuideBook>}
