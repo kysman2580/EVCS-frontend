@@ -49,6 +49,8 @@ import UserLayout from "./components/Layout/UserInterface/UserLayout";
 import AdminLayout from "./components/Layout/AdminInterface/AdminLayout";
 import { AuthProvider } from "./components/UserInterface/Context/AuthContext/AuthContext";
 import AdminRoute from "./components/UserInterface/Common/AdminRoute/AdminRoute";
+import AdminHotDealRentCar from "./components/AdminInterface/RentCar/HotDealRentCar/AdminHotDealRentCar";
+import AdminHotDealRentCarEnrollForm from "./components/AdminInterface/RentCar/HotDealRentCar/AdminHotDealRentCarEnrollForm";
 
 function App() {
   return (
@@ -136,6 +138,11 @@ function App() {
               <Route
                 path="goAdminEventEnrollForm"
                 element={<AdminEventBoardEnrollForm />}
+              />
+              <Route path="hotDealRentCar" element={<AdminHotDealRentCar />} />
+              <Route
+                path="goHotdealEnrollForm"
+                element={<AdminHotDealRentCarEnrollForm />}
               />
               {/* 신고 관련*/}
               <Route
