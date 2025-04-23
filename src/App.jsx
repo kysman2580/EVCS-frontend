@@ -21,6 +21,12 @@ import AdminReport from "./components/UserInterface/Report/adminReport";
 import UserNotice from "./components/UserInterface/Board/Notice/UserNotice";
 import AdminNotice from "./components/AdminInterface/Board/Notice/Notice";
 import NoticeDetail from "./components/AdminInterface/Board/Notice/NoticeDetail";
+import EventBoard from "./components/UserInterface/Board/Event/EventBoard";
+import EventBoardDetail from "./components/UserInterface/Board/Event/EventBoardDetail";
+import AdminEventBoard from "./components/AdminInterface/Board/Event/AdminEventBoard";
+import AdminEventBoardDetail from "./components/AdminInterface/Board/Event/AdminEventBoardDetail";
+import AdminEventBoardUpdateForm from "./components/AdminInterface/Board/Event/AdminEventBoardUpdateForm";
+import AdminEventBoardEnrollForm from "./components/AdminInterface/Board/Event/AdminEventBoardEnrollForm";
 
 /* 회원관련 */
 import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
@@ -53,18 +59,18 @@ function App() {
           {/* User Interface */}
           <Route element={<UserLayout />}>
             <Route path="/" element={<Main />}></Route>
-            <Route path="/timerentalPage" element={<RentalPage />}></Route>
-            <Route path="/driveRouteBoard" element={<DRBoard />}></Route>
-            <Route path="/loginPage" element={<LoginPage />} />
 
             {/* 드라이빙 루뜨 관련 */}
-            <Route path="/driveRouteBoard" element={<DRBoard />}></Route>
+            <Route path="/driveRouteBoard" element={<DRBoard />} />
 
             {/* 충전소 위치 관련 */}
-            <Route path="/chargingMap" element={<ChargingMap />}></Route>
+            <Route path="/chargingMap" element={<ChargingMap />} />
 
             {/* 게시판 페이지 관련 */}
-            <Route path="/notice" element={<UserNotice />}></Route>
+            <Route path="/notice" element={<UserNotice />} />
+            <Route path="/eventBoard" element={<EventBoard />} />
+            <Route path="/goEventDetailPage/*" element={<EventBoardDetail />} />
+            <Route path="/timerentalPage" element={<RentalPage />}></Route>
 
             {/* 회원관련 */}
             <Route path="/loginPage" element={<LoginPage />} />
@@ -77,18 +83,18 @@ function App() {
             ></Route>
 
             {/* 누스 관련 */}
-            <Route path="/newsMain" element={<NewsMain />}></Route>
-            <Route path="/newsDetail" element={<NewsDetail />}></Route>
+            <Route path="/newsMain" element={<NewsMain />} />
+            <Route path="/newsDetail" element={<NewsDetail />} />
 
             {/* 렌트카 관련 */}
-            <Route path="/hotRentCar" element={<HotdealRentCar />}></Route>
-            <Route path="/subRentCar" element={<SubscribeRentCar />}></Route>
+            <Route path="/hotRentCar" element={<HotdealRentCar />} />
+            <Route path="/subRentCar" element={<SubscribeRentCar />} />
             <Route
               path="/LongTermRentDetail"
               element={<LongTermRentCarDetail />}
-            ></Route>
-            <Route path="/longRentCar" element={<LongTermRentCar />}></Route>
-            <Route path="/timerentalPage" element={<RentalPage />}></Route>
+            />
+            <Route path="/longRentCar" element={<LongTermRentCar />} />
+            <Route path="/timerentalPage" element={<RentalPage />} />
           </Route>
 
           {/* 아래부터는 관리자페이지만 적자 */}
@@ -96,29 +102,41 @@ function App() {
           {/* Admin Interface */}
           <Route path="/admin" element={<AdminRoute />}>
             <Route element={<AdminLayout />}>
-              <Route path="main" element={<AdminMain />}></Route>
+              <Route path="main" element={<AdminMain />} />
 
               {/* 렌트카 관련 */}
-              <Route path="timeCar" element={<TimeRentCar />}></Route>
-              <Route path="insertCar" element={<InsertCar />}></Route>
-              <Route path="carManagement" element={<CarManagement />}></Route>
+              <Route path="timeCar" element={<TimeRentCar />} />
+              <Route path="insertCar" element={<InsertCar />} />
+              <Route path="carManagement" element={<CarManagement />} />
               <Route
                 path="/admin/adminLongTermRentCar"
                 element={<AdminLongTermRentCar />}
-              ></Route>
+              />
               <Route
                 path="/admin/rentCarEnrollPage"
                 element={<AdminRentCarEnrollPage />}
-              ></Route>
+              />
               <Route
                 path="/admin/goUpdateRentCarPage/*"
                 element={<AdminRentCarUpdatePage />}
-              ></Route>
+              />
 
               {/* 게시판 페이지 관련 */}
               <Route path="notice" element={<AdminNotice />} />
               <Route path="notice/:id" element={<NoticeDetail />} />
-
+              <Route path="adminEventBoard" element={<AdminEventBoard />} />
+              <Route
+                path="goAdminEventDetailPage"
+                element={<AdminEventBoardDetail />}
+              />
+              <Route
+                path="goAdminEventUpdateForm"
+                element={<AdminEventBoardUpdateForm />}
+              />
+              <Route
+                path="goAdminEventEnrollForm"
+                element={<AdminEventBoardEnrollForm />}
+              />
               {/* 신고 관련*/}
               <Route
                 path="/admin/adminReport/*"

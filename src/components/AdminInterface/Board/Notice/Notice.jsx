@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../Notice/Notice.css";
+import AdminNoitceNav from "../../AdminCommon/AdminNav/AdminNoitceNav";
 
 function Notice() {
   const navigate = useNavigate();
@@ -109,159 +110,169 @@ function Notice() {
 
   return (
     <>
-      <div style={{ width: "10%" }}>{/* nav 들어갈 자리 */}</div>
-      <div style={{ width: "90%" }}>
-        <div className="Notice">
-          <h1>공지사항</h1>
+      <div style={{ display: "flex" }}>
+        <AdminNoitceNav />
+        <div style={{ width: "90%" }}>
+          <div className="Notice">
+            <h1>공지사항</h1>
 
-          {/* 검색창 */}
-          <input
-            type="text"
-            placeholder="제목 또는 작성일시,작성자 검색"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{ marginBottom: "10px", padding: "5px", width: "250px" }}
-          />
+            {/* 검색창 */}
+            <input
+              type="text"
+              placeholder="제목 또는 작성일시,작성자 검색"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              style={{ marginBottom: "10px", padding: "5px", width: "250px" }}
+            />
 
-          <div className="Notice-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>제목</th>
-                  <th>작성일시</th>
-                  <th>작성자</th>
-                  <th>삭제</th>
-                  <th>수정</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedNotices.map((notice, index) => (
-                  <tr
-                    key={startIndex + index}
-                    onClick={() =>
-                      navigate(`/admin/notice/${startIndex + index}`, "_blank")
-                    }
-                    style={{ cursor: "pointer" }}
-                  >
-                    <td>{notice.title}</td>
-                    <td>{notice.date}</td>
-                    <td>{notice.author}</td>
-                    <td>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation(); // 행 클릭 방지
-                          handleDelete(startIndex + index);
-                        }}
-                      >
-                        삭제
-                      </button>
-                    </td>
-                    <td>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation(); // 행 클릭 방지
-                          handleEdit(startIndex + index);
-                        }}
-                      >
-                        수정
-                      </button>
-                    </td>
+            <div className="Notice-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>제목</th>
+                    <th>작성일시</th>
+                    <th>작성자</th>
+                    <th>삭제</th>
+                    <th>수정</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {paginatedNotices.map((notice, index) => (
+                    <tr
+                      key={startIndex + index}
+                      onClick={() =>
+                        navigate(
+                          `/admin/notice/${startIndex + index}`,
+                          "_blank"
+                        )
+                      }
+                      style={{ cursor: "pointer" }}
+                    >
+                      <td>{notice.title}</td>
+                      <td>{notice.date}</td>
+                      <td>{notice.author}</td>
+                      <td>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation(); // 행 클릭 방지
+                            handleDelete(startIndex + index);
+                          }}
+                        >
+                          삭제
+                        </button>
+                      </td>
+                      <td>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation(); // 행 클릭 방지
+                            handleEdit(startIndex + index);
+                          }}
+                        >
+                          수정
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-          {/* 페이지네이션 */}
-          <div className="Notice-pagination">
-            {/* 처음 페이지로 이동 */}
-            <button
-              onClick={() => handlePageChange(1)}
-              disabled={currentPage === 1}
-            >
-              ◀ 처음
-            </button>
-
-            {/* 이전 페이지 */}
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              ◀ 이전
-            </button>
-            {Array.from({ length: totalPages }, (_, i) => (
+            {/* 페이지네이션 */}
+            <div className="Notice-pagination">
+              {/* 처음 페이지로 이동 */}
               <button
-                key={i}
-                onClick={() => handlePageChange(i + 1)}
-                style={{
-                  margin: "0 5px",
-                  fontWeight: currentPage === i + 1 ? "bold" : "normal",
+                onClick={() => handlePageChange(1)}
+                disabled={currentPage === 1}
+              >
+                ◀ 처음
+              </button>
+
+              {/* 이전 페이지 */}
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                ◀ 이전
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i}
+                  onClick={() => handlePageChange(i + 1)}
+                  style={{
+                    margin: "0 5px",
+                    fontWeight: currentPage === i + 1 ? "bold" : "normal",
+                  }}
+                >
+                  {i + 1}
+                </button>
+              ))}
+              {/* 다음 페이지 */}
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                다음 ▶
+              </button>
+
+              {/* 마지막 페이지로 이동 */}
+              <button
+                onClick={() => handlePageChange(totalPages)}
+                disabled={currentPage === totalPages}
+              >
+                끝 ▶
+              </button>
+            </div>
+
+            {/* 작성 버튼 */}
+            <div className="Notice-write-button">
+              <button
+                onClick={() => {
+                  setShowForm(!showForm);
+                  setNewNotice({
+                    title: "",
+                    date: "",
+                    author: "",
+                    content: "",
+                  });
+                  setEditIndex(null); // 폼 열 때 수정 모드 해제
                 }}
               >
-                {i + 1}
+                {showForm ? "작성 취소" : "공지사항 작성"}
               </button>
-            ))}
-            {/* 다음 페이지 */}
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              다음 ▶
-            </button>
+            </div>
 
-            {/* 마지막 페이지로 이동 */}
-            <button
-              onClick={() => handlePageChange(totalPages)}
-              disabled={currentPage === totalPages}
-            >
-              끝 ▶
-            </button>
+            {/* 작성/수정 폼 */}
+            {showForm && (
+              <form className="Notice-form" onSubmit={handleSubmit}>
+                <input
+                  type="text"
+                  name="title"
+                  placeholder="제목"
+                  value={newNotice.title}
+                  onChange={handleChange}
+                  required
+                />
+                <input
+                  type="text"
+                  name="author"
+                  placeholder="작성자"
+                  value={newNotice.author}
+                  onChange={handleChange}
+                  required
+                />
+                <textarea
+                  name="content"
+                  placeholder="공지 내용"
+                  value={newNotice.content}
+                  onChange={handleChange}
+                  required
+                ></textarea>
+                <button type="submit">
+                  {editIndex !== null ? "수정 완료" : "등록"}
+                </button>
+              </form>
+            )}
           </div>
-
-          {/* 작성 버튼 */}
-          <div className="Notice-write-button">
-            <button
-              onClick={() => {
-                setShowForm(!showForm);
-                setNewNotice({ title: "", date: "", author: "", content: "" });
-                setEditIndex(null); // 폼 열 때 수정 모드 해제
-              }}
-            >
-              {showForm ? "작성 취소" : "공지사항 작성"}
-            </button>
-          </div>
-
-          {/* 작성/수정 폼 */}
-          {showForm && (
-            <form className="Notice-form" onSubmit={handleSubmit}>
-              <input
-                type="text"
-                name="title"
-                placeholder="제목"
-                value={newNotice.title}
-                onChange={handleChange}
-                required
-              />
-              <input
-                type="text"
-                name="author"
-                placeholder="작성자"
-                value={newNotice.author}
-                onChange={handleChange}
-                required
-              />
-              <textarea
-                name="content"
-                placeholder="공지 내용"
-                value={newNotice.content}
-                onChange={handleChange}
-                required
-              ></textarea>
-              <button type="submit">
-                {editIndex !== null ? "수정 완료" : "등록"}
-              </button>
-            </form>
-          )}
         </div>
       </div>
     </>

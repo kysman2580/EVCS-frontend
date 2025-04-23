@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import {
   Container,
@@ -18,8 +18,25 @@ import {
 } from "../AdminRentCarCommon/AdminRentCar.styles";
 
 const AdminRentCarEnrollPage = () => {
+  const location = useLocation();
+  const car = location.state?.car;
+
+  useEffect(() => {
+    if (car) {
+      setForm({
+        name: car.name,
+        carNo: car.carNo,
+        year: car.year,
+        category: car.category,
+        price: car.price,
+        address: car.address,
+      });
+    }
+  }, [car]);
+
   const [form, setForm] = useState({
     name: "",
+    carNo: "",
     year: "",
     category: "",
     price: "",
@@ -46,8 +63,6 @@ const AdminRentCarEnrollPage = () => {
     alert("차량이 등록되었습니다!");
   };
 
-  const location = useLocation();
-  const car = location.state?.car;
   return (
     <>
       <RentContainerDiv>
@@ -94,7 +109,7 @@ const AdminRentCarEnrollPage = () => {
                   <Form.Control
                     type="text"
                     name="name"
-                    value={car.name}
+                    value={form.name}
                     onChange={handleChange}
                   />
                 </Form.Group>
@@ -107,7 +122,7 @@ const AdminRentCarEnrollPage = () => {
                       <Form.Control
                         type="text"
                         name="year"
-                        value={car.year}
+                        value={form.year}
                         onChange={handleChange}
                       />
                     </Form.Group>
@@ -117,7 +132,7 @@ const AdminRentCarEnrollPage = () => {
                       <Form.Label className="fw-bold ">카테고리 :</Form.Label>
                       <Form.Select
                         name="category"
-                        value={car.category}
+                        value={form.category}
                         onChange={handleChange}
                       >
                         <option value="">선택</option>
@@ -130,15 +145,30 @@ const AdminRentCarEnrollPage = () => {
                 </Row>
 
                 {/* 가격 */}
-                <Form.Group className="mb-3" controlId="carPrice">
-                  <Form.Label className="fw-bold ">가격 :</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="price"
-                    value={car.price}
-                    onChange={handleChange}
-                  />
-                </Form.Group>
+                <Row>
+                  <Col>
+                    <Form.Group className="mb-3" controlId="carPrice">
+                      <Form.Label className="fw-bold ">가격 :</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="price"
+                        value={form.price}
+                        onChange={handleChange}
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col>
+                    <Form.Group className="mb-3" controlId="carPrice">
+                      <Form.Label className="fw-bold ">차 번호 :</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="carNo"
+                        value={form.carNo}
+                        onChange={handleChange}
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
 
                 {/* 주소 */}
                 <Form.Group className="mb-4" controlId="carAddress">
@@ -146,7 +176,7 @@ const AdminRentCarEnrollPage = () => {
                   <Form.Control
                     type="text"
                     name="address"
-                    value={car.address}
+                    value={form.address}
                     onChange={handleChange}
                   />
                 </Form.Group>
