@@ -9,15 +9,7 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
   const location = useLocation();
   const { title, description, pubDate, imageUrl, originallink, query } =
     location.state || {};
-
-  const [article] = useState({
-    title,
-    description,
-    pubDate,
-    imageUrl,
-    originallink,
-    query,
-  });
+  const [article, setArticle] = useState(null); // ← 서버에서 받아온 news로 대체
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [likeCount, setLikeCount] = useState(0);
@@ -40,7 +32,9 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
       })
       .then((res) => {
         const data = res.data;
+        console.log("서버 응답 데이터:", data);
 
+        setArticle(data.news);
         setComments(data.comments);
         setLikeCount(data.likeCount); // ✅ 좋아요 수
         setHateCount(data.hateCount); // ✅ 싫어요 수
@@ -67,23 +61,19 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
     setNewComment("");
   };
 
-  const handleVote = (id, type) => {
-    setComments(
-      comments.map((comment) => {
-        if (comment.id === id) {
-          if (type === "like") {
-            return { ...comment, likes: comment.likes + 1 };
-          } else {
-            return { ...comment, dislikes: comment.dislikes + 1 };
-          }
-        }
-        return comment;
+  const handleLike = () => {
+    axios
+      .post(`${backendUrl}/api/news/like`, {
+        newsNo: article.newsNo,
+        memberNo: 1,
       })
-    );
+      .then(() => setLikeCount((prev) => prev + 1))
+      .catch((err) =>
+        alert(err.response?.data || "이미 좋아요를 누르셨습니다.")
+      );
   };
 
-  if (!article?.title)
-    return <S.Loading>기사를 불러오는 중입니다...</S.Loading>;
+  if (!article) return <S.Loading>기사를 불러오는 중입니다...</S.Loading>;
 
   return (
     <S.Container>
@@ -107,11 +97,11 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
             />
             <div>원문 링크</div>
             <a
-              href={article.originallink}
+              href={article.originUrl}
               target="_blank"
               rel="noopener noreferrer"
             >
-              {article.originallink}
+              {article.originUrl}
             </a>
           </S.ArticleText>
           <S.ArticleActions>
@@ -125,8 +115,8 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
             >
               뒤로가기
             </Button>
-            <S.ActionButton>좋아요</S.ActionButton>
-            <S.ActionButton>싫어요</S.ActionButton>
+            <S.ActionButton onClick={handleLike}>👍 {likeCount}</S.ActionButton>
+            <S.ActionButton>👎 {hateCount}</S.ActionButton>
           </S.ArticleActions>
         </S.ArticleContent>
       </S.ArticleBox>
@@ -149,16 +139,7 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
             </S.CommentHeader>
             <S.CommentBody>
               <div>{comment.content}</div>
-              <S.CommentActions>
-                <S.ActionButton onClick={() => handleVote(comment.id, "like")}>
-                  👍 {comment.likes}
-                </S.ActionButton>
-                <S.ActionButton
-                  onClick={() => handleVote(comment.id, "dislike")}
-                >
-                  👎 {comment.dislikes}
-                </S.ActionButton>
-              </S.CommentActions>
+              <S.CommentActions></S.CommentActions>
             </S.CommentBody>
           </S.CommentItem>
         ))}
