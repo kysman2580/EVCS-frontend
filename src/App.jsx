@@ -22,6 +22,7 @@ import ReportDetail from "./components/UserInterface/Report/ReportDetail/ReportD
 import UserNotice from "./components/UserInterface/Board/Notice/UserNotice";
 import AdminNotice from "./components/AdminInterface/Board/Notice/Notice";
 import NoticeDetail from "./components/AdminInterface/Board/Notice/NoticeDetail";
+import NoticeWrite from "./components/AdminInterface/Board/Notice/NoticeWrite";
 import EventBoard from "./components/UserInterface/Board/Event/EventBoard";
 import EventBoardDetail from "./components/UserInterface/Board/Event/EventBoardDetail";
 import AdminEventBoard from "./components/AdminInterface/Board/Event/AdminEventBoard";
@@ -127,8 +128,10 @@ function App() {
               />
 
               {/* 게시판 페이지 관련 */}
-              <Route path="notice" element={<AdminNotice />} />
-              <Route path="notice/:id" element={<NoticeDetail />} />
+              <Route path="/admin/notice" element={<AdminNotice />} />
+              <Route path="/admin/notice/:id" element={<NoticeDetail />} />
+              <Route path="/admin/notice/write" element={<NoticeWrite />} />
+
               <Route path="adminEventBoard" element={<AdminEventBoard />} />
               <Route
                 path="goAdminEventDetailPage"
