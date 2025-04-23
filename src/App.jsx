@@ -127,8 +127,8 @@ function App() {
               />
 
               {/* 게시판 페이지 관련 */}
-              <Route path="notice" element={<AdminNotice />} />
-              <Route path="notice/:id" element={<NoticeDetail />} />
+              <Route path="/admin/notice" element={<AdminNotice />} />
+              <Route path="/admin/notice/:id" element={<NoticeDetail />} />
               <Route path="adminEventBoard" element={<AdminEventBoard />} />
               <Route
                 path="goAdminEventDetailPage"
