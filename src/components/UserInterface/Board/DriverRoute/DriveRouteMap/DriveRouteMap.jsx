@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { SelectRoute, ResetRoute, ShowRoute } from "./DriveRouteMap.styles";
 import axios from "axios";
 
-function DriveRouteMap() {
+function DriveRouteMap({ mapUrl }) {
   const mapRef = useRef();
   const markerArrRef = useRef([]);
   const polylineArrRef = useRef([]);
@@ -190,7 +190,9 @@ function DriveRouteMap() {
       }` +
       `&passList=${passListStr}` +
       `&lineColor=0,0,255&width=1000&height=700&reqCoordType=WGS84GEO`;
-    return <>{url}</>;
+
+    console.log(url);
+    mapUrl(url);
   };
 
   return (

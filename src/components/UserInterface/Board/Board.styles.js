@@ -11,4 +11,5 @@ export const BoardBodyDiv = styled.div`
 
 export const BoardContainerDiv = styled.div`
   display: flex;
+  height: 650px;
 `;

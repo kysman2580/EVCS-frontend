@@ -16,7 +16,7 @@ const LongTermRentCarDetail = () => {
   const [selectedPeriod, setSelectedPeriod] = useState("24개월");
 
   const car = {
-    image: "images/model_Y.png", // 이미지 URL 넣을 수 있음
+    image: "rentCar/model_Y.png", // 이미지 URL 넣을 수 있음
     name: "쏘나타 EV",
     year: "2023년식",
     location: "서울 강남지점",

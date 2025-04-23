@@ -69,7 +69,6 @@ export const RentContainerDiv = styled.div`
 `;
 
 // 게시물 만들기 모달
-
 export const ModalWrapper = styled.div`
   background-color: rgba(0, 0, 0, 0.5);
   position: fixed;
@@ -109,6 +108,7 @@ export const ModalHeader = styled.div`
   position: relative;
   width: 100%;
   font-weight: bold;
+  border-bottom: 1px solid black;
 `;
 
 export const ModalSubmit = styled.button`
@@ -126,6 +126,21 @@ export const ModalSubmit = styled.button`
   cursor: pointer;
 `;
 
+export const ModalBack = styled.div`
+  width: 20%;
+  text-align: right;
+  margin-right: 10px;
+  position: absolute;
+  right: 100px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #2962ff;
+  font-weight: bold;
+  cursor: pointer;
+`;
+
 export const ModalContent = styled.div`
   display: flex;
   height: 95%;
@@ -133,7 +148,6 @@ export const ModalContent = styled.div`
 `;
 
 export const LeftContent = styled.div`
-  border-top: 1px solid black;
   width: 60%;
   height: 100%;
   display: flex;
@@ -141,21 +155,37 @@ export const LeftContent = styled.div`
   align-items: center;
   font-weight: bold;
 `;
+export const LeftComment = styled.div`
+  width: 60%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  border-right: 1px solid black;
+`;
 
+export const DriveRoute = styled.div`
+  height: 100%;
+  width: 100%;
+  border-left: 1px solid black;
+  text-align: center;
+`;
 export const RightContent = styled.div`
-  border-top: 1px solid black;
   width: 40%;
   height: 100%;
   font-weight: bold;
 `;
 
-export const DriveRoute = styled.div`
-  height: 5%;
-  border-left: 1px solid black;
+export const MapImg = styled.img`
+  margin-top: 75px;
+  width: 500px;
+  height: 500px;
+  border: 1px solid black;
 `;
 
 export const DriveContent = styled.div`
-  height: 95%;
+  height: 100%;
   border-left: 1px solid black;
 `;
 
@@ -171,6 +201,28 @@ export const Textarea = styled.textarea`
 `;
 
 // 댓글 모달달
+
+export const CommentModalWrapper = styled.div`
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999;
+`;
+
+export const CommentModalLabel = styled.div`
+  width: 1200px;
+  height: 900px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  z-index: 1000;
+`;
+
 export const SeeDriveRoute = styled.div`
   height: 5%;
 `;
@@ -187,6 +239,12 @@ export const InsertComment = styled.div`
 export const Commentarea = styled.textarea`
   width: 80%;
   border: none;
+  overflow: hidden;
+  &:focus {
+    outline: none;
+    border: none;
+    box-shadow: none;
+  }
 `;
 
 export const CommentSubmit = styled.div`
@@ -194,4 +252,5 @@ export const CommentSubmit = styled.div`
   border: none;
   color: #2962ff;
   font-weight: bold;
+  cursor: pointer;
 `;

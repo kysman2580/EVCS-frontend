@@ -19,6 +19,7 @@ import {
 const AdminRentCarEnrollPage = () => {
   const [form, setForm] = useState({
     name: "",
+    carNo: "",
     year: "",
     category: "",
     price: "",
@@ -126,15 +127,30 @@ const AdminRentCarEnrollPage = () => {
                 </Row>
 
                 {/* 가격 */}
-                <Form.Group className="mb-3" controlId="carPrice">
-                  <Form.Label className="fw-bold ">가격 :</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="price"
-                    value={form.price}
-                    onChange={handleChange}
-                  />
-                </Form.Group>
+                <Row>
+                  <Col>
+                    <Form.Group className="mb-3" controlId="carPrice">
+                      <Form.Label className="fw-bold ">가격 :</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="price"
+                        value={form.price}
+                        onChange={handleChange}
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col>
+                    <Form.Group className="mb-3" controlId="carPrice">
+                      <Form.Label className="fw-bold ">차 번호 :</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="carNo"
+                        value={form.carNo}
+                        onChange={handleChange}
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
 
                 {/* 주소 */}
                 <Form.Group className="mb-4" controlId="carAddress">

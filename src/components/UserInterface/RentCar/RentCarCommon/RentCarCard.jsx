@@ -18,7 +18,7 @@ const RentCarCard = () => {
     <>
       <RentCarCardContainer onClick={() => navi("/LongTermRentDetail")}>
         <RentCarCardImgDiv>
-          <RentCarCardImg src="images/model_Y.png"></RentCarCardImg>
+          <RentCarCardImg src="rentCar/model_Y.png"></RentCarCardImg>
         </RentCarCardImgDiv>
         <RentCarCardContentDiv>
           <RentCarNameDiv>Model Y</RentCarNameDiv>
