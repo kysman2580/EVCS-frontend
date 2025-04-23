@@ -10,7 +10,7 @@ import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import AutoAwesomeMotionOutlinedIcon from "@mui/icons-material/AutoAwesomeMotionOutlined";
 import { useNavigate } from "react-router-dom";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import DriveRouteMap from "../DriveRouteMap/DriveRouteMap";
 import {
   H1,
@@ -32,8 +32,10 @@ import {
   LeftContent,
   RightContent,
   ModalSubmit,
+  ModalBack,
   CloseBtn,
   DriveRoute,
+  MapImg,
   DriveContent,
   Textarea,
   SeeDriveRoute,
@@ -41,18 +43,30 @@ import {
   CommentSubmit,
   InsertComment,
   Commentarea,
+  LeftComment,
+  CommentModalWrapper,
+  CommentModalLabel,
 } from "./DRBoard.styles";
-import { CustomPrev, CustomNext } from "../CustomSlides/CustomStildes";
+import { CustomPrev, CustomNext } from "../CustomSlides/CustomSlides";
 
 const DRBoard = () => {
-  const [openContentModal, setOpenContentModal] = useState(false);
   const [openCommentModal, setOpenCommentModal] = useState(false);
+  const [openPhotoModal, setopenPhotoModal] = useState(false);
+  const [openRouteModal, setOpenRouteModal] = useState(false);
   const [openMapModal, setOpenMapModal] = useState(false);
+  const [mapUrl, setMapUrl] = useState("");
 
   const [heart, setHeart] = useState(false);
   const ref = useRef(null);
   const [imagesUrl, setImagesUrl] = useState([]);
   const navi = useNavigate();
+
+  useEffect(() => {
+    if (mapUrl !== "") {
+      setOpenMapModal(false);
+    } else {
+    }
+  }, [mapUrl]);
 
   const fileHandler = () => {
     if (ref.current) {
@@ -63,7 +77,7 @@ const DRBoard = () => {
 
   const handleImageChange = (e) => {
     const images = e.target.files;
-    let imagesUrlList = [...imagesUrl];
+    let imagesUrlList = [...imagesUrl]; // imagesUrl배열을 펼쳐서 [] 안에 집어넣음
     let imageLengh = images.length > 10 ? 10 : images.length;
 
     for (let i = 0; i < imageLengh; i++) {
@@ -88,7 +102,9 @@ const DRBoard = () => {
   return (
     <>
       <RentContainerDiv>
-        {!openContentModal && !openCommentModal && <DriveRouteBoardNav />}
+        {!openPhotoModal && !openCommentModal && !openRouteModal && (
+          <DriveRouteBoardNav />
+        )}
         <RentBodyDiv>
           <H1>일상 공유 게시판</H1>
 
@@ -98,9 +114,8 @@ const DRBoard = () => {
           <H3>당신의 일상과 드라이브 루트를 공유해보세요~</H3>
 
           <br />
-          <InsertButton onClick={() => setOpenContentModal(true)}>
-            <AddBoxOutlinedIcon /> <bsnp />
-            게시물 만들기
+          <InsertButton onClick={() => setopenPhotoModal(true)}>
+            <AddBoxOutlinedIcon /> 게시물 만들기
           </InsertButton>
           <br />
 
@@ -169,84 +184,153 @@ const DRBoard = () => {
             </ContentBox>
           </Wrapper>
 
-          {/* 게시물 만들기기 모달 */}
-          {openContentModal && (
+          {/* 게시물 만들기기(사진설정) 모달 */}
+          {openPhotoModal && (
             <ModalWrapper>
-              <CloseBtn onClick={() => setOpenContentModal(false)}>
+              <CloseBtn
+                onClick={() => {
+                  setopenPhotoModal(false);
+                  setImagesUrl([]);
+                  setMapUrl("");
+                }}
+              >
+                <CloseRoundedIcon style={{ fontSize: "40px" }} />
+              </CloseBtn>
+              <ModalLabel>
+                <ModalHeader>
+                  새 게시물 만들기
+                  <ModalSubmit
+                    onClick={() => {
+                      setOpenRouteModal(true);
+                      setopenPhotoModal(false);
+                    }}
+                  >
+                    다음
+                  </ModalSubmit>
+                </ModalHeader>
+                <ModalContent>
+                  <input
+                    style={{ display: "none" }}
+                    type="file"
+                    ref={ref}
+                    onChange={handleImageChange}
+                    accept="image/*"
+                    multiple
+                  />
+                  {imagesUrl == "" ? (
+                    <>
+                      <div
+                        style={{
+                          width: "200px",
+                          height: "50px",
+                          position: "fixed",
+                          right: "400px",
+                          top: "300px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <InsertPhotoRoundedIcon />
+                        <Button variant="primary" onClick={fileHandler}>
+                          사진을 선택해주세요
+                        </Button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div
+                        className="slider-container"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                        }}
+                      >
+                        <Slider {...settings}>
+                          {imagesUrl.map((url, index) => (
+                            <div style={{}} key={index}>
+                              <img
+                                src={url}
+                                style={{
+                                  width: "100%",
+                                  maxHeight: "630px",
+                                  objectFit: "cover",
+                                  backgroundRepeat: "none",
+                                }}
+                                alt={`preview-${index}`}
+                              />
+                            </div>
+                          ))}
+                        </Slider>
+                      </div>
+                      <AutoAwesomeMotionOutlinedIcon
+                        style={{
+                          position: "absolute",
+                          bottom: "3px",
+                          right: "20px",
+                          fontSize: "30px",
+                          color: "#fff",
+                          backgroundColor: "rgba(0,0,0,0.4)",
+                          borderRadius: "50%",
+                          padding: "5px",
+                          cursor: "pointer",
+                        }}
+                        onClick={fileHandler}
+                      />
+                    </>
+                  )}
+                </ModalContent>
+              </ModalLabel>
+            </ModalWrapper>
+          )}
+
+          {/* 경로설정 및 내용작성 모달 */}
+          {openRouteModal && (
+            <ModalWrapper>
+              <CloseBtn
+                onClick={() => {
+                  setOpenRouteModal(false);
+                  setImagesUrl([]);
+                  setMapUrl("");
+                }}
+              >
                 <CloseRoundedIcon style={{ fontSize: "40px" }} />
               </CloseBtn>
               <ModalLabel>
                 <ModalHeader>
                   새 게시물 만들기
                   <ModalSubmit>공유하기</ModalSubmit>
+                  <ModalBack
+                    onClick={() => {
+                      setOpenRouteModal(false);
+                      setopenPhotoModal(true);
+                      setMapUrl("");
+                    }}
+                  >
+                    이전
+                  </ModalBack>
                 </ModalHeader>
                 <ModalContent>
                   <LeftContent>
-                    <input
-                      style={{ display: "none" }}
-                      type="file"
-                      ref={ref}
-                      onChange={handleImageChange}
-                      accept="image/*"
-                      multiple
-                    />
-                    {imagesUrl.length === 0 && (
+                    {mapUrl == "" ? (
                       <>
-                        <InsertPhotoRoundedIcon />
-                        <Button variant="primary" onClick={fileHandler}>
-                          사진을 선택해주세요
+                        <Button
+                          variant="primary"
+                          onClick={() => setOpenMapModal(true)}
+                        >
+                          드라이브 루트 선택하기
                         </Button>
                       </>
-                    )}
-                    {imagesUrl.length != 0 && (
+                    ) : (
                       <>
-                        <div
-                          className="slider-container"
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                          }}
+                        <DriveRoute
+                          onClick={() => setOpenMapModal(true)}
+                          style={{ cursor: "pointer" }}
                         >
-                          <Slider {...settings}>
-                            {imagesUrl.map((url, index) => (
-                              <div style={{}} key={index}>
-                                <img
-                                  src={url}
-                                  style={{
-                                    width: "100%",
-                                    height: "100%",
-                                    objectFit: "cover",
-                                  }}
-                                  alt={`preview-${index}`}
-                                />
-                              </div>
-                            ))}
-                          </Slider>
-                        </div>
-                        <AutoAwesomeMotionOutlinedIcon
-                          style={{
-                            position: "absolute",
-                            bottom: "10px",
-                            right: "10px",
-                            fontSize: "30px",
-                            color: "#fff",
-                            backgroundColor: "rgba(0,0,0,0.4)",
-                            borderRadius: "50%",
-                            padding: "5px",
-                            cursor: "pointer",
-                          }}
-                          onClick={fileHandler}
-                        />
+                          <MapImg src={mapUrl} alt="지도지도" />
+                        </DriveRoute>
                       </>
                     )}
                   </LeftContent>
                   <RightContent>
-                    <DriveRoute
-                      onClick={() => setOpenMapModal(true)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      드라이브 루트 선택하기
-                    </DriveRoute>
                     <DriveContent>
                       <Textarea type="text" placeholder="내용을 작성해주세요" />
                     </DriveContent>
@@ -265,33 +349,39 @@ const DRBoard = () => {
               <ModalLabel>
                 <ModalHeader>드라이브 경로 선택</ModalHeader>
 
-                <DriveRouteMap style={{}} />
+                <DriveRouteMap mapUrl={(url) => setMapUrl(url)} />
               </ModalLabel>
             </ModalWrapper>
           )}
 
           {/* 댓글 모달 */}
           {openCommentModal && (
-            <ModalWrapper>
+            <CommentModalWrapper>
               <CloseBtn onClick={() => setOpenCommentModal(false)}>
                 <CloseRoundedIcon style={{ fontSize: "40px" }} />
               </CloseBtn>
-              <ModalLabel>
+              <CommentModalLabel>
+                <ModalHeader>상세보기</ModalHeader>
                 <ModalContent>
-                  <LeftContent>
+                  <LeftComment>
                     <InsertPhotoRoundedIcon /> 사진
-                  </LeftContent>
+                  </LeftComment>
                   <RightContent>
                     <SeeDriveRoute>드라이브 루트 보기</SeeDriveRoute>
                     <Comments>댓글댓글</Comments>
                     <InsertComment>
-                      <Commentarea type="text" placeholder="댓글 달기.." />
+                      <Commentarea
+                        type="text"
+                        placeholder="댓글 달기.."
+                        maxLength={85}
+                        style={{ resize: "none" }}
+                      />
                       <CommentSubmit>게시</CommentSubmit>
                     </InsertComment>
                   </RightContent>
                 </ModalContent>
-              </ModalLabel>
-            </ModalWrapper>
+              </CommentModalLabel>
+            </CommentModalWrapper>
           )}
         </RentBodyDiv>
       </RentContainerDiv>
