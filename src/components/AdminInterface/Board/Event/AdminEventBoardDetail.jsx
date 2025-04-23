@@ -35,6 +35,18 @@ const AdminEventBoardDetail = () => {
                     </div>
                   </div>
 
+                  {/* 기간 */}
+                  <Row>
+                    <Col md={4}>
+                      <div className="mb-3">
+                        <strong>이벤트 기간:</strong>
+                        <div className="border rounded p-2 mt-1 bg-light">
+                          {post.period}
+                        </div>
+                      </div>
+                    </Col>
+                  </Row>
+
                   {/* 내용 */}
                   <div className="mb-4">
                     <strong>이벤트 내용:</strong>

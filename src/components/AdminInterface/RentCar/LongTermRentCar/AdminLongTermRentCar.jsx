@@ -21,6 +21,7 @@ const AdminLongTermRentCar = () => {
     {
       id: 1,
       category: "SUV",
+      carNo: "12가3456",
       name: "쏘렌토",
       maker: "기아",
       year: "2023",
@@ -30,6 +31,7 @@ const AdminLongTermRentCar = () => {
     {
       id: 2,
       category: "세단",
+      carNo: "12나3456",
       name: "그랜저",
       maker: "현대",
       year: "2022",
@@ -112,6 +114,7 @@ const AdminLongTermRentCar = () => {
                 <thead className="table-secondary">
                   <tr>
                     <th>카테고리</th>
+                    <th>차 번호</th>
                     <th>모델명</th>
                     <th>제조사</th>
                     <th>연식</th>
@@ -138,6 +141,7 @@ const AdminLongTermRentCar = () => {
                         style={{ cursor: "pointer" }}
                       >
                         <td>{car.category}</td>
+                        <td>{car.carNo}</td>
                         <td>{car.name}</td>
                         <td>{car.maker}</td>
                         <td>{car.year}</td>

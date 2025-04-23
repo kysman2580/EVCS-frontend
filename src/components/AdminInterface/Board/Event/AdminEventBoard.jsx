@@ -24,7 +24,7 @@ const AdminEventBoard = () => {
       evnetNo: 1,
       title: "핫딜 3시간 할인 이벤트 아 뜨겁다 뜨거워 ",
       author: "관리자",
-      date: "2025-04-20",
+      period: "2025-04-20 ~ 2025-04-27",
       image: "/event/hot_deal_img.png",
       content: "핫딜 이벤트입니다 미쳐쮸",
     },
@@ -32,7 +32,7 @@ const AdminEventBoard = () => {
       evnetNo: 2,
       title: "첫 사용자 할인 이벤트~ 처음이시면 아 싸다 싸 미쳐따",
       author: "운영팀",
-      date: "2025-04-20",
+      period: "2025-04-20 ~ 2025-04-28",
       image: "/event/first_sale_img.png",
       content: "전기충만 처음 이용하시나요? 그럼 할인받으세요 ~",
     },
@@ -40,7 +40,7 @@ const AdminEventBoard = () => {
       evnetNo: 3,
       title: "밤에는 싸게 싸게 타고 노세요 이거 안타면 바보다 바보",
       author: "마케팅팀",
-      date: "2025-04-20",
+      period: "2025-04-20 ~ 2025-04-29",
       image: "/event/night_sale_img.png",
       content: "야간에는 싸게 싸게 경치좀 보자",
     },
@@ -132,7 +132,7 @@ const AdminEventBoard = () => {
                               <td>{post.evnetNo}</td>
                               <td>{post.title}</td>
                               <td>{post.author}</td>
-                              <td>{post.date}</td>
+                              <td>{post.period}</td>
                             </tr>
                           ))}
                         </tbody>
