@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import "./CarMap.css";
+import Offcanvas from "react-bootstrap/Offcanvas";
+import "./CarMap.css"; // 필요하면 유지
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const Map = styled.div`
   width: 800px;
@@ -8,14 +10,16 @@ const Map = styled.div`
   margin: 50px auto;
   border: 2px solid black;
   border-radius: 1em;
-
-  // 달력 api 짤려서 추가 kkm
   position: relative;
-  z-index: 1; /* 지도는 밑으로 */
+  z-index: 1;
 `;
 
 const CarMap = () => {
   const [loaded, setLoaded] = useState(false);
+  const [carModal, setCarModal] = useState(false);
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   useEffect(() => {
     window.kakao.maps.load(() => {
@@ -25,14 +29,12 @@ const CarMap = () => {
 
   useEffect(() => {
     if (!loaded) return;
-    console.log("KakaoMap");
 
     if (navigator.geolocation) {
-      // GeoLocation을 이용해서 접속 위치를 얻어옴
       navigator.geolocation.getCurrentPosition(function (position) {
-        var lat = position.coords.latitude, // 위도
-          lon = position.coords.longitude; // 경도
-        console.log(lat, lon);
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+
         const mapContainer = document.getElementById("map");
         const mapOption = {
           center: new window.kakao.maps.LatLng(lat, lon),
@@ -40,141 +42,94 @@ const CarMap = () => {
         };
 
         const map = new window.kakao.maps.Map(mapContainer, mapOption);
-        // 커스텀 오버레이에 표시할 컨텐츠 입니다
-        // 커스텀 오버레이는 아래와 같이 사용자가 자유롭게 컨텐츠를 구성하고 이벤트를 제어할 수 있기 때문에
-        // 별도의 이벤트 메소드를 제공하지 않습니다
 
         const positions = [
           {
             content: `
-        <div class="wrap">
-          <div class="info">
-            <div class="title">
-              카카오 스페이스닷원
-              <div class="close" onclick="closeOverlay()" title="닫기"></div>
-            </div>
-            <div class="wrapper">
-              <div class="body">
-                <div class="img">
-                  <img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/thumnail.png" width="43" height="40">
-                </div>
-                <div class="desc">
-                  <div class="ellipsis">제주</div>
-                  <div class="jibun ellipsis">(우) 63309 (지번) 영평동 2181</div>
-                </div>
-              </div>
-              <div class="body">
-                <div class="img">
-                  <img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/thumnail.png" width="43" height="40">
-                </div>
-                <div class="desc">
-                  <div class="ellipsis">제주특별자치도 제주시 첨단로 242</div>
-                  <div class="jibun ellipsis">(우) 63309 (지번) 영평동 2181</div>
+              <div class="wrap">
+                <div class="info">
+                  <div class="title">
+                    카카오 스페이스닷원
+                    <div class="close" title="닫기"/></div>
+                  </div>
+                  <div class="wrapper">
+                    <div class="customBody" style="cursor:pointer; padding:5px;">
+                      <div class="img">
+                        <img src="images/아이오닉 5.png" width="43" height="40">
+                      </div>
+                      <div class="desc">
+                        <div class="carTitle">2121 아이오닉 5</div>
+                        <div class="jibun carTitle">HYUNDAI</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="body">
-                <div class="img">
-                  <img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/thumnail.png" width="43" height="40">
-                </div>
-                <div class="desc">
-                  <div class="ellipsis">제주특별자치도 제주시 첨단로 242</div>
-                  <div class="jibun ellipsis">(우) 63309 (지번) 영평동 2181</div>
-                </div>
-              </div>
-              <div class="body">
-                <div class="img">
-                  <img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/thumnail.png" width="43" height="40">
-                </div>
-                <div class="desc">
-                  <div class="ellipsis">제주특별자치도 제주시 첨단로 242</div>
-                  <div class="jibun ellipsis">(우) 63309 (지번) 영평동 2181</div>
-                </div>
-              </div>
-              <div class="body">
-                <div class="img">
-                  <img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/thumnail.png" width="43" height="40">
-                </div>
-                <div class="desc">
-                  <div class="ellipsis">제주특별자치도 제주시 첨단로 242</div>
-                  <div class="jibun ellipsis">(우) 63309 (지번) 영평동 2181</div>
-                </div>
-              </div>
-              <div class="body">
-                <div class="img">
-                  <img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/thumnail.png" width="43" height="40">
-                </div>
-                <div class="desc">
-                  <div class="ellipsis">제주특별자치도 제주시 첨단로 242</div>
-                  <div class="jibun ellipsis">(우) 63309 (지번) 영평동 2181</div>
-                </div>
-              </div>
-              <div class="body">
-                <div class="img">
-                  <img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/thumnail.png" width="43" height="40">
-                </div>
-                <div class="desc">
-                  <div class="ellipsis">제주특별자치도 제주시 첨단로 242</div>
-                  <div class="jibun ellipsis">(우) 63309 (지번) 영평동 2181</div>
-                </div>
-              </div>
-              <div class="body">
-                <div class="img">
-                  <img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/thumnail.png" width="43" height="40">
-                </div>
-                <div class="desc">
-                  <div class="ellipsis">제주특별자치도 제주시 첨단로 242</div>
-                  <div class="jibun ellipsis">(우) 63309 (지번) 영평동 2181</div>
-                </div>
-              </div>
-              <div class="body">
-                <div class="img">
-                  <img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/thumnail.png" width="43" height="40">
-                </div>
-                <div class="desc">
-                  <div class="ellipsis">제주특별자치도 제주시 첨단로 242</div>
-                  <div class="jibun ellipsis">(우) 63309 (지번) 영평동 2181</div>
-                </div>
-              </div>
-              
-            </div>
-          </div>
-        </div>
-    `,
-            latlng: new window.kakao.maps.LatLng(36.650879, 126.56994),
+            `,
+            latlng: new window.kakao.maps.LatLng(37.5652352, 126.9891072),
           },
         ];
 
         for (let i = 0; i < positions.length; i++) {
-          // 지도에 마커를 표시합니다
-          var marker = new window.kakao.maps.Marker({
+          const marker = new window.kakao.maps.Marker({
             map: map,
             position: positions[i].latlng,
           });
-          // 마커 위에 커스텀오버레이를 표시합니다
-          // 마커를 중심으로 커스텀 오버레이를 표시하기위해 CSS를 이용해 위치를 설정했습니다
-          var overlay = new window.kakao.maps.CustomOverlay({
-            content: positions[i].content,
-            map: null,
+
+          const container = document.createElement("div");
+          container.innerHTML = positions[i].content;
+
+          const customBody = container.querySelector(".customBody");
+          if (customBody) {
+            customBody.addEventListener("click", () => {
+              console.log("클릭됨");
+              handleShow();
+            });
+          }
+
+          const overlay = new window.kakao.maps.CustomOverlay({
+            content: container,
             position: positions[i].latlng,
+            map: null,
           });
+
+          // 마커 클릭 시 오버레이 표시
+          window.kakao.maps.event.addListener(marker, "click", function () {
+            overlay.setMap(map);
+          });
+
+          // 오버레이 닫기용 함수도 만들면 이렇게 가능
+          const closeBtn = container.querySelector(".close");
+          if (closeBtn) {
+            closeBtn.addEventListener("click", () => {
+              overlay.setMap(null);
+            });
+          }
         }
-
-        // 마커를 클릭했을 때 커스텀 오버레이를 표시합니다
-        window.kakao.maps.event.addListener(marker, "click", function () {
-          overlay.setMap(map);
-        });
-
-        // 커스텀 오버레이를 닫기 위해 호출되는 함수입니다
-        window.closeOverlay = function () {
-          overlay.setMap(null);
-        };
       });
     }
   }, [loaded]);
 
   return (
     <>
-      <Map id="map"></Map>;
+      <Map id="map" />
+
+      {/* 오프캔버스: customBody 클릭 시 나타남 */}
+      <Offcanvas
+        show={show}
+        onHide={handleClose}
+        placement="end"
+        styled={{ width: "00px" }}
+      >
+        <Offcanvas.Header closeButton>
+          <Offcanvas.Title>차량 상세 정보</Offcanvas.Title>
+        </Offcanvas.Header>
+        <Offcanvas.Body>
+          차량 정보를 여기에 넣으세요.
+          <br />
+          예: 차량 이름, 연식, 제조사 등등...
+        </Offcanvas.Body>
+      </Offcanvas>
     </>
   );
 };
