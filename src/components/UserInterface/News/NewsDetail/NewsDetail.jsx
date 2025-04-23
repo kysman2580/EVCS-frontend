@@ -3,18 +3,24 @@ import { useLocation, useNavigate } from "react-router-dom";
 import * as S from "./NewsDetail.styles";
 import { Button } from "react-bootstrap";
 import axios from "axios";
+import { useAuth } from "../../Context/AuthContext/AuthContext";
 
 const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { title, description, pubDate, imageUrl, originallink, query } =
     location.state || {};
+  const { auth } = useAuth(); // ← 여기서 auth 꺼내고
   const [article, setArticle] = useState(null); // ← 서버에서 받아온 news로 대체
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [likeCount, setLikeCount] = useState(0);
   const [hateCount, setHateCount] = useState(0);
   const [bookmarked, setBookmarked] = useState(false);
+  const [hasLiked, setHasLiked] = useState(false);
+  const [hasHated, setHasHated] = useState(false);
+  // const memberNo = Number(auth?.user?.memberNo);
+  const memberNo = 4;
 
   useEffect(() => {
     console.log("location.state 확인:", location.state);
@@ -47,6 +53,84 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
       });
   }, []);
 
+  useEffect(() => {
+    if (!article || !auth?.user?.memberNo) return;
+
+    const memberNo = Number(auth.user.memberNo);
+
+    axios
+      .get(`${backendUrl}/api/news/like/status`, {
+        params: { newsNo: article.newsNo, memberNo },
+      })
+      .then((res) => setHasLiked(res.data));
+
+    axios
+      .get(`${backendUrl}/api/news/hate/status`, {
+        params: { newsNo: article.newsNo, memberNo },
+      })
+      .then((res) => setHasHated(res.data));
+  }, [article]);
+
+  const handleLike = () => {
+    axios
+      .post(`${backendUrl}/api/news/like`, {
+        newsNo: article.newsNo,
+        memberNo,
+      })
+      .then(() => {
+        // 토글 상태만 클라이언트에서 반영
+        setHasLiked((prev) => !prev);
+        if (hasHated) setHasHated(false);
+
+        // count는 서버에서 다시 가져옴 (정확하게 유지)
+        axios
+          .get(`${backendUrl}/api/news/like`, {
+            params: { newsNo: article.newsNo },
+          })
+          .then((res) => setLikeCount(res.data));
+
+        if (hasHated) {
+          axios
+            .get(`${backendUrl}/api/news/hate`, {
+              params: { newsNo: article.newsNo },
+            })
+            .then((res) => setHateCount(res.data));
+        }
+      })
+      .catch((err) =>
+        alert(err.response?.data || "좋아요 처리 중 오류가 발생했습니다.")
+      );
+  };
+
+  const handleHate = () => {
+    axios
+      .post(`${backendUrl}/api/news/hate`, {
+        newsNo: article.newsNo,
+        memberNo,
+      })
+      .then(() => {
+        setHasHated((prev) => !prev);
+        if (hasLiked) setHasLiked(false);
+
+        axios
+          .get(`${backendUrl}/api/news/hate`, {
+            params: { newsNo: article.newsNo },
+          })
+          .then((res) => setHateCount(res.data));
+
+        if (hasLiked) {
+          axios
+            .get(`${backendUrl}/api/news/like`, {
+              params: { newsNo: article.newsNo },
+            })
+            .then((res) => setLikeCount(res.data));
+        }
+      })
+      .catch((err) =>
+        alert(err.response?.data || "싫어요 처리 중 오류가 발생했습니다.")
+      );
+  };
+
   const handleAddComment = () => {
     if (!newComment.trim()) return;
     const comment = {
@@ -59,18 +143,6 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
     };
     setComments([...comments, comment]);
     setNewComment("");
-  };
-
-  const handleLike = () => {
-    axios
-      .post(`${backendUrl}/api/news/like`, {
-        newsNo: article.newsNo,
-        memberNo: 1,
-      })
-      .then(() => setLikeCount((prev) => prev + 1))
-      .catch((err) =>
-        alert(err.response?.data || "이미 좋아요를 누르셨습니다.")
-      );
   };
 
   if (!article) return <S.Loading>기사를 불러오는 중입니다...</S.Loading>;
@@ -116,7 +188,7 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
               뒤로가기
             </Button>
             <S.ActionButton onClick={handleLike}>👍 {likeCount}</S.ActionButton>
-            <S.ActionButton>👎 {hateCount}</S.ActionButton>
+            <S.ActionButton onClick={handleHate}>👎 {hateCount}</S.ActionButton>
           </S.ArticleActions>
         </S.ArticleContent>
       </S.ArticleBox>
