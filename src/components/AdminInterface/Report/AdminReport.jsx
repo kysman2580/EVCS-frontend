@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // Report2는 스타일드 컨테이너입니다.
 import { Report2 } from "./AdminReport.styled";
-import { useAuth } from "../Context/AuthContext/AuthContext";
+import { useAuth } from "../../UserInterface/Context/AuthContext/AuthContext";
 import axios from "axios";
 
 const dummyReports = [
