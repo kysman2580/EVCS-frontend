@@ -3,26 +3,24 @@ import { useLocation, useNavigate } from "react-router-dom";
 import * as S from "./NewsDetail.styles";
 import { Button } from "react-bootstrap";
 import axios from "axios";
+import { useAuth } from "../../Context/AuthContext/AuthContext";
 
 const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { title, description, pubDate, imageUrl, originallink, query } =
     location.state || {};
-
-  const [article] = useState({
-    title,
-    description,
-    pubDate,
-    imageUrl,
-    originallink,
-    query,
-  });
+  const { auth } = useAuth(); // ← 여기서 auth 꺼내고
+  const [article, setArticle] = useState(null); // ← 서버에서 받아온 news로 대체
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [likeCount, setLikeCount] = useState(0);
   const [hateCount, setHateCount] = useState(0);
   const [bookmarked, setBookmarked] = useState(false);
+  const [hasLiked, setHasLiked] = useState(false);
+  const [hasHated, setHasHated] = useState(false);
+  // const memberNo = Number(auth?.user?.memberNo);
+  const memberNo = null;
 
   useEffect(() => {
     console.log("location.state 확인:", location.state);
@@ -40,7 +38,9 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
       })
       .then((res) => {
         const data = res.data;
+        console.log("서버 응답 데이터:", data);
 
+        setArticle(data.news);
         setComments(data.comments);
         setLikeCount(data.likeCount); // ✅ 좋아요 수
         setHateCount(data.hateCount); // ✅ 싫어요 수
@@ -52,6 +52,84 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
         console.error("뉴스 상세 요청 실패:", err);
       });
   }, []);
+
+  useEffect(() => {
+    if (!article || !auth?.user?.memberNo) return;
+
+    const memberNo = Number(auth.user.memberNo);
+
+    axios
+      .get(`${backendUrl}/api/news/like/status`, {
+        params: { newsNo: article.newsNo, memberNo },
+      })
+      .then((res) => setHasLiked(res.data));
+
+    axios
+      .get(`${backendUrl}/api/news/hate/status`, {
+        params: { newsNo: article.newsNo, memberNo },
+      })
+      .then((res) => setHasHated(res.data));
+  }, [article]);
+
+  const handleLike = () => {
+    axios
+      .post(`${backendUrl}/api/news/like`, {
+        newsNo: article.newsNo,
+        memberNo,
+      })
+      .then(() => {
+        // 토글 상태만 클라이언트에서 반영
+        setHasLiked((prev) => !prev);
+        if (hasHated) setHasHated(false);
+
+        // count는 서버에서 다시 가져옴 (정확하게 유지)
+        axios
+          .get(`${backendUrl}/api/news/like`, {
+            params: { newsNo: article.newsNo },
+          })
+          .then((res) => setLikeCount(res.data));
+
+        if (hasHated) {
+          axios
+            .get(`${backendUrl}/api/news/hate`, {
+              params: { newsNo: article.newsNo },
+            })
+            .then((res) => setHateCount(res.data));
+        }
+      })
+      .catch((err) =>
+        alert(err.response?.data || "좋아요 처리 중 오류가 발생했습니다.")
+      );
+  };
+
+  const handleHate = () => {
+    axios
+      .post(`${backendUrl}/api/news/hate`, {
+        newsNo: article.newsNo,
+        memberNo,
+      })
+      .then(() => {
+        setHasHated((prev) => !prev);
+        if (hasLiked) setHasLiked(false);
+
+        axios
+          .get(`${backendUrl}/api/news/hate`, {
+            params: { newsNo: article.newsNo },
+          })
+          .then((res) => setHateCount(res.data));
+
+        if (hasLiked) {
+          axios
+            .get(`${backendUrl}/api/news/like`, {
+              params: { newsNo: article.newsNo },
+            })
+            .then((res) => setLikeCount(res.data));
+        }
+      })
+      .catch((err) =>
+        alert(err.response?.data || "싫어요 처리 중 오류가 발생했습니다.")
+      );
+  };
 
   const handleAddComment = () => {
     if (!newComment.trim()) return;
@@ -67,23 +145,7 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
     setNewComment("");
   };
 
-  const handleVote = (id, type) => {
-    setComments(
-      comments.map((comment) => {
-        if (comment.id === id) {
-          if (type === "like") {
-            return { ...comment, likes: comment.likes + 1 };
-          } else {
-            return { ...comment, dislikes: comment.dislikes + 1 };
-          }
-        }
-        return comment;
-      })
-    );
-  };
-
-  if (!article?.title)
-    return <S.Loading>기사를 불러오는 중입니다...</S.Loading>;
+  if (!article) return <S.Loading>기사를 불러오는 중입니다...</S.Loading>;
 
   return (
     <S.Container>
@@ -107,11 +169,11 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
             />
             <div>원문 링크</div>
             <a
-              href={article.originallink}
+              href={article.originUrl}
               target="_blank"
               rel="noopener noreferrer"
             >
-              {article.originallink}
+              {article.originUrl}
             </a>
           </S.ArticleText>
           <S.ArticleActions>
@@ -125,8 +187,8 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
             >
               뒤로가기
             </Button>
-            <S.ActionButton>좋아요</S.ActionButton>
-            <S.ActionButton>싫어요</S.ActionButton>
+            <S.ActionButton onClick={handleLike}>👍 {likeCount}</S.ActionButton>
+            <S.ActionButton onClick={handleHate}>👎 {hateCount}</S.ActionButton>
           </S.ArticleActions>
         </S.ArticleContent>
       </S.ArticleBox>
@@ -149,16 +211,7 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
             </S.CommentHeader>
             <S.CommentBody>
               <div>{comment.content}</div>
-              <S.CommentActions>
-                <S.ActionButton onClick={() => handleVote(comment.id, "like")}>
-                  👍 {comment.likes}
-                </S.ActionButton>
-                <S.ActionButton
-                  onClick={() => handleVote(comment.id, "dislike")}
-                >
-                  👎 {comment.dislikes}
-                </S.ActionButton>
-              </S.CommentActions>
+              <S.CommentActions></S.CommentActions>
             </S.CommentBody>
           </S.CommentItem>
         ))}

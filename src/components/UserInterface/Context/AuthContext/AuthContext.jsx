@@ -1,19 +1,73 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState({
-    isLoggedIn: true, // or false
-    user: {
-      id: "admin001",
-      name: "홍길동",
-      role: "admin", // 또는 "user"
-    },
+      memberNo: null,
+      email: null,
+      memberPw: null,
+      memberName: null,
+      accessToken: null,
+      refreshToken: null,
+      isAuthenticated: false,
+
   });
 
+  useEffect(() =>{
+    const memberNo = localStorage.getItem("memberNo");
+    const email = localStorage.getItem("email");
+    const memberName = localStorage.getItem("memberName");
+    const accessToken = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
+
+    if(memberNo && email && memberName && accessToken && refreshToken){
+      setAuth({
+        memberNo,
+        email,
+        memberName,
+        accessToken,
+        refreshToken,
+        isAuthenticated: true,
+      });
+    }
+  }, []);
+
+  const login = (email, memberName, memberNo, refreshToken, accessToken) => {
+    setAuth({
+      email,
+      memberName,
+      memberNo,
+      refreshToken,
+      accessToken,
+      isAuthenticated: true,
+    });
+    localStorage.setItem("email", email);
+    localStorage.setItem("memberName", memberName);
+    localStorage.setItem("memberNo", memberNo);
+    localStorage.setItem("accessToken", accessToken);
+    localStorage.setItem("refreshToken", refreshToken);
+  };
+
+  const logout = () => {
+    setAuth({
+      memberId: null,
+      memberPw: null,
+      memberName: null,
+      accessToken: null,
+      refreshToken: null,
+      isAuthenticated: false,
+    });
+    localStorage.removeItem("email");
+    localStorage.removeItem("memberNo");
+    localStorage.removeItem("memberName");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    window.location.href = "/";
+  };
+
   return (
-    <AuthContext.Provider value={{ auth, setAuth }}>
+    <AuthContext.Provider value={{ auth, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
