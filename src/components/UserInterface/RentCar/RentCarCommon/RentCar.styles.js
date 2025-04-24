@@ -20,7 +20,7 @@ export const RentCarListDiv = styled.div`
   height: 90%;
   display: flex;
   flex-wrap: wrap;
-  magin: 20px 20px 20px 20px;
+  margin: 20px;
 `;
 
 export const RentCarBtnDiv = styled.div`
@@ -167,7 +167,7 @@ export const RentCarDetailContentDiv = styled.div`
 
 export const RentDetailBodyDiv = styled.div`
   width: 100%;
-  height: 100%px;
+  height: 100%;
   display: flex;
   align-items: center;
   flex-direction: column;
