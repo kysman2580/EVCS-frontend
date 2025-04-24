@@ -175,31 +175,39 @@ const NewsDetail = ({ backendUrl = "http://localhost:80" }) => {
               {article.originUrl}
             </a>
           </S.ArticleText>
-          <S.ArticleActions>
-            <Button
-              style={{
-                backgroundColor: "#03c75a",
-                color: "#fff",
-                border: "none",
-              }}
-              onClick={() => navigate(-1)}
-            >
-              뒤로가기
-            </Button>
-            <S.ActionButton onClick={handleLike}>👍 {likeCount}</S.ActionButton>
-            <S.ActionButton onClick={handleHate}>👎 {hateCount}</S.ActionButton>
-          </S.ArticleActions>
+          {auth?.user && (
+            <S.ArticleActions>
+              <Button
+                style={{
+                  backgroundColor: "#03c75a",
+                  color: "#fff",
+                  border: "none",
+                }}
+                onClick={() => navigate(-1)}
+              >
+                뒤로가기
+              </Button>
+              <S.ActionButton onClick={handleLike}>
+                👍 {likeCount}
+              </S.ActionButton>
+              <S.ActionButton onClick={handleHate}>
+                👎 {hateCount}
+              </S.ActionButton>
+            </S.ArticleActions>
+          )}
         </S.ArticleContent>
       </S.ArticleBox>
 
-      <S.CommentInputWrapper>
-        <S.CommentInput
-          placeholder="댓글 작성 공간"
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-        />
-        <S.CommentButton onClick={handleAddComment}>작성</S.CommentButton>
-      </S.CommentInputWrapper>
+      {auth?.user && (
+        <S.CommentInputWrapper>
+          <S.CommentInput
+            placeholder="댓글 작성 공간"
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+          />
+          <S.CommentButton onClick={handleAddComment}>작성</S.CommentButton>
+        </S.CommentInputWrapper>
+      )}
 
       <S.CommentList>
         {comments.map((comment) => (
