@@ -9,7 +9,7 @@ import {
   ActionButton,
   BackButton,
   FieldRow2,
-} from "./ReportDetail.styled";
+} from "./AdminReportDetail.styled";
 import { useAuth } from "../../Context/AuthContext/AuthContext";
 import axios from "axios";
 
@@ -78,7 +78,7 @@ const dummyReports = [
   },
 ];
 
-const ReportDetail = ({ useDummyData = true }) => {
+const AdminReportDetail = ({ useDummyData = true }) => {
   const { boardNo } = useParams();
   const navigate = useNavigate();
   const { auth } = useAuth();
@@ -99,8 +99,7 @@ const ReportDetail = ({ useDummyData = true }) => {
     if (useDummyData) {
       const found = dummyReports.find((r) => r.boardNo === id);
       if (!found) setError("해당 신고를 찾을 수 없습니다.");
-      else if (role !== "admin" && found.reporter !== currentUser)
-        setError("접근 권한이 없습니다.");
+      else if (role !== "admin") setError("접근 권한이 없습니다.");
       else setReport(found);
 
       setLoading(false);
@@ -111,7 +110,7 @@ const ReportDetail = ({ useDummyData = true }) => {
       setLoading(true);
       try {
         const { data } = await axios.get(`/api/reports/${id}`);
-        if (role !== "admin" && data.reporter !== currentUser) {
+        if (role !== "admin") {
           setError("접근 권한이 없습니다.");
         } else {
           setReport(data);
@@ -208,10 +207,13 @@ const ReportDetail = ({ useDummyData = true }) => {
       {/* 삭제 버튼 */}
       <ButtonGroup>
         <BackButton onClick={() => navigate(-1)}>뒤로가기</BackButton>
-        <ActionButton onClick={handleDelete}>신고 취소</ActionButton>
+        <div>
+          <ActionButton onClick={handleDelete}>?</ActionButton>
+          <ActionButton onClick={handleDelete}>?</ActionButton>
+        </div>
       </ButtonGroup>
     </DetailContainer>
   );
 };
 
-export default ReportDetail;
+export default AdminReportDetail;
