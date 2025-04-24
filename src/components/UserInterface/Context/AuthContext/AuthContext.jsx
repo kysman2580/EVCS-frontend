@@ -4,43 +4,51 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState({
+    user: {
       memberNo: null,
       email: null,
       memberPw: null,
       memberName: null,
       accessToken: null,
       refreshToken: null,
-      isAuthenticated: false,
-      role: "admin",
+      isAuthenticated: false, // 기존 : isLoggedIn: true
+      role: null,
+    },
   });
 
-  useEffect(() =>{
+  useEffect(() => {
     const memberNo = localStorage.getItem("memberNo");
     const email = localStorage.getItem("email");
     const memberName = localStorage.getItem("memberName");
     const accessToken = localStorage.getItem("accessToken");
     const refreshToken = localStorage.getItem("refreshToken");
 
-    if(memberNo && email && memberName && accessToken && refreshToken){
+    if (memberNo && email && memberName && accessToken && refreshToken) {
       setAuth({
-        memberNo,
-        email,
-        memberName,
-        accessToken,
-        refreshToken,
-        isAuthenticated: true,
+        user: {
+          memberNo,
+          email,
+          memberName,
+          accessToken,
+          refreshToken,
+          isAuthenticated: true,
+          role: "admin",
+        },
       });
     }
   }, []);
 
   const login = (email, memberName, memberNo, refreshToken, accessToken) => {
     setAuth({
-      email,
-      memberName,
-      memberNo,
-      refreshToken,
-      accessToken,
-      isAuthenticated: true,
+      user: {
+        email,
+        memberName,
+        memberNo,
+        refreshToken,
+        accessToken,
+        isAuthenticated: true,
+        role: "admin",
+      },
     });
     localStorage.setItem("email", email);
     localStorage.setItem("memberName", memberName);
@@ -51,12 +59,15 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setAuth({
-      memberId: null,
-      memberPw: null,
-      memberName: null,
-      accessToken: null,
-      refreshToken: null,
-      isAuthenticated: false,
+      user: {
+        memberId: null,
+        memberPw: null,
+        memberName: null,
+        accessToken: null,
+        refreshToken: null,
+        isAuthenticated: false,
+        role: null,
+      },
     });
     localStorage.removeItem("email");
     localStorage.removeItem("memberNo");

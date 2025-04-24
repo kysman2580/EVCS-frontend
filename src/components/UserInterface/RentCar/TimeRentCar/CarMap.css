@@ -66,3 +66,7 @@
   border: 1px solid #ddd;
   color: #888;
 }
+
+.custom-offcanvas {
+  width: 700px !important;
+}
