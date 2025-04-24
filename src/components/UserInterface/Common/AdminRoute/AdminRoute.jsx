@@ -4,7 +4,7 @@ import { useAuth } from "../../Context/AuthContext/AuthContext";
 const AdminRoute = () => {
   const { auth } = useAuth();
 
-  if (!auth.isLoggedIn || auth.user.role !== "admin") {
+  if (!auth.isAuthenticated || auth.role !== "admin") {
     return <Navigate to="/" replace />;
   }
 

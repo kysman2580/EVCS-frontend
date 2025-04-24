@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
       accessToken: null,
       refreshToken: null,
       isAuthenticated: false,
-
+      role: "admin",
   });
 
   useEffect(() =>{

@@ -100,9 +100,7 @@ function LoginPage() {
                 <StyledFindDiv>
                     <Styled_a onClick={() => navi("/findByPwPage")}>비밀번호 찾기</Styled_a>
                     <a className="stick">|</a>
-                    <Styled_a href="">아이디 찾기</Styled_a>
-                    <a className="stick">|</a>
-                    <Styled_a href="">회원가입</Styled_a>
+                    <Styled_a onClick={() => navi("/signUpPage")}>회원가입</Styled_a>
                 </StyledFindDiv>
 
                 <StyledButtonDiv>
