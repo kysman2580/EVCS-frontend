@@ -3,14 +3,17 @@ import "../Notice/UserNotice.css";
 import NoticeNav from "../../Common/Nav/NoticeNav";
 import { BoardContainerDiv, BoardBodyDiv } from "../Board.styles";
 import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 
 function Notice() {
+  const navigate = useNavigate();
   const [notices, setNotices] = useState(() => {
     const saved = localStorage.getItem("notices");
     return saved
       ? JSON.parse(saved)
       : [
           {
+            id: uuidv4(),
             title: "안녕하세요 공지사항 입니다.",
             date: "2025.07.05",
             author: "admin",
@@ -22,14 +25,17 @@ function Notice() {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const noticesPerPage = 5;
-  const navigate = useNavigate();
 
-  // 저장
+  // 공지사항에 UUID 보장 및 저장
   useEffect(() => {
-    localStorage.setItem("notices", JSON.stringify(notices));
-  }, [notices]);
+    const fixedNotices = notices.map((n) => ({
+      ...n,
+      id: n.id || uuidv4(), // id가 없으면 새로 생성
+    }));
+    setNotices(fixedNotices);
+    localStorage.setItem("notices", JSON.stringify(fixedNotices));
+  }, []);
 
-  // 검색 필터링
   const filteredNotices = notices.filter(
     (n) =>
       n.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -55,7 +61,6 @@ function Notice() {
         <div className="Notice">
           <h1>공지사항</h1>
 
-          {/* 검색창 */}
           <input
             type="text"
             placeholder="제목 또는 작성일시, 작성자 검색"
@@ -74,25 +79,21 @@ function Notice() {
                 </tr>
               </thead>
               <tbody>
-                {paginatedNotices.map((notice, index) => {
-                  const globalIndex = startIndex + index;
-                  return (
-                    <tr
-                      key={globalIndex}
-                      style={{ cursor: "pointer" }}
-                      onClick={() => navigate(`/notice/${globalIndex}`)}
-                    >
-                      <td>{notice.title}</td>
-                      <td>{notice.date}</td>
-                      <td>{notice.author}</td>
-                    </tr>
-                  );
-                })}
+                {paginatedNotices.map((notice) => (
+                  <tr
+                    key={notice.id}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => navigate(`/notice/${notice.id}`)}
+                  >
+                    <td>{notice.title}</td>
+                    <td>{notice.date}</td>
+                    <td>{notice.author}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
 
-          {/* 페이지네이션 */}
           <div className="Notice-pagination" style={{ marginTop: "20px" }}>
             <button
               onClick={() => handlePageChange(1)}

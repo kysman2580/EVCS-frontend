@@ -85,3 +85,64 @@
   white-space: pre-line;
   line-height: 1.6;
 }
+
+/* 상세보기 컨테이너 */
+.Notice-detail-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* 상세 공지 박스 */
+.Notice-detail-box {
+  background: #f9fbfd;
+  border: 1px solid #d6e9f8;
+  border-radius: 10px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* 제목 */
+.detail-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 15px;
+  border-left: 5px solid #3498db;
+  padding-left: 15px;
+}
+
+/* 작성일/작성자 */
+.detail-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #7f8c8d;
+  margin-bottom: 20px;
+}
+
+/* 내용 */
+.detail-content {
+  font-size: 16px;
+  color: #34495e;
+  line-height: 1.8;
+  white-space: pre-line;
+}
+
+/* 목록으로 버튼 */
+.back-button {
+  display: inline-block;
+  margin-bottom: 20px;
+  padding: 8px 14px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.back-button:hover {
+  background-color: #2980b9;
+}
