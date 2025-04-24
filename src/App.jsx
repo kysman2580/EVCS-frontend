@@ -33,6 +33,7 @@ import AdminEventBoardEnrollForm from "./components/AdminInterface/Board/Event/A
 
 /* 회원관련 */
 import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
+import MemberRating from "./components/UserInterface/Member/Mypage/MemberRating";
 
 /* 렌트카 관련 */
 import LongTermRentCarDetail from "./components/UserInterface/RentCar/LongTermRentCar/LongTermRentCarDetail";
@@ -52,7 +53,9 @@ import UserLayout from "./components/Layout/UserInterface/UserLayout";
 import AdminLayout from "./components/Layout/AdminInterface/AdminLayout";
 import { AuthProvider } from "./components/UserInterface/Context/AuthContext/AuthContext";
 import AdminRoute from "./components/UserInterface/Common/AdminRoute/AdminRoute";
+import CarDetails from "./components/AdminInterface/RentCar/CarManagement/CarDetails";
 import SignUpPage from "./components/UserInterface/Member/SignPage/SignPage";
+
 
 function App() {
   return (
@@ -79,6 +82,9 @@ function App() {
 
             {/* 회원관련 */}
             <Route path="/loginPage" element={<LoginPage />} />
+
+            <Route path="/memberRating" element={<MemberRating />} />
+
             <Route path="/signUpPage" element={<SignUpPage/>} />
 
             {/* 신고 관련 */}
@@ -115,9 +121,12 @@ function App() {
               <Route path="main" element={<AdminMain />} />
 
               {/* 렌트카 관련 */}
-              <Route path="timeCar" element={<TimeRentCar />} />
-              <Route path="insertCar" element={<InsertCar />} />
-              <Route path="carManagement" element={<CarManagement />} />
+
+              <Route path="timeCar" element={<TimeRentCar />}></Route>
+              <Route path="insertCar" element={<InsertCar />}></Route>
+              <Route path="carManagement" element={<CarManagement />}></Route>
+              <Route path="carDetails" element={<CarDetails />}></Route>
+
               <Route
                 path="/admin/adminLongTermRentCar"
                 element={<AdminLongTermRentCar />}

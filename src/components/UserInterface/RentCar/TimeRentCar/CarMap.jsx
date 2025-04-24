@@ -3,6 +3,9 @@ import styled from "styled-components";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import "./CarMap.css"; // 필요하면 유지
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Card, Container, Row, Col, Button, Image } from "react-bootstrap";
+import RentCarNav from "../../Common/Nav/RentCarNav";
+import { ContainerDiv, DetailDiv } from "./CarMap.styles";
 
 const Map = styled.div`
   width: 800px;
@@ -20,6 +23,19 @@ const CarMap = () => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const car = {
+    image: "images/아이오닉 5.png", // 이미지 URL 넣을 수 있음
+    name: "쏘나타 EV",
+    year: "2023년식",
+    location: "서울 강남지점",
+    period: "24개월 / 30개월",
+    startDate: "25.4.17.(목)",
+    monthlyFee: "450,000" + "원",
+    originalPrice: "12,000,000" + "원",
+    discountedPrice: "10,800,000" + "원",
+    totalEstimate: "10,800,000" + "원",
+  };
 
   useEffect(() => {
     window.kakao.maps.load(() => {
@@ -119,15 +135,87 @@ const CarMap = () => {
         show={show}
         onHide={handleClose}
         placement="end"
-        styled={{ width: "00px" }}
+        className="custom-offcanvas"
       >
         <Offcanvas.Header closeButton>
           <Offcanvas.Title>차량 상세 정보</Offcanvas.Title>
         </Offcanvas.Header>
-        <Offcanvas.Body>
-          차량 정보를 여기에 넣으세요.
-          <br />
-          예: 차량 이름, 연식, 제조사 등등...
+        <Offcanvas.Body style={{ height: "100%", width: "100%" }}>
+          <ContainerDiv>
+            <DetailDiv>
+              <Container style={{ height: "100%", width: "100%" }}>
+                <Row
+                  className="justify-content-center"
+                  style={{ height: "100%", width: "100%" }}
+                >
+                  <Col md={6} style={{ height: "100%", width: "100%" }}>
+                    <Card>
+                      <Image
+                        src={car.image}
+                        alt="차 이미지"
+                        fluid
+                        style={{
+                          height: "300px",
+                          objectFit: "cover",
+                          width: "100%",
+                        }}
+                      />
+
+                      <Card.Body>
+                        {/* 차량 정보 */}
+                        <Row className="text-center mb-3">
+                          <Col>
+                            <h4>{car.name}</h4>
+                            <div className="text-muted">
+                              {car.year} / {car.location}
+                            </div>
+                          </Col>
+                        </Row>
+
+                        <hr />
+
+                        {/* 요금 정보 */}
+                        <Row className="mb-3 px-3">
+                          <Col>
+                            <h6 className="fw-bold">요금 정보</h6>
+                            <Row>
+                              <Col>월 요금</Col>
+                              <Col className="text-end">{car.monthlyFee}</Col>
+                            </Row>
+                            <Row>
+                              <Col>원래 가격 / 실제 가격</Col>
+                              <Col className="text-end">
+                                {car.originalPrice} / {car.discountedPrice}
+                              </Col>
+                            </Row>
+                          </Col>
+                        </Row>
+
+                        <hr />
+
+                        {/* 계산 가격 + 결제 */}
+                        <Row className="mb-3 px-3">
+                          <Col>
+                            <Row className="align-items-center">
+                              <Col>
+                                <strong>계산할 가격</strong>
+                              </Col>
+                              <Col className="text-center fw-bold">
+                                {car.totalEstimate}
+                              </Col>
+                              <Col className="text-end">
+                                <Button variant="dark">결제하기</Button>
+                              </Col>
+                            </Row>
+                          </Col>
+                        </Row>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                </Row>
+              </Container>
+            </DetailDiv>
+          </ContainerDiv>
         </Offcanvas.Body>
       </Offcanvas>
     </>
