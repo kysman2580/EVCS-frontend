@@ -20,7 +20,7 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
   const [hasLiked, setHasLiked] = useState(false);
   const [hasHated, setHasHated] = useState(false);
   // const memberNo = Number(auth?.user?.memberNo);
-  const memberNo = 4;
+  const memberNo = null;
 
   useEffect(() => {
     console.log("location.state 확인:", location.state);
