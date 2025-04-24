@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // Report2는 스타일드 컨테이너입니다.
 import { Report2 } from "./AdminReport.styled";
-import { useAuth } from "../../UserInterface/Context/AuthContext/AuthContext";
+import { useAuth } from "../../../UserInterface/Context/AuthContext/AuthContext";
 import axios from "axios";
 
 const dummyReports = [
@@ -149,7 +149,7 @@ const AdminReport = ({ useDummyData = true }) => {
     };
 
     axios
-      .get("/api/reports", { params })
+      .get("/api/reportsa", { params })
       .then((res) => setReports(res.data))
       .catch((err) => {
         console.error(err);
@@ -166,7 +166,7 @@ const AdminReport = ({ useDummyData = true }) => {
     setEndDate(end.toISOString().slice(0, 10));
   };
 
-  const handleRowClick = (boardNo) => navi(`/reports/${boardNo}`);
+  const handleRowClick = (boardNo) => navi(`/admin/reports/${boardNo}`);
 
   return (
     <Report2>

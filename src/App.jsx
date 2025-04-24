@@ -15,7 +15,7 @@ import ChargingMap from "./components/UserInterface/ChargingMap/ChargingMap";
 /* 신고 관련 */
 import IntegratedReportingPage from "./components/UserInterface/Report/IntegratedReportingPage/IntegratedReportingPage";
 import Report from "./components/UserInterface/Report/Report/Report";
-import AdminReport from "./components/AdminInterface/Report/AdminReport";
+import AdminReport from "./components/AdminInterface/Report/AdminReport/AdminReport";
 import ReportDetail from "./components/UserInterface/Report/ReportDetail/ReportDetail";
 
 /* 게시판 페이지 관련 */
@@ -145,10 +145,15 @@ function App() {
                 path="goAdminEventEnrollForm"
                 element={<AdminEventBoardEnrollForm />}
               />
+
               {/* 신고 관련*/}
               <Route
                 path="/admin/adminReport/*"
                 element={<AdminReport useDummyData={true} />}
+              />
+              <Route
+                path="/admin/reports/:boardNo"
+                element={<ReportDetail useDummyData={true} />}
               />
             </Route>
           </Route>
