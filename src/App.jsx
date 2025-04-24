@@ -20,6 +20,7 @@ import ReportDetail from "./components/UserInterface/Report/ReportDetail/ReportD
 
 /* 게시판 페이지 관련 */
 import UserNotice from "./components/UserInterface/Board/Notice/UserNotice";
+import UserNoticeDetail from "./components/UserInterface/Board//Notice/UserNoticeDetail";
 import AdminNotice from "./components/AdminInterface/Board/Notice/Notice";
 import NoticeDetail from "./components/AdminInterface/Board/Notice/NoticeDetail";
 import NoticeWrite from "./components/AdminInterface/Board/Notice/NoticeWrite";
@@ -70,6 +71,7 @@ function App() {
 
             {/* 게시판 페이지 관련 */}
             <Route path="/notice" element={<UserNotice />} />
+            <Route path="/notice/:id" element={<UserNoticeDetail />} />
             <Route path="/eventBoard" element={<EventBoard />} />
             <Route path="/goEventDetailPage/*" element={<EventBoardDetail />} />
             <Route path="/timerentalPage" element={<RentalPage />}></Route>

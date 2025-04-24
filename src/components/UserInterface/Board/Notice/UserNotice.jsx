@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "../Notice/UserNotice.css";
 import NoticeNav from "../../Common/Nav/NoticeNav";
 import { BoardContainerDiv, BoardBodyDiv } from "../Board.styles";
@@ -18,18 +19,13 @@ function Notice() {
         ];
   });
 
-  const [selectedNoticeIndex, setSelectedNoticeIndex] = useState(null);
   const [search, setSearch] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     localStorage.setItem("notices", JSON.stringify(notices));
   }, [notices]);
 
-  const handleRowClick = (index) => {
-    setSelectedNoticeIndex(index === selectedNoticeIndex ? null : index);
-  };
-
-  // 검색 필터
   const filteredNotices = notices.filter(
     (n) =>
       n.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -37,7 +33,6 @@ function Notice() {
       n.date.toLowerCase().includes(search.toLowerCase())
   );
 
-  // 페이지네이션 관련
   const [currentPage, setCurrentPage] = useState(1);
   const noticesPerPage = 5;
   const totalPages = Math.ceil(filteredNotices.length / noticesPerPage);
@@ -50,7 +45,6 @@ function Notice() {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    setSelectedNoticeIndex(null); // 페이지 바뀌면 상세 닫기
   };
 
   return (
@@ -63,7 +57,7 @@ function Notice() {
           {/* 검색창 */}
           <input
             type="text"
-            placeholder="제목 또는 작성일시,작성자 검색"
+            placeholder="제목 또는 작성일시, 작성자 검색"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             style={{ marginBottom: "10px", padding: "5px", width: "250px" }}
@@ -79,39 +73,17 @@ function Notice() {
                 </tr>
               </thead>
               <tbody>
-                {paginatedNotices.map((notice, index) => {
-                  const globalIndex = startIndex + index;
-                  return (
-                    <React.Fragment key={globalIndex}>
-                      <tr
-                        onClick={() => handleRowClick(globalIndex)}
-                        style={{ cursor: "pointer" }}
-                      >
-                        <td>{notice.title}</td>
-                        <td>{notice.date}</td>
-                        <td>{notice.author}</td>
-                      </tr>
-                      {selectedNoticeIndex === globalIndex && (
-                        <tr className="Notice-detail-row">
-                          <td colSpan="3">
-                            <div className="Notice-detail">
-                              <h2>📢 {notice.title}</h2>
-                              <p>
-                                <strong>작성일:</strong> {notice.date}
-                              </p>
-                              <p>
-                                <strong>작성자:</strong> {notice.author}
-                              </p>
-                              <div className="Notice-content">
-                                <p>{notice.content}</p>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                      )}
-                    </React.Fragment>
-                  );
-                })}
+                {paginatedNotices.map((notice, index) => (
+                  <tr
+                    key={startIndex + index}
+                    onClick={() => navigate(`/notice/${startIndex + index}`)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <td>{notice.title}</td>
+                    <td>{notice.date}</td>
+                    <td>{notice.author}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
