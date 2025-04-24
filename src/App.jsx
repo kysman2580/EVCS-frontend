@@ -24,6 +24,7 @@ import NoticeDetail from "./components/AdminInterface/Board/Notice/NoticeDetail"
 
 /* 회원관련 */
 import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
+import MemberRating from "./components/UserInterface/Member/Mypage/MemberRating";
 
 /* 렌트카 관련 */
 import LongTermRentCarDetail from "./components/UserInterface/RentCar/LongTermRentCar/LongTermRentCarDetail";
@@ -43,6 +44,7 @@ import UserLayout from "./components/Layout/UserInterface/UserLayout";
 import AdminLayout from "./components/Layout/AdminInterface/AdminLayout";
 import { AuthProvider } from "./components/UserInterface/Context/AuthContext/AuthContext";
 import AdminRoute from "./components/UserInterface/Common/AdminRoute/AdminRoute";
+import CarDetails from "./components/AdminInterface/RentCar/CarManagement/CarDetails";
 
 function App() {
   return (
@@ -68,6 +70,7 @@ function App() {
 
             {/* 회원관련 */}
             <Route path="/loginPage" element={<LoginPage />} />
+            <Route path="memberRating" element={<MemberRating />} />
 
             {/* 신고 관련 */}
             <Route path="/report/*" element={<Report useDummyData={true} />} />
@@ -102,6 +105,7 @@ function App() {
               <Route path="timeCar" element={<TimeRentCar />}></Route>
               <Route path="insertCar" element={<InsertCar />}></Route>
               <Route path="carManagement" element={<CarManagement />}></Route>
+              <Route path="carDetails" element={<CarDetails />}></Route>
               <Route
                 path="/admin/adminLongTermRentCar"
                 element={<AdminLongTermRentCar />}
