@@ -5,7 +5,7 @@ import { Button } from "react-bootstrap";
 import axios from "axios";
 import { useAuth } from "../../Context/AuthContext/AuthContext";
 
-const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
+const NewsDetail = ({ backendUrl = "http://localhost:80" }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { title, description, pubDate, imageUrl, originallink, query } =
@@ -19,8 +19,7 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
   const [bookmarked, setBookmarked] = useState(false);
   const [hasLiked, setHasLiked] = useState(false);
   const [hasHated, setHasHated] = useState(false);
-  // const memberNo = Number(auth?.user?.memberNo);
-  const memberNo = null;
+  const memberNo = Number(auth?.user?.memberNo);
 
   useEffect(() => {
     console.log("location.state 확인:", location.state);
