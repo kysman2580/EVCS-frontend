@@ -10,7 +10,7 @@ const UserNoticeDetail = () => {
   useEffect(() => {
     const stored = localStorage.getItem("notices");
     const notices = stored ? JSON.parse(stored) : [];
-    const targetNotice = notices[parseInt(id)];
+    const targetNotice = notices.find((n) => n.id === id);
     setNotice(targetNotice);
   }, [id]);
 
