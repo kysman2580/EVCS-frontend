@@ -52,6 +52,7 @@ import UserLayout from "./components/Layout/UserInterface/UserLayout";
 import AdminLayout from "./components/Layout/AdminInterface/AdminLayout";
 import { AuthProvider } from "./components/UserInterface/Context/AuthContext/AuthContext";
 import AdminRoute from "./components/UserInterface/Common/AdminRoute/AdminRoute";
+import SignUpPage from "./components/UserInterface/Member/SignPage/SignPage";
 
 function App() {
   return (
@@ -78,6 +79,7 @@ function App() {
 
             {/* 회원관련 */}
             <Route path="/loginPage" element={<LoginPage />} />
+            <Route path="/signUpPage" element={<SignUpPage/>} />
 
             {/* 신고 관련 */}
             <Route path="/report/*" element={<Report useDummyData={true} />} />
@@ -164,5 +166,4 @@ function App() {
     </>
   );
 }
-
 export default App;

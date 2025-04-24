@@ -9,23 +9,25 @@ import {
   NavLink,
 } from "./Header.styles";
 import { useNavigate } from "react-router-dom";
-import LoginPage from "../../Member/LoginPage/LoginPage";
+import { useAuth } from "../../Context/AuthContext/AuthContext";
 
 const Header = () => {
   const navi = useNavigate();
-  return (
-    <>
-      <StyledHeaderDiv>
-        <StyledLogoDiv>
-          <NavLink onClick={() => navi("/")}>
-            <LogoImg src="/images/Logo.png" />
-          </NavLink>
-        </StyledLogoDiv>
-        <StyledHomeCenterDiv>
-          <StyledHeaderBtn onClick={() => navi("/timerentalPage")}>
-            렌트카
-          </StyledHeaderBtn>
-          <StyledHeaderBtn onClick={() => navi("/driveRouteBoard")}>
+  const { auth, logout } = useAuth();
+
+    return (
+      <>
+        <StyledHeaderDiv>
+          <StyledLogoDiv>
+            <NavLink onClick={() => navi("/")}>
+              <LogoImg src="/images/Logo.png" />
+            </NavLink>
+          </StyledLogoDiv>
+          <StyledHomeCenterDiv>
+            <StyledHeaderBtn onClick={() => navi("/timerentalPage")}>
+              렌트카
+            </StyledHeaderBtn>
+            <StyledHeaderBtn onClick={() => navi("/driveRouteBoard")}>
             커뮤니티
           </StyledHeaderBtn>
           <StyledHeaderBtn onClick={() => navi("/chargingMap")}>
@@ -39,10 +41,18 @@ const Header = () => {
           </StyledHeaderBtn>
         </StyledHomeCenterDiv>
         <StyledMemberDiv>
-          <StyledHeaderBtn onClick={() => navi("/loginPage")}>로그인</StyledHeaderBtn>
-          <StyledHeaderBtn>회원가입</StyledHeaderBtn>
-          <StyledHeaderBtn>로그아웃</StyledHeaderBtn>
-          <StyledHeaderBtn>아이콘</StyledHeaderBtn>
+          {auth.isAuthenticated ? (
+            <>
+              <StyledHeaderBtn>{auth.memberName}님</StyledHeaderBtn>
+              <StyledHeaderBtn onClick={logout}>로그아웃</StyledHeaderBtn>
+              <StyledHeaderBtn>아이콘</StyledHeaderBtn>
+            </>
+          ) : (
+            <>
+              <StyledHeaderBtn onClick={() => navi("/loginPage")}>로그인</StyledHeaderBtn>
+              <StyledHeaderBtn onClick={() => navi("/signUpPage")}>회원가입</StyledHeaderBtn>
+            </>
+          )}
           <StyledHeaderBtn onClick={() => navi("/admin/main")}>
             관리자페이지로
           </StyledHeaderBtn>
