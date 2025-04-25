@@ -14,7 +14,7 @@ import {
   formatDate,
 } from "./NewsItemComponents";
 
-const NewsMain = ({ backendUrl = "http://localhost:8080" }) => {
+const NewsMain = ({ backendUrl = "http://localhost:80" }) => {
   const navigate = useNavigate();
 
   const [query, setQuery] = useState("전기차");

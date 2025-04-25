@@ -5,7 +5,7 @@ import { Button } from "react-bootstrap";
 import axios from "axios";
 import { useAuth } from "../../Context/AuthContext/AuthContext";
 
-const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
+const NewsDetail = ({ backendUrl = "http://localhost:80" }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { title, description, pubDate, imageUrl, originallink, query } =
@@ -20,7 +20,7 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
   const [hasLiked, setHasLiked] = useState(false);
   const [hasHated, setHasHated] = useState(false);
   // const memberNo = Number(auth?.user?.memberNo);
-  const memberNo = null;
+  const memberNo = 85;
 
   useEffect(() => {
     console.log("location.state 확인:", location.state);
@@ -187,20 +187,30 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
             >
               뒤로가기
             </Button>
-            <S.ActionButton onClick={handleLike}>👍 {likeCount}</S.ActionButton>
-            <S.ActionButton onClick={handleHate}>👎 {hateCount}</S.ActionButton>
+            {auth?.user && (
+              <>
+                <S.ActionButton onClick={handleLike}>
+                  👍 {likeCount}
+                </S.ActionButton>
+                <S.ActionButton onClick={handleHate}>
+                  👎 {hateCount}
+                </S.ActionButton>
+              </>
+            )}
           </S.ArticleActions>
         </S.ArticleContent>
       </S.ArticleBox>
 
-      <S.CommentInputWrapper>
-        <S.CommentInput
-          placeholder="댓글 작성 공간"
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-        />
-        <S.CommentButton onClick={handleAddComment}>작성</S.CommentButton>
-      </S.CommentInputWrapper>
+      {auth?.user && (
+        <S.CommentInputWrapper>
+          <S.CommentInput
+            placeholder="댓글 작성 공간"
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+          />
+          <S.CommentButton onClick={handleAddComment}>작성</S.CommentButton>
+        </S.CommentInputWrapper>
+      )}
 
       <S.CommentList>
         {comments.map((comment) => (
