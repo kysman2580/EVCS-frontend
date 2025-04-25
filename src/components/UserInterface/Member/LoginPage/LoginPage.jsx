@@ -50,6 +50,7 @@ function LoginPage() {
 
         axios.post('http://localhost:80/auth/login', loginData)
             .then(response => {
+                console.log("로그인 응답 데이터:", response.data);
                 const { email, memberName, memberNo, refreshToken, accessToken } = response.data;
                 login(email, memberName, memberNo, refreshToken, accessToken);
 
