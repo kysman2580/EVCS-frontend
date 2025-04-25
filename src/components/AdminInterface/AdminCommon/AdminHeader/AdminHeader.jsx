@@ -28,7 +28,9 @@ const Header = () => {
           <StyledHeaderBtn onClick={() => navi("/admin/notice/")}>
             공지사항
           </StyledHeaderBtn>
-          <StyledHeaderBtn>회원관리</StyledHeaderBtn>
+          <StyledHeaderBtn onClick={() => navi("/admin/adminReport")}>
+            회원관리
+          </StyledHeaderBtn>
         </StyledHomeCenterDiv>
         <StyledMemberDiv>
           <StyledHeaderBtn onClick={() => navi("/")}>
