@@ -19,8 +19,8 @@ const NewsDetail = ({ backendUrl = "http://localhost:80" }) => {
   const [bookmarked, setBookmarked] = useState(false);
   const [hasLiked, setHasLiked] = useState(false);
   const [hasHated, setHasHated] = useState(false);
-  // const memberNo = Number(auth?.user?.memberNo);
-  const memberNo = 85;
+  const memberNo = Number(localStorage.getItem("memberNo")); // ← 숫자 변환
+  // const memberNo = 101;
 
   useEffect(() => {
     console.log("location.state 확인:", location.state);
@@ -71,64 +71,114 @@ const NewsDetail = ({ backendUrl = "http://localhost:80" }) => {
       .then((res) => setHasHated(res.data));
   }, [article]);
 
-  const handleLike = () => {
+  useEffect(() => {
+    if (!article || !auth?.user?.memberNo) return;
+
+    const safeMemberNo = Number(auth.user.memberNo);
+    if (Number.isNaN(safeMemberNo)) return;
+
     axios
-      .post(`${backendUrl}/api/news/like`, {
+      .get(`${backendUrl}/api/news/bookmark/status`, {
+        params: { newsNo: article.newsNo, memberNo: safeMemberNo },
+      })
+      .then((res) => setBookmarked(res.data))
+      .catch(() => console.log("북마크 상태 확인 실패"));
+  }, [article, auth]);
+
+  const handleLike = async () => {
+    if (!memberNo) {
+      alert("로그인을 해야 사용 가능한 기능입니다.");
+      return;
+    }
+
+    try {
+      await axios.post(`${backendUrl}/api/news/like`, {
         newsNo: article.newsNo,
         memberNo,
-      })
-      .then(() => {
-        // 토글 상태만 클라이언트에서 반영
-        setHasLiked((prev) => !prev);
-        if (hasHated) setHasHated(false);
+      });
 
-        // count는 서버에서 다시 가져옴 (정확하게 유지)
-        axios
-          .get(`${backendUrl}/api/news/like`, {
+      const [likeStatusRes, hateStatusRes, likeCountRes, hateCountRes] =
+        await Promise.all([
+          axios.get(`${backendUrl}/api/news/like/status`, {
+            params: { newsNo: article.newsNo, memberNo },
+          }),
+          axios.get(`${backendUrl}/api/news/hate/status`, {
+            params: { newsNo: article.newsNo, memberNo },
+          }),
+          axios.get(`${backendUrl}/api/news/like`, {
             params: { newsNo: article.newsNo },
-          })
-          .then((res) => setLikeCount(res.data));
+          }),
+          axios.get(`${backendUrl}/api/news/hate`, {
+            params: { newsNo: article.newsNo },
+          }),
+        ]);
 
-        if (hasHated) {
-          axios
-            .get(`${backendUrl}/api/news/hate`, {
-              params: { newsNo: article.newsNo },
-            })
-            .then((res) => setHateCount(res.data));
-        }
-      })
-      .catch((err) =>
-        alert(err.response?.data || "좋아요 처리 중 오류가 발생했습니다.")
-      );
+      setHasLiked(likeStatusRes.data);
+      setHasHated(hateStatusRes.data);
+      setLikeCount(likeCountRes.data);
+      setHateCount(hateCountRes.data);
+    } catch (err) {
+      alert(err.response?.data || "좋아요 처리 중 오류가 발생했습니다.");
+    }
   };
 
-  const handleHate = () => {
-    axios
-      .post(`${backendUrl}/api/news/hate`, {
+  const handleHate = async () => {
+    if (!memberNo) {
+      alert("로그인을 해야 사용 가능한 기능입니다.");
+      return;
+    }
+
+    try {
+      await axios.post(`${backendUrl}/api/news/hate`, {
         newsNo: article.newsNo,
         memberNo,
-      })
-      .then(() => {
-        setHasHated((prev) => !prev);
-        if (hasLiked) setHasLiked(false);
+      });
 
-        axios
-          .get(`${backendUrl}/api/news/hate`, {
+      const [likeStatusRes, hateStatusRes, likeCountRes, hateCountRes] =
+        await Promise.all([
+          axios.get(`${backendUrl}/api/news/like/status`, {
+            params: { newsNo: article.newsNo, memberNo },
+          }),
+          axios.get(`${backendUrl}/api/news/hate/status`, {
+            params: { newsNo: article.newsNo, memberNo },
+          }),
+          axios.get(`${backendUrl}/api/news/like`, {
             params: { newsNo: article.newsNo },
-          })
-          .then((res) => setHateCount(res.data));
+          }),
+          axios.get(`${backendUrl}/api/news/hate`, {
+            params: { newsNo: article.newsNo },
+          }),
+        ]);
 
-        if (hasLiked) {
-          axios
-            .get(`${backendUrl}/api/news/like`, {
-              params: { newsNo: article.newsNo },
-            })
-            .then((res) => setLikeCount(res.data));
-        }
-      })
-      .catch((err) =>
-        alert(err.response?.data || "싫어요 처리 중 오류가 발생했습니다.")
-      );
+      setHasLiked(likeStatusRes.data);
+      setHasHated(hateStatusRes.data);
+      setLikeCount(likeCountRes.data);
+      setHateCount(hateCountRes.data);
+    } catch (err) {
+      alert(err.response?.data || "싫어요 처리 중 오류가 발생했습니다.");
+    }
+  };
+
+  const handleBookmark = async () => {
+    if (!memberNo) {
+      alert("로그인을 해야 사용 가능한 기능입니다.");
+      return;
+    }
+
+    try {
+      await axios.post(`${backendUrl}/api/news/bookmark`, {
+        newsNo: article.newsNo,
+        memberNo,
+      });
+
+      // 토글 결과를 다시 가져오는 방식
+      const res = await axios.get(`${backendUrl}/api/news/bookmark/status`, {
+        params: { newsNo: article.newsNo, memberNo },
+      });
+      setBookmarked(res.data);
+    } catch (err) {
+      alert(err.response?.data || "북마크 처리 중 오류가 발생했습니다.");
+    }
   };
 
   const handleAddComment = () => {
@@ -187,7 +237,7 @@ const NewsDetail = ({ backendUrl = "http://localhost:80" }) => {
             >
               뒤로가기
             </Button>
-            {auth?.user && (
+            {auth?.user?.isAuthenticated && (
               <>
                 <S.ActionButton onClick={handleLike}>
                   👍 {likeCount}
@@ -195,13 +245,16 @@ const NewsDetail = ({ backendUrl = "http://localhost:80" }) => {
                 <S.ActionButton onClick={handleHate}>
                   👎 {hateCount}
                 </S.ActionButton>
+                <S.ActionButton onClick={handleBookmark}>
+                  {bookmarked ? "🔖 북마크됨" : "📌 북마크"}
+                </S.ActionButton>
               </>
             )}
           </S.ArticleActions>
         </S.ArticleContent>
       </S.ArticleBox>
 
-      {auth?.user && (
+      {auth?.user?.isAuthenticated && (
         <S.CommentInputWrapper>
           <S.CommentInput
             placeholder="댓글 작성 공간"
