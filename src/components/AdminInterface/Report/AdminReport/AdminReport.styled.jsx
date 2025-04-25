@@ -1,9 +1,10 @@
 import styled from "styled-components";
 
 export const Report2 = styled.div`
-  padding: 24px;
-  margin: 10px 400px;
+  margin: 10px;
   background: #fafafa;
+  display: flex;
+  margin: 20px auto;
 
   h2 {
     display: flex;
@@ -110,4 +111,7 @@ export const Report2 = styled.div`
     margin: 16px 0;
     color: #666;
   }
+`;
+export const Report3 = styled.div`
+  margin: 0 auto;
 `;

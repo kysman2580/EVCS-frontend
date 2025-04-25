@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // Report2는 스타일드 컨테이너입니다.
-import { Report2 } from "./AdminReport.styled";
+import { Report2, Report3 } from "./AdminReport.styled";
 import { useAuth } from "../../../UserInterface/Context/AuthContext/AuthContext";
 import axios from "axios";
+import AdminReportNav from "../../AdminCommon/AdminNav/AdminReportNav";
 
 const dummyReports = [
   {
@@ -170,69 +171,72 @@ const AdminReport = ({ useDummyData = true }) => {
 
   return (
     <Report2>
-      <h2>관리자용 신고 내역</h2>
-      {/* 필터 UI는 그대로 */}
-      <div className="report-filters">
-        <input
-          type="date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-        />
-        <span>~</span>
-        <input
-          type="date"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="제목 검색"
-          value={titleQuery}
-          onChange={(e) => setTitleQuery(e.target.value)}
-        />
-        <button onClick={() => handlePreset(7)}>1주일</button>
-        <button onClick={() => handlePreset(30)}>1개월</button>
-        <button onClick={() => handlePreset(90)}>3개월</button>
-        <button onClick={() => handlePreset(180)}>6개월</button>
-        <button onClick={() => handlePreset(365)}>1년</button>
-        <button className="search-button" onClick={handleSearch}>
-          검색
-        </button>
-      </div>
+      <AdminReportNav />
+      <Report3>
+        <h2>관리자용 신고 내역</h2>
+        {/* 필터 UI는 그대로 */}
+        <div className="report-filters">
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+          <span>~</span>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="제목 검색"
+            value={titleQuery}
+            onChange={(e) => setTitleQuery(e.target.value)}
+          />
+          <button onClick={() => handlePreset(7)}>1주일</button>
+          <button onClick={() => handlePreset(30)}>1개월</button>
+          <button onClick={() => handlePreset(90)}>3개월</button>
+          <button onClick={() => handlePreset(180)}>6개월</button>
+          <button onClick={() => handlePreset(365)}>1년</button>
+          <button className="search-button" onClick={handleSearch}>
+            검색
+          </button>
+        </div>
 
-      <div className="report-table-container">
-        {loading && <p>불러오는 중...</p>}
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        {!loading && reports.length === 0 && !error && (
-          <p>신고 내역이 없습니다.</p>
-        )}
-        {reports.length > 0 && (
-          <table className="report-table">
-            <thead>
-              <tr>
-                <th>번호</th>
-                <th>제목</th>
-                <th>신고자</th>
-                <th>피의자</th>
-                <th>신청일</th>
-                <th>진행상황</th>
-              </tr>
-            </thead>
-            <tbody>
-              {reports.map((r) => (
-                <tr key={r.boardNo} onClick={() => handleRowClick(r.boardNo)}>
-                  <td>{r.displayId}</td>
-                  <td className="report-title">{r.title}</td>
-                  <td>{r.reporter}</td>
-                  <td>{r.defendant}</td>
-                  <td>{r.applicationDate}</td>
-                  <td>{r.status}</td>
+        <div className="report-table-container">
+          {loading && <p>불러오는 중...</p>}
+          {error && <p style={{ color: "red" }}>{error}</p>}
+          {!loading && reports.length === 0 && !error && (
+            <p>신고 내역이 없습니다.</p>
+          )}
+          {reports.length > 0 && (
+            <table className="report-table">
+              <thead>
+                <tr>
+                  <th>번호</th>
+                  <th>제목</th>
+                  <th>신고자</th>
+                  <th>피의자</th>
+                  <th>신청일</th>
+                  <th>진행상황</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+              </thead>
+              <tbody>
+                {reports.map((r) => (
+                  <tr key={r.boardNo} onClick={() => handleRowClick(r.boardNo)}>
+                    <td>{r.displayId}</td>
+                    <td className="report-title">{r.title}</td>
+                    <td>{r.reporter}</td>
+                    <td>{r.defendant}</td>
+                    <td>{r.applicationDate}</td>
+                    <td>{r.status}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </Report3>
     </Report2>
   );
 };

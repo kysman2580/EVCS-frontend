@@ -11,8 +11,8 @@ export const AuthProvider = ({ children }) => {
       memberName: null,
       accessToken: null,
       refreshToken: null,
-      isAuthenticated: false, // 기존 : isLoggedIn: true
-      role: null,
+      isAuthenticated: true, // 기존 : isLoggedIn: true
+      role: "admin",
     },
   });
 
