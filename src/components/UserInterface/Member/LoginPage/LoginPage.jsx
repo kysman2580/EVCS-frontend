@@ -50,6 +50,7 @@ function LoginPage() {
 
         axios.post('http://localhost:80/auth/login', loginData)
             .then(response => {
+                console.log("로그인 응답 데이터:", response.data);
                 const { email, memberName, memberNo, refreshToken, accessToken } = response.data;
                 login(email, memberName, memberNo, refreshToken, accessToken);
 
@@ -100,9 +101,7 @@ function LoginPage() {
                 <StyledFindDiv>
                     <Styled_a onClick={() => navi("/findByPwPage")}>비밀번호 찾기</Styled_a>
                     <a className="stick">|</a>
-                    <Styled_a href="">아이디 찾기</Styled_a>
-                    <a className="stick">|</a>
-                    <Styled_a href="">회원가입</Styled_a>
+                    <Styled_a onClick={() => navi("/signUpPage")}>회원가입</Styled_a>
                 </StyledFindDiv>
 
                 <StyledButtonDiv>

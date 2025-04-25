@@ -60,9 +60,9 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setAuth({
       user: {
-        memberId: null,
-        memberPw: null,
+        email: null,
         memberName: null,
+        memberPw: null,
         accessToken: null,
         refreshToken: null,
         isAuthenticated: false,
