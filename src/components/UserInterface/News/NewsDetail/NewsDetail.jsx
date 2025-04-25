@@ -19,7 +19,8 @@ const NewsDetail = ({ backendUrl = "http://localhost:80" }) => {
   const [bookmarked, setBookmarked] = useState(false);
   const [hasLiked, setHasLiked] = useState(false);
   const [hasHated, setHasHated] = useState(false);
-  const memberNo = Number(auth?.user?.memberNo);
+  // const memberNo = Number(auth?.user?.memberNo);
+  const memberNo = 85;
 
   useEffect(() => {
     console.log("location.state 확인:", location.state);
@@ -175,26 +176,28 @@ const NewsDetail = ({ backendUrl = "http://localhost:80" }) => {
               {article.originUrl}
             </a>
           </S.ArticleText>
-          {auth?.user && (
-            <S.ArticleActions>
-              <Button
-                style={{
-                  backgroundColor: "#03c75a",
-                  color: "#fff",
-                  border: "none",
-                }}
-                onClick={() => navigate(-1)}
-              >
-                뒤로가기
-              </Button>
-              <S.ActionButton onClick={handleLike}>
-                👍 {likeCount}
-              </S.ActionButton>
-              <S.ActionButton onClick={handleHate}>
-                👎 {hateCount}
-              </S.ActionButton>
-            </S.ArticleActions>
-          )}
+          <S.ArticleActions>
+            <Button
+              style={{
+                backgroundColor: "#03c75a",
+                color: "#fff",
+                border: "none",
+              }}
+              onClick={() => navigate(-1)}
+            >
+              뒤로가기
+            </Button>
+            {auth?.user && (
+              <>
+                <S.ActionButton onClick={handleLike}>
+                  👍 {likeCount}
+                </S.ActionButton>
+                <S.ActionButton onClick={handleHate}>
+                  👎 {hateCount}
+                </S.ActionButton>
+              </>
+            )}
+          </S.ArticleActions>
         </S.ArticleContent>
       </S.ArticleBox>
 
