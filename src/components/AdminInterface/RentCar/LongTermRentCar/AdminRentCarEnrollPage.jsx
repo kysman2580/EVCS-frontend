@@ -130,7 +130,7 @@ const AdminRentCarEnrollPage = () => {
                 <Row>
                   <Col>
                     <Form.Group className="mb-3" controlId="carPrice">
-                      <Form.Label className="fw-bold ">가격 :</Form.Label>
+                      <Form.Label className="fw-bold">가격 :</Form.Label>
                       <Form.Control
                         type="text"
                         name="price"
