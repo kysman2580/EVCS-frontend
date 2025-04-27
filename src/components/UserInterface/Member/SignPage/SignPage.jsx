@@ -51,7 +51,6 @@ function SignUpPage() {
     const handleSendCode = (e) => {
         e.preventDefault();
 
-        // 이메일 유효성 검사 (trim()은 메서드이므로 ()가 필요)
         if (!email || !email.trim()) {
             alert('이메일을 입력해주세요.');
             return;
