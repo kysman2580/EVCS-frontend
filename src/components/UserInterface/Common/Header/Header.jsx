@@ -9,10 +9,12 @@ import {
   NavLink,
 } from "./Header.styles";
 import { useNavigate } from "react-router-dom";
-import LoginPage from "../../Member/LoginPage/LoginPage";
+import { useAuth } from "../../Context/AuthContext/AuthContext";
 
 const Header = () => {
   const navi = useNavigate();
+  const { auth, logout } = useAuth();
+
   return (
     <>
       <StyledHeaderDiv>
@@ -39,13 +41,29 @@ const Header = () => {
           </StyledHeaderBtn>
         </StyledHomeCenterDiv>
         <StyledMemberDiv>
-          <StyledHeaderBtn onClick={() => navi("/loginPage")}>로그인</StyledHeaderBtn>
-          <StyledHeaderBtn>회원가입</StyledHeaderBtn>
-          <StyledHeaderBtn>로그아웃</StyledHeaderBtn>
-          <StyledHeaderBtn>아이콘</StyledHeaderBtn>
-          <StyledHeaderBtn onClick={() => navi("/admin/main")}>
-            관리자페이지로
-          </StyledHeaderBtn>
+          {auth.user.isAuthenticated ? (
+            <>
+              <StyledHeaderBtn>{auth.user.memberName}님</StyledHeaderBtn>
+              <StyledHeaderBtn onClick={logout}>로그아웃</StyledHeaderBtn>
+              <StyledHeaderBtn>아이콘</StyledHeaderBtn>
+              {auth.user.role === "admin" && (
+                <>
+                  <StyledHeaderBtn onClick={() => navi("/admin/main")}>
+                    관리자페이지로
+                  </StyledHeaderBtn>
+                </>
+              )}
+            </>
+          ) : (
+            <>
+              <StyledHeaderBtn onClick={() => navi("/loginPage")}>
+                로그인
+              </StyledHeaderBtn>
+              <StyledHeaderBtn onClick={() => navi("/signUpPage")}>
+                회원가입
+              </StyledHeaderBtn>
+            </>
+          )}
         </StyledMemberDiv>
       </StyledHeaderDiv>
     </>

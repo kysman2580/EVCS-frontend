@@ -3,26 +3,24 @@ import { useLocation, useNavigate } from "react-router-dom";
 import * as S from "./NewsDetail.styles";
 import { Button } from "react-bootstrap";
 import axios from "axios";
+import { useAuth } from "../../Context/AuthContext/AuthContext";
 
-const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
+const NewsDetail = ({ backendUrl = "http://localhost:80" }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { title, description, pubDate, imageUrl, originallink, query } =
     location.state || {};
-
-  const [article] = useState({
-    title,
-    description,
-    pubDate,
-    imageUrl,
-    originallink,
-    query,
-  });
+  const { auth } = useAuth(); // ← 여기서 auth 꺼내고
+  const [article, setArticle] = useState(null); // ← 서버에서 받아온 news로 대체
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [likeCount, setLikeCount] = useState(0);
   const [hateCount, setHateCount] = useState(0);
   const [bookmarked, setBookmarked] = useState(false);
+  const [hasLiked, setHasLiked] = useState(false);
+  const [hasHated, setHasHated] = useState(false);
+  const memberNo = Number(localStorage.getItem("memberNo")); // ← 숫자 변환
+  // const memberNo = 101;
 
   useEffect(() => {
     console.log("location.state 확인:", location.state);
@@ -40,7 +38,9 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
       })
       .then((res) => {
         const data = res.data;
+        console.log("서버 응답 데이터:", data);
 
+        setArticle(data.news);
         setComments(data.comments);
         setLikeCount(data.likeCount); // ✅ 좋아요 수
         setHateCount(data.hateCount); // ✅ 싫어요 수
@@ -52,6 +52,134 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
         console.error("뉴스 상세 요청 실패:", err);
       });
   }, []);
+
+  useEffect(() => {
+    if (!article || !auth?.user?.memberNo) return;
+
+    const memberNo = Number(auth.user.memberNo);
+
+    axios
+      .get(`${backendUrl}/api/news/like/status`, {
+        params: { newsNo: article.newsNo, memberNo },
+      })
+      .then((res) => setHasLiked(res.data));
+
+    axios
+      .get(`${backendUrl}/api/news/hate/status`, {
+        params: { newsNo: article.newsNo, memberNo },
+      })
+      .then((res) => setHasHated(res.data));
+  }, [article]);
+
+  useEffect(() => {
+    if (!article || !auth?.user?.memberNo) return;
+
+    const safeMemberNo = Number(auth.user.memberNo);
+    if (Number.isNaN(safeMemberNo)) return;
+
+    axios
+      .get(`${backendUrl}/api/news/bookmark/status`, {
+        params: { newsNo: article.newsNo, memberNo: safeMemberNo },
+      })
+      .then((res) => setBookmarked(res.data))
+      .catch(() => console.log("북마크 상태 확인 실패"));
+  }, [article, auth]);
+
+  const handleLike = async () => {
+    if (!memberNo) {
+      alert("로그인을 해야 사용 가능한 기능입니다.");
+      return;
+    }
+
+    try {
+      await axios.post(`${backendUrl}/api/news/like`, {
+        newsNo: article.newsNo,
+        memberNo,
+      });
+
+      const [likeStatusRes, hateStatusRes, likeCountRes, hateCountRes] =
+        await Promise.all([
+          axios.get(`${backendUrl}/api/news/like/status`, {
+            params: { newsNo: article.newsNo, memberNo },
+          }),
+          axios.get(`${backendUrl}/api/news/hate/status`, {
+            params: { newsNo: article.newsNo, memberNo },
+          }),
+          axios.get(`${backendUrl}/api/news/like`, {
+            params: { newsNo: article.newsNo },
+          }),
+          axios.get(`${backendUrl}/api/news/hate`, {
+            params: { newsNo: article.newsNo },
+          }),
+        ]);
+
+      setHasLiked(likeStatusRes.data);
+      setHasHated(hateStatusRes.data);
+      setLikeCount(likeCountRes.data);
+      setHateCount(hateCountRes.data);
+    } catch (err) {
+      alert(err.response?.data || "좋아요 처리 중 오류가 발생했습니다.");
+    }
+  };
+
+  const handleHate = async () => {
+    if (!memberNo) {
+      alert("로그인을 해야 사용 가능한 기능입니다.");
+      return;
+    }
+
+    try {
+      await axios.post(`${backendUrl}/api/news/hate`, {
+        newsNo: article.newsNo,
+        memberNo,
+      });
+
+      const [likeStatusRes, hateStatusRes, likeCountRes, hateCountRes] =
+        await Promise.all([
+          axios.get(`${backendUrl}/api/news/like/status`, {
+            params: { newsNo: article.newsNo, memberNo },
+          }),
+          axios.get(`${backendUrl}/api/news/hate/status`, {
+            params: { newsNo: article.newsNo, memberNo },
+          }),
+          axios.get(`${backendUrl}/api/news/like`, {
+            params: { newsNo: article.newsNo },
+          }),
+          axios.get(`${backendUrl}/api/news/hate`, {
+            params: { newsNo: article.newsNo },
+          }),
+        ]);
+
+      setHasLiked(likeStatusRes.data);
+      setHasHated(hateStatusRes.data);
+      setLikeCount(likeCountRes.data);
+      setHateCount(hateCountRes.data);
+    } catch (err) {
+      alert(err.response?.data || "싫어요 처리 중 오류가 발생했습니다.");
+    }
+  };
+
+  const handleBookmark = async () => {
+    if (!memberNo) {
+      alert("로그인을 해야 사용 가능한 기능입니다.");
+      return;
+    }
+
+    try {
+      await axios.post(`${backendUrl}/api/news/bookmark`, {
+        newsNo: article.newsNo,
+        memberNo,
+      });
+
+      // 토글 결과를 다시 가져오는 방식
+      const res = await axios.get(`${backendUrl}/api/news/bookmark/status`, {
+        params: { newsNo: article.newsNo, memberNo },
+      });
+      setBookmarked(res.data);
+    } catch (err) {
+      alert(err.response?.data || "북마크 처리 중 오류가 발생했습니다.");
+    }
+  };
 
   const handleAddComment = () => {
     if (!newComment.trim()) return;
@@ -67,23 +195,7 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
     setNewComment("");
   };
 
-  const handleVote = (id, type) => {
-    setComments(
-      comments.map((comment) => {
-        if (comment.id === id) {
-          if (type === "like") {
-            return { ...comment, likes: comment.likes + 1 };
-          } else {
-            return { ...comment, dislikes: comment.dislikes + 1 };
-          }
-        }
-        return comment;
-      })
-    );
-  };
-
-  if (!article?.title)
-    return <S.Loading>기사를 불러오는 중입니다...</S.Loading>;
+  if (!article) return <S.Loading>기사를 불러오는 중입니다...</S.Loading>;
 
   return (
     <S.Container>
@@ -107,11 +219,11 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
             />
             <div>원문 링크</div>
             <a
-              href={article.originallink}
+              href={article.originUrl}
               target="_blank"
               rel="noopener noreferrer"
             >
-              {article.originallink}
+              {article.originUrl}
             </a>
           </S.ArticleText>
           <S.ArticleActions>
@@ -125,20 +237,33 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
             >
               뒤로가기
             </Button>
-            <S.ActionButton>좋아요</S.ActionButton>
-            <S.ActionButton>싫어요</S.ActionButton>
+            {auth?.user?.isAuthenticated && (
+              <>
+                <S.ActionButton onClick={handleLike}>
+                  👍 {likeCount}
+                </S.ActionButton>
+                <S.ActionButton onClick={handleHate}>
+                  👎 {hateCount}
+                </S.ActionButton>
+                <S.ActionButton onClick={handleBookmark}>
+                  {bookmarked ? "🔖 북마크됨" : "📌 북마크"}
+                </S.ActionButton>
+              </>
+            )}
           </S.ArticleActions>
         </S.ArticleContent>
       </S.ArticleBox>
 
-      <S.CommentInputWrapper>
-        <S.CommentInput
-          placeholder="댓글 작성 공간"
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-        />
-        <S.CommentButton onClick={handleAddComment}>작성</S.CommentButton>
-      </S.CommentInputWrapper>
+      {auth?.user?.isAuthenticated && (
+        <S.CommentInputWrapper>
+          <S.CommentInput
+            placeholder="댓글 작성 공간"
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+          />
+          <S.CommentButton onClick={handleAddComment}>작성</S.CommentButton>
+        </S.CommentInputWrapper>
+      )}
 
       <S.CommentList>
         {comments.map((comment) => (
@@ -149,16 +274,7 @@ const NewsDetail = ({ backendUrl = "http://localhost:8080" }) => {
             </S.CommentHeader>
             <S.CommentBody>
               <div>{comment.content}</div>
-              <S.CommentActions>
-                <S.ActionButton onClick={() => handleVote(comment.id, "like")}>
-                  👍 {comment.likes}
-                </S.ActionButton>
-                <S.ActionButton
-                  onClick={() => handleVote(comment.id, "dislike")}
-                >
-                  👎 {comment.dislikes}
-                </S.ActionButton>
-              </S.CommentActions>
+              <S.CommentActions></S.CommentActions>
             </S.CommentBody>
           </S.CommentItem>
         ))}

@@ -128,7 +128,7 @@ const AdminHotDealRentCar = () => {
                       <tr
                         key={car.id}
                         onClick={() =>
-                          navigate("/admin/goHotdealEnrollForm", {
+                          navigate("/admin/goHotdealUpdate", {
                             state: { car }, // ← 여기서 객체 넘기기
                           })
                         }

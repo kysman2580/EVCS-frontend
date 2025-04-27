@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // Report2는 스타일드 컨테이너입니다.
-import { Report2 } from "./AdminReport.styled";
-import { useAuth } from "../Context/AuthContext/AuthContext";
+import { Report2 } from "./Report.styled";
+import { useAuth } from "../../Context/AuthContext/AuthContext";
 import axios from "axios";
 
+// 개발 및 테스트용 더미 데이터 (신고자와 피의자 모두 사람)
 const dummyReports = [
   {
     boardNo: 1,
@@ -62,10 +63,10 @@ const dummyReports = [
   },
 ];
 
-const AdminReport = ({ useDummyData = true }) => {
+const Report = ({ useDummyData = true }) => {
   const navi = useNavigate();
-  const { auth } = useAuth();
-  const { name: currentUser, role } = auth.user; // role 꺼내기
+  const { auth } = useAuth(); // ← 여기서 auth 꺼내고
+  const currentUser = auth.user.name; // ← name을 currentUser로 사용
 
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -75,38 +76,19 @@ const AdminReport = ({ useDummyData = true }) => {
   const [endDate, setEndDate] = useState("");
   const [titleQuery, setTitleQuery] = useState("");
 
-  // 접근 제어
-  useEffect(() => {
-    if (role !== "admin") {
-      // 일반 유저는 접근 불가
-      navi("/");
-    }
-  }, [role, navi]);
-
-  // 데이터 로드
+  // 데이터 로드 (현재 사용자 기준)
   useEffect(() => {
     if (useDummyData) {
-      if (role === "admin") {
-        // admin이면 전체
-        setReports(dummyReports);
-      } else {
-        // 아니라면 본인 신고만 혹시 모를 방지
-        setReports(dummyReports.filter((r) => r.reporter === currentUser));
-      }
+      setReports(dummyReports.filter((r) => r.reporter === currentUser));
       return;
     }
-
     const fetchReports = async () => {
       setLoading(true);
       setError(null);
       try {
-        // admin이면 전체, 아니면 reporter 파라미터
-        const params =
-          role === "admin"
-            ? { page: 0, size: 10 }
-            : { reporter: currentUser, page: 0, size: 10 };
-
-        const { data } = await axios.get("/api/reports", { params });
+        const { data } = await axios.get("/api/reports", {
+          params: { reporter: currentUser, page: 0, size: 10 },
+        });
         setReports(data);
       } catch (err) {
         console.error(err);
@@ -115,41 +97,35 @@ const AdminReport = ({ useDummyData = true }) => {
         setLoading(false);
       }
     };
-
     fetchReports();
-  }, [useDummyData, currentUser, role]);
+  }, [useDummyData, currentUser]);
 
+  // 검색/필터
   const handleSearch = () => {
     if (useDummyData) {
-      let filtered =
-        role === "admin"
-          ? dummyReports
-          : dummyReports.filter((r) => r.reporter === currentUser);
-
+      let filtered = dummyReports.filter((r) => r.reporter === currentUser);
       if (titleQuery)
         filtered = filtered.filter((r) => r.title.includes(titleQuery));
       if (startDate)
         filtered = filtered.filter((r) => r.applicationDate >= startDate);
       if (endDate)
         filtered = filtered.filter((r) => r.applicationDate <= endDate);
-
       setReports(filtered);
       return;
     }
-
     setLoading(true);
     setError(null);
-    const params = {
-      title: titleQuery || undefined,
-      startDate: startDate || undefined,
-      endDate: endDate || undefined,
-      page: 0,
-      size: 10,
-      ...(role === "admin" ? {} : { reporter: currentUser }),
-    };
-
     axios
-      .get("/api/reports", { params })
+      .get("/api/reports", {
+        params: {
+          reporter: currentUser,
+          title: titleQuery || undefined,
+          startDate: startDate || undefined,
+          endDate: endDate || undefined,
+          page: 0,
+          size: 10,
+        },
+      })
       .then((res) => setReports(res.data))
       .catch((err) => {
         console.error(err);
@@ -158,20 +134,22 @@ const AdminReport = ({ useDummyData = true }) => {
       .finally(() => setLoading(false));
   };
 
+  // 기간 단축 버튼
   const handlePreset = (days) => {
-    const end = new Date(),
-      start = new Date();
+    const end = new Date();
+    const start = new Date();
     start.setDate(end.getDate() - days);
     setStartDate(start.toISOString().slice(0, 10));
     setEndDate(end.toISOString().slice(0, 10));
   };
 
+  // 행 클릭
   const handleRowClick = (boardNo) => navi(`/reports/${boardNo}`);
 
   return (
     <Report2>
-      <h2>관리자용 신고 내역</h2>
-      {/* 필터 UI는 그대로 */}
+      <h2>내 신고 내역 ({currentUser})</h2>
+
       <div className="report-filters">
         <input
           type="date"
@@ -201,11 +179,13 @@ const AdminReport = ({ useDummyData = true }) => {
       </div>
 
       <div className="report-table-container">
-        {loading && <p>불러오는 중...</p>}
+        {loading && <p>신고 내역을 불러오는 중...</p>}
         {error && <p style={{ color: "red" }}>{error}</p>}
+
         {!loading && reports.length === 0 && !error && (
           <p>신고 내역이 없습니다.</p>
         )}
+
         {reports.length > 0 && (
           <table className="report-table">
             <thead>
@@ -215,7 +195,7 @@ const AdminReport = ({ useDummyData = true }) => {
                 <th>신고자</th>
                 <th>피의자</th>
                 <th>신청일</th>
-                <th>진행상황</th>
+                <th>추진상황</th>
               </tr>
             </thead>
             <tbody>
@@ -237,4 +217,4 @@ const AdminReport = ({ useDummyData = true }) => {
   );
 };
 
-export default AdminReport;
+export default Report;
