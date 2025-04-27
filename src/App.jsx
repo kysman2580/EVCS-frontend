@@ -3,6 +3,11 @@ import GlobalStyle from "./components/UserInterface/Common/Header/GlobalStyle";
 import AdminMain from "./components/AdminInterface/Main/AdminMain";
 import Main from "./components/UserInterface/Main/Main";
 
+
+/* alert 대신 깔끔한 UX  */
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 /* 드라이빙 루뜨 관련 */
 import DRBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteBoard/drBoard";
 /* 누스 관련 */
@@ -60,6 +65,7 @@ import SignUpPage from "./components/UserInterface/Member/SignPage/SignPage";
 function App() {
   return (
     <>
+      <ToastContainer/>
       <GlobalStyle />
       <AuthProvider>
         <Routes>
