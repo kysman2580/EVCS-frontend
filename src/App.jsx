@@ -53,9 +53,11 @@ import UserLayout from "./components/Layout/UserInterface/UserLayout";
 import AdminLayout from "./components/Layout/AdminInterface/AdminLayout";
 import { AuthProvider } from "./components/UserInterface/Context/AuthContext/AuthContext";
 import AdminRoute from "./components/UserInterface/Common/AdminRoute/AdminRoute";
+import AdminHotDealRentCar from "./components/AdminInterface/RentCar/HotDealRentCar/AdminHotDealRentCar";
+import AdminHotDealRentCarEnrollForm from "./components/AdminInterface/RentCar/HotDealRentCar/AdminHotDealRentCarEnrollForm";
 import CarDetails from "./components/AdminInterface/RentCar/CarManagement/CarDetails";
 import SignUpPage from "./components/UserInterface/Member/SignPage/SignPage";
-
+import AdminHotDealRentCarUpdate from "./components/AdminInterface/RentCar/HotDealRentCar/AdminHotDealRentCarUpdate";
 
 function App() {
   return (
@@ -85,7 +87,7 @@ function App() {
 
             <Route path="/memberRating" element={<MemberRating />} />
 
-            <Route path="/signUpPage" element={<SignUpPage/>} />
+            <Route path="/signUpPage" element={<SignUpPage />} />
 
             {/* 신고 관련 */}
             <Route path="/report/*" element={<Report useDummyData={true} />} />
@@ -139,6 +141,10 @@ function App() {
                 path="/admin/goUpdateRentCarPage/*"
                 element={<AdminRentCarUpdatePage />}
               />
+              <Route
+                path="/admin/goHotdealUpdate/*"
+                element={<AdminHotDealRentCarUpdate />}
+              />
 
               {/* 게시판 페이지 관련 */}
               <Route path="/admin/notice" element={<AdminNotice />} />
@@ -157,6 +163,11 @@ function App() {
               <Route
                 path="goAdminEventEnrollForm"
                 element={<AdminEventBoardEnrollForm />}
+              />
+              <Route path="hotDealRentCar" element={<AdminHotDealRentCar />} />
+              <Route
+                path="goHotdealEnrollForm"
+                element={<AdminHotDealRentCarEnrollForm />}
               />
 
               {/* 신고 관련*/}
