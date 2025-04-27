@@ -15,20 +15,21 @@ import {
   RentContainerDiv,
   RentBodyDiv,
 } from "../AdminRentCarCommon/AdminRentCar.styles";
+import axios from "axios";
 
 const InsertCar = () => {
   const [form, setForm] = useState({
     number: "",
     name: "",
-    category: "",
+    type: "",
     year: "",
     company: "",
     battery: "",
-    enrollDate: "",
+    imageUrl: "",
   });
 
   const [imagePreview, setImagePreview] = useState(null);
-
+  const [image, setImage] = useState("");
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
@@ -39,12 +40,23 @@ const InsertCar = () => {
     if (file) {
       setImagePreview(URL.createObjectURL(file));
     }
+    setImage(imagePreview);
+    setForm({ ...form, imageUrl: image });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("등록된 데이터:", form);
-    alert("차량이 등록되었습니다!");
+    console.log(form);
+    axios
+      .post("http://localhost/car/insert", form)
+      .then((result) => {
+        console.log("등록된 데이터:", result);
+        alert("차량이 등록되었습니다!");
+      })
+      .catch((error) => {
+        console.log(error);
+        alert("오류발생~~");
+      });
   };
   return (
     <>
@@ -111,13 +123,9 @@ const InsertCar = () => {
                     </Form.Group>
                   </Col>
                   <Col>
-                    <Form.Group controlId="carCategory">
+                    <Form.Group controlId="carType">
                       <Form.Label className="fw-bold ">차종 :</Form.Label>
-                      <Form.Select
-                        name="category"
-                        value={form.category}
-                        onChange={handleChange}
-                      >
+                      <Form.Select name="type" onChange={handleChange}>
                         <option value="">선택</option>
                         <option value="SUV">SUV</option>
                         <option value="세단">세단</option>
@@ -142,11 +150,7 @@ const InsertCar = () => {
                   <Col>
                     <Form.Group controlId="carCompany">
                       <Form.Label className="fw-bold ">제조사 :</Form.Label>
-                      <Form.Select
-                        name="category"
-                        value={form.company}
-                        onChange={handleChange}
-                      >
+                      <Form.Select name="company" onChange={handleChange}>
                         <option value="">선택</option>
                         <option value="HYUNDAI">HYUNDAI</option>
                         <option value="KIA">KIA</option>
@@ -161,7 +165,7 @@ const InsertCar = () => {
                   <Form.Label className="fw-bold ">배터리 용량 :</Form.Label>
                   <Form.Control
                     type="text"
-                    name="price"
+                    name="battery"
                     value={form.battery}
                     onChange={handleChange}
                   />
@@ -172,7 +176,7 @@ const InsertCar = () => {
                   <Form.Label className="fw-bold ">등록 일시 :</Form.Label>
                   <Form.Control
                     type="text"
-                    name="address"
+                    name="enrollDate"
                     value={form.enrollDate}
                     onChange={handleChange}
                   />
