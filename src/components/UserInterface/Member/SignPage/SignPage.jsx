@@ -15,6 +15,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import React, { useState } from 'react';
 import axios from "axios";
+import { toast } from "react-toastify";
 
 function SignUpPage() {
     const navi = useNavigate();
@@ -50,7 +51,6 @@ function SignUpPage() {
     const handleSendCode = (e) => {
         e.preventDefault();
 
-        // 이메일 유효성 검사 (trim()은 메서드이므로 ()가 필요)
         if (!email || !email.trim()) {
             alert('이메일을 입력해주세요.');
             return;
@@ -62,11 +62,11 @@ function SignUpPage() {
             .then(response => {
                 console.log('인증코드 발송 성공:', response.data);
                 setShowVerificationInput(true);
-                alert('인증번호가 발송되었습니다. 이메일을 확인해주세요.');
+                toast.success('인증번호가 발송되었습니다. 이메일을 확인해주세요.');
             })
             .catch(error => {
                 console.error('인증코드 발송 실패:', error);
-                alert('인증코드 발송에 실패했습니다. 다시 시도해주세요.');
+                toast.error('인증코드 발송에 실패했습니다. 다시 시도해주세요.');
             });
     };
 
@@ -75,7 +75,7 @@ function SignUpPage() {
 
 
         if (!code || !code.trim()) {
-            alert('인증코드를 입력해주세요.');
+            toast.error('인증코드를 입력해주세요.');
             return;
         }
 
@@ -86,11 +86,11 @@ function SignUpPage() {
             .then(response => {
                 console.log('인증코드 확인 성공:', response.data);
                 setIsVerified(true);
-                alert('인증이 완료되었습니다.');
+                toast.success('인증이 완료되었습니다.');
             })
             .catch(error => {
                 console.error('인증코드 확인 실패:', error);
-                alert('인증번호가 일치하지 않습니다. 다시 확인해주세요.');
+                toast.error('인증번호가 일치하지 않습니다. 다시 확인해주세요.');
             });
     };
 
@@ -100,13 +100,13 @@ function SignUpPage() {
 
         // 필요한 유효성 검사 추가
         if (!email || !password || !nickname) {
-            alert('모든 항목을 입력해주세요.');
+            toast.error('모든 항목을 입력해주세요.');
             return;
         }
 
         // 이메일 인증 확인 (옵션)
         if (!isVerified) {
-            alert('이메일 인증이 필요합니다.');
+            toast.error('이메일 인증이 필요합니다.');
             return;
         }
 
@@ -122,7 +122,7 @@ function SignUpPage() {
         axios.post('http://localhost:80/members', memberData)
             .then(response => {
                 if (response.status === 201) {
-                    alert('회원가입이 완료되었습니다!');
+                    toast.success('회원가입이 완료되었습니다!');
                     navi('/loginPage'); // 로그인 페이지로 이동
                 }
             })
@@ -130,9 +130,9 @@ function SignUpPage() {
                 console.error('회원가입 실패:', error);
                 if (error.response) {
                     // 서버에서 응답을 받았으나 오류 상태 코드인 경우
-                    alert(`회원가입 실패: ${error.response.data.message || '오류가 발생했습니다.'}`);
+                    toast.error(`회원가입 실패: ${error.response.data.message || '오류가 발생했습니다.'}`);
                 } else {
-                    alert('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
+                    toast.error('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
                 }
             });
     };
