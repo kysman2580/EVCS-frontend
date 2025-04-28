@@ -2,14 +2,15 @@ import React, { useState, useEffect } from "react";
 import "../Notice/UserNotice.css";
 import NoticeNav from "../../Common/Nav/NoticeNav";
 import { BoardContainerDiv, BoardBodyDiv } from "../Board.styles";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 
 function Notice() {
   const navigate = useNavigate();
+  const location = useLocation(); // useLocation 추가
   const [searchParams] = useSearchParams();
   const [search, setSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1); // 페이지 번호 상태
   const noticesPerPage = 5;
 
   const [notices, setNotices] = useState(() => {
@@ -27,6 +28,7 @@ function Notice() {
         ];
   });
 
+  // 컴포넌트 로드 시 공지사항 ID를 고정하고 로컬 스토리지에 저장
   useEffect(() => {
     const fixedNotices = notices.map((n) => ({
       ...n,
@@ -36,16 +38,24 @@ function Notice() {
     localStorage.setItem("notices", JSON.stringify(fixedNotices));
   }, []);
 
+  // 페이지 파라미터 및 state에서 현재 페이지 읽기
   useEffect(() => {
     const pageFromUrl = parseInt(searchParams.get("page"), 10);
-    if (pageFromUrl && !isNaN(pageFromUrl)) {
+    const pageFromState = location.state?.page;
+
+    // state에 저장된 페이지 우선, 없으면 URL의 페이지 파라미터 사용
+    if (pageFromState && !isNaN(pageFromState)) {
+      setCurrentPage(pageFromState);
+    } else if (pageFromUrl && !isNaN(pageFromUrl)) {
       setCurrentPage(pageFromUrl);
     }
-  }, [searchParams]);
+  }, [searchParams, location.state]); // location.state 추가
 
   // 검색 시 페이지 초기화
   useEffect(() => {
-    setCurrentPage(1);
+    if (search !== "") {
+      setCurrentPage(1);
+    }
   }, [search]);
 
   const filteredNotices = notices.filter(
@@ -64,7 +74,7 @@ function Notice() {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    navigate(`/notice?page=${page}`);
+    navigate(`/notice?page=${page}`, { state: { page } }); // 페이지 정보 상태로 전달
   };
 
   return (
@@ -104,7 +114,7 @@ function Notice() {
                       style={{ cursor: "pointer" }}
                       onClick={() =>
                         navigate(`/notice/${notice.id}`, {
-                          state: { page: currentPage },
+                          state: { page: currentPage }, // 페이지 정보도 함께 전달
                         })
                       }
                     >
