@@ -19,8 +19,8 @@ const NewsDetail = ({ backendUrl = "http://localhost:80" }) => {
   const [bookmarked, setBookmarked] = useState(false);
   const [hasLiked, setHasLiked] = useState(false);
   const [hasHated, setHasHated] = useState(false);
-  const memberNo = Number(localStorage.getItem("memberNo")); // ← 숫자 변환
-  // const memberNo = 101;
+  // const memberNo = Number(localStorage.getItem("memberNo")); // ← 숫자 변환
+  const memberNo = 85;
 
   useEffect(() => {
     console.log("location.state 확인:", location.state);
