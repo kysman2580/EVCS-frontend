@@ -1,4 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { toast } from "react-toastify";
+
 
 const AuthContext = createContext();
 
@@ -11,8 +13,7 @@ export const AuthProvider = ({ children }) => {
       memberName: null,
       accessToken: null,
       refreshToken: null,
-      isAuthenticated: true, // 기존 : isLoggedIn: true
-      role: "admin",
+      isAuthenticated: false, // 기존 : isLoggedIn: true
     },
   });
 
@@ -32,7 +33,6 @@ export const AuthProvider = ({ children }) => {
           accessToken,
           refreshToken,
           isAuthenticated: true,
-          role: "admin",
         },
       });
     }
@@ -47,7 +47,6 @@ export const AuthProvider = ({ children }) => {
         refreshToken,
         accessToken,
         isAuthenticated: true,
-        role: "admin",
       },
     });
     localStorage.setItem("email", email);
@@ -66,7 +65,6 @@ export const AuthProvider = ({ children }) => {
         accessToken: null,
         refreshToken: null,
         isAuthenticated: false,
-        role: null,
       },
     });
     localStorage.removeItem("email");
@@ -74,6 +72,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("memberName");
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    alert('로그아웃 되었습니다.')
     window.location.href = "/";
   };
 

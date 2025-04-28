@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from 'react';
 import axios from "axios";
 import { useAuth } from "../../Context/AuthContext/AuthContext";
+import { toast } from 'react-toastify';
 
 
 
@@ -54,16 +55,16 @@ function LoginPage() {
                 const { email, memberName, memberNo, refreshToken, accessToken } = response.data;
                 login(email, memberName, memberNo, refreshToken, accessToken);
 
-                alert('로그인 성공~~');
+                alert('로그인 성공!')
                 window.location.href = "/";
             })
             .catch(error => {
                 console.error('로그인 실패 : ', error);
                 if (error.response) {
-                    alert(`회원가입 실패 : ${error.response.data.message || '오류가 발생했습니다.'}`);
-                } else {
-                    alert('로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
-                }
+                    toast.error(error.response.data.message);
+                  } else {
+                    toast.error('알 수 없는 오류가 발생했습니다.');
+                  }
             });
     };
 
@@ -73,7 +74,7 @@ function LoginPage() {
 
 
     return (
-        <StyledForm className="forms" action="">
+        <StyledForm className="forms" onSubmit={handleLogin}>
             <StyledLoginForm>
                 <StyledLogoDiv >
                     <StyledImg src="/images/Logo.png" alt="전기충만 로고" onClick={() => navi("/")} />
