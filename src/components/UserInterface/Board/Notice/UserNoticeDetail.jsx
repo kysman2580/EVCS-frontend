@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import "../Notice/UserNotice.css";
 
 const UserNoticeDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation(); // 페이지 정보 가져오기
   const [notice, setNotice] = useState(null);
+
+  // 이전 페이지 정보 (없으면 1로 fallback)
+  const prevPage = location.state?.page || 1;
 
   useEffect(() => {
     const stored = localStorage.getItem("notices");
@@ -18,7 +22,10 @@ const UserNoticeDetail = () => {
     <div className="Notice" style={{ paddingTop: "30px" }}>
       <h1>📢 공지사항 상세보기</h1>
       <div className="Notice-detail-container">
-        <button className="back-button" onClick={() => navigate("/notice")}>
+        <button
+          className="back-button"
+          onClick={() => navigate(`/notice?page=${prevPage}`)}
+        >
           ◀ 목록으로 돌아가기
         </button>
 
