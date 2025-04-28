@@ -9,7 +9,7 @@ const UserNoticeDetail = () => {
   const [notice, setNotice] = useState(null);
 
   // 이전 페이지 정보 (없으면 1로 fallback)
-  const prevPage = location.state?.page || 1;
+  const prevPage = location.state?.page || 1; // 상세 페이지로 올 때 넘어온 page 값을 받아옵니다.
 
   useEffect(() => {
     const stored = localStorage.getItem("notices");
@@ -24,7 +24,11 @@ const UserNoticeDetail = () => {
       <div className="Notice-detail-container">
         <button
           className="back-button"
-          onClick={() => navigate(`/notice?page=${prevPage}`)}
+          onClick={() =>
+            navigate(`/notice?page=${prevPage}`, {
+              state: { page: prevPage }, // 페이지 상태를 넘깁니다.
+            })
+          }
         >
           ◀ 목록으로 돌아가기
         </button>
