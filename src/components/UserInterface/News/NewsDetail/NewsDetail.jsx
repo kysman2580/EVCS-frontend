@@ -19,19 +19,28 @@ const NewsDetail = ({ backendUrl = "http://localhost:80" }) => {
   const [hasLiked, setHasLiked] = useState(false);
   const [hasHated, setHasHated] = useState(false);
   const memberNo = Number(localStorage.getItem("memberNo"));
+  // const memberNo = 161;
 
   useEffect(() => {
     if (!title || !originallink) return;
 
     axios
-      .post(`${backendUrl}/api/news/detail`, {
-        title,
-        originUrl: originallink,
-        description,
-        imageUrl,
-        pubDate,
-        query,
-      })
+      .post(
+        `${backendUrl}/api/news/detail`,
+        {
+          title,
+          originUrl: originallink,
+          description,
+          imageUrl,
+          pubDate,
+          query,
+        },
+        {
+          params: {
+            memberNo: memberNo, // ← 추가!
+          },
+        }
+      )
       .then((res) => {
         const data = res.data;
         setArticle(data.news);
@@ -173,7 +182,7 @@ const NewsDetail = ({ backendUrl = "http://localhost:80" }) => {
   return (
     <S.Container>
       <S.ArticleTitle>
-        <strong>토론 게시판</strong>
+        <strong>뉴스 게시판</strong>
       </S.ArticleTitle>
 
       <S.ArticleBox>
@@ -212,15 +221,29 @@ const NewsDetail = ({ backendUrl = "http://localhost:80" }) => {
             </Button>
             {auth?.user?.isAuthenticated && (
               <>
-                <S.ActionButton onClick={handleLike}>
+                <Button
+                  size="sm"
+                  variant={hasLiked ? "primary" : "outline-primary"}
+                  onClick={handleLike}
+                >
                   👍 {likeCount}
-                </S.ActionButton>
-                <S.ActionButton onClick={handleHate}>
+                </Button>
+
+                <Button
+                  size="sm"
+                  variant={hasHated ? "danger" : "outline-danger"}
+                  onClick={handleHate}
+                >
                   👎 {hateCount}
-                </S.ActionButton>
-                <S.ActionButton onClick={handleBookmark}>
+                </Button>
+
+                <Button
+                  size="sm"
+                  variant={bookmarked ? "success" : "outline-success"}
+                  onClick={handleBookmark}
+                >
                   {bookmarked ? "🔖 북마크됨" : "📌 북마크"}
-                </S.ActionButton>
+                </Button>
               </>
             )}
           </S.ArticleActions>
