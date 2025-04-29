@@ -5,17 +5,26 @@ import "../Notice/UserNotice.css";
 const UserNoticeDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const location = useLocation(); // 페이지 정보 가져오기
+  const location = useLocation();
   const [notice, setNotice] = useState(null);
 
-  // 이전 페이지 정보 (없으면 1로 fallback)
-  const prevPage = location.state?.page || 1; // 상세 페이지로 올 때 넘어온 page 값을 받아옵니다.
+  const prevPage = location.state?.page || 1;
 
   useEffect(() => {
-    const stored = localStorage.getItem("notices");
-    const notices = stored ? JSON.parse(stored) : [];
-    const targetNotice = notices.find((n) => n.id === id);
-    setNotice(targetNotice);
+    // 1차 시도: 백엔드에서 공지사항 조회
+    fetch(`http://localhost:8080/api/notices/${id}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("API 실패");
+        return res.json();
+      })
+      .then((data) => setNotice(data))
+      .catch(() => {
+        // 2차 시도: 로컬 스토리지에서 찾기
+        const stored = localStorage.getItem("notices");
+        const notices = stored ? JSON.parse(stored) : [];
+        const localNotice = notices.find((n) => n.id === id);
+        setNotice(localNotice);
+      });
   }, [id]);
 
   return (
@@ -26,7 +35,7 @@ const UserNoticeDetail = () => {
           className="back-button"
           onClick={() =>
             navigate(`/notice?page=${prevPage}`, {
-              state: { page: prevPage }, // 페이지 상태를 넘깁니다.
+              state: { page: prevPage },
             })
           }
         >
