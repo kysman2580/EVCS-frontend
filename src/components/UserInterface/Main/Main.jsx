@@ -14,6 +14,8 @@ import {
 } from "./Main.styles";
 import MainSwiper from "./Swiper/MainSwiper";
 import { useNavigate } from "react-router-dom";
+import NewsMainList from "../News/NewsMainList";
+import * as S from "../News/NewsMain/NewsMain.styles";
 
 const Main = () => {
   const navi = useNavigate();
@@ -68,7 +70,11 @@ const Main = () => {
         <MainBodyDiv>
           <MainLeftDiv>
             <MainNewsDiv>
-              <h1>뉴스 나오는 자리</h1>
+              <h1>오늘의 전기차 뉴스</h1>
+              <NewsMainList backendUrl="http://localhost:80" />
+              <S.LoadMoreButton onClick={() => navi("/newsMain")}>
+                뉴스 더보기
+              </S.LoadMoreButton>
             </MainNewsDiv>
             <MainNoitceDiv>
               <h1>공지사항 나오는 자리</h1>

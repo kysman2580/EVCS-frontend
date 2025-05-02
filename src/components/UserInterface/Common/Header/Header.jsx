@@ -102,7 +102,7 @@ const Header = () => {
         <StyledMemberDiv>
           {auth.user.isAuthenticated ? (
             <>
-              <StyledHeaderBtn>{auth.user.memberName}님</StyledHeaderBtn>
+              <StyledHeaderBtn onClick={() => navi("/myPage")}>{auth.user.memberName}님</StyledHeaderBtn>
               <StyledHeaderBtn onClick={logout}>로그아웃</StyledHeaderBtn>
               <StyledHeaderBtn>아이콘</StyledHeaderBtn>
               {isAdmin && (

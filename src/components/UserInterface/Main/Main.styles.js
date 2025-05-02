@@ -70,9 +70,9 @@ export const MainRightDiv = styled.div`
 `;
 
 export const MainNewsDiv = styled.div`
-  border: 1px solid red;
   width: 100%;
   height: 70%;
+  padding: 16px 24px;
 `;
 
 export const MainNoitceDiv = styled.div`

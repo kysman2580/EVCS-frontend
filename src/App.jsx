@@ -12,6 +12,7 @@ import DRBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteBoar
 /* 누스 관련 */
 import NewsMain from "./components/UserInterface/News/NewsMain/NewsMain";
 import NewsDetail from "./components/UserInterface/News/NewsDetail/NewsDetail";
+import NewsList from "./components/UserInterface/News/NewsList/NewsList";
 
 /* 충전소 위치 관련 */
 import ChargingMap from "./components/UserInterface/ChargingMap/ChargingMap";
@@ -38,6 +39,7 @@ import AdminEventBoardEnrollForm from "./components/AdminInterface/Board/Event/A
 /* 회원관련 */
 import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
 import MemberRating from "./components/UserInterface/Member/Mypage/MemberRating";
+import ChangePasswordPage from "./components/UserInterface/Member/Mypage/ChangePassword";
 
 /* 렌트카 관련 */
 import LongTermRentCarDetail from "./components/UserInterface/RentCar/LongTermRentCar/LongTermRentCarDetail";
@@ -58,6 +60,7 @@ import AdminHotDealRentCarEnrollForm from "./components/AdminInterface/RentCar/H
 import CarDetails from "./components/AdminInterface/RentCar/CarManagement/CarDetails";
 import SignUpPage from "./components/UserInterface/Member/SignPage/SignPage";
 import AdminHotDealRentCarUpdate from "./components/AdminInterface/RentCar/HotDealRentCar/AdminHotDealRentCarUpdate";
+import MyPage from "./components/UserInterface/Member/Mypage/Mypage";
 import InsertRentCar from "./components/AdminInterface/RentCar/RentCarManagement/InsertRentCar";
 import RentCarManagement from "./components/AdminInterface/RentCar/RentCarManagement/RentCarManagement";
 import RentCarDetails from "./components/AdminInterface/RentCar/RentCarManagement/RenCarDetails";
@@ -93,6 +96,10 @@ function App() {
 
             <Route path="/signUpPage" element={<SignUpPage />} />
 
+            <Route path="/myPage" element={<MyPage />} />
+
+            <Route path="/changePasswordPage" element={<ChangePasswordPage />} />
+
             {/* 신고 관련 */}
             <Route path="/report/*" element={<Report useDummyData={true} />} />
             <Route
@@ -107,6 +114,7 @@ function App() {
             {/* 뉴스 관련 */}
             <Route path="/newsMain" element={<NewsMain />} />
             <Route path="/newsDetail" element={<NewsDetail />} />
+            <Route path="/news-list" element={<NewsList />} />
 
             {/* 렌트카 관련 */}
             <Route path="/hotRentCar" element={<HotdealRentCar />} />

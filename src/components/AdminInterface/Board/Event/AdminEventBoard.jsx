@@ -11,44 +11,93 @@ import {
 
 import NoticeNav from "../../AdminCommon/AdminNav/AdminNoitceNav";
 import "./AdminEventBoard.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const AdminEventBoard = () => {
   const navigate = useNavigate();
-  const [searchType, setSearchType] = useState("title");
-  const [searchText, setSearchText] = useState("");
+  const [category, setCategory] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState("");
 
-  const posts = [
-    {
-      evnetNo: 1,
-      title: "핫딜 3시간 할인 이벤트 아 뜨겁다 뜨거워 ",
-      author: "관리자",
-      period: "2025-04-20 ~ 2025-04-27",
-      image: "/event/hot_deal_img.png",
-      content: "핫딜 이벤트입니다 미쳐쮸",
-    },
-    {
-      evnetNo: 2,
-      title: "첫 사용자 할인 이벤트~ 처음이시면 아 싸다 싸 미쳐따",
-      author: "운영팀",
-      period: "2025-04-20 ~ 2025-04-28",
-      image: "/event/first_sale_img.png",
-      content: "전기충만 처음 이용하시나요? 그럼 할인받으세요 ~",
-    },
-    {
-      evnetNo: 3,
-      title: "밤에는 싸게 싸게 타고 노세요 이거 안타면 바보다 바보",
-      author: "마케팅팀",
-      period: "2025-04-20 ~ 2025-04-29",
-      image: "/event/night_sale_img.png",
-      content: "야간에는 싸게 싸게 경치좀 보자",
-    },
-  ];
+  const [events, setEvents] = useState([]);
+  const [page, setPage] = useState(1);
+  const [pageInfo, setPageInfo] = useState({
+    startPage: 1,
+    endPage: 1,
+    currentPage: 1,
+    maxPage: 1,
+  });
+
+  // 1) 페이지나 검색어가 바뀔 때마다 데이터 fetch
+  useEffect(() => {
+    console.log("category :" + category);
+    console.log("searchKeyword :" + searchKeyword);
+    axios
+      .get("http://localhost/events", {
+        params: { page, category: category, searchKeyword: searchKeyword },
+      })
+      .then((res) => {
+        console.log(res.data); // ← 여기에 찍히는 키 확인
+        setEvents(res.data.eventList);
+        setPageInfo(res.data.pageInfo);
+      })
+      .catch((err) => console.error(err));
+  }, [page]);
 
   const handleSearch = () => {
-    alert(`"${searchType}"에서 "${searchText}" 검색! (예시 alert)`);
+    setPage(1); // 검색할 때는 1페이지로
   };
+
+  // 2) 페이징 버튼 생성 함수
+  const renderPagination = () => {
+    const items = [];
+    const { startPage, endPage, currentPage, maxPage } = pageInfo;
+
+    // 처음 / 이전
+    items.push(
+      <Pagination.First
+        key="first"
+        disabled={currentPage === 1}
+        onClick={() => setPage(1)}
+      />,
+      <Pagination.Prev
+        key="prev"
+        disabled={currentPage === 1}
+        onClick={() => setPage(currentPage - 1)}
+      />
+    );
+
+    // 숫자 버튼들
+    for (let num = startPage; num <= endPage; num++) {
+      items.push(
+        <Pagination.Item
+          key={num}
+          active={num === currentPage}
+          onClick={() => setPage(num)}
+        >
+          {num}
+        </Pagination.Item>
+      );
+    }
+
+    // 다음 / 마지막
+    items.push(
+      <Pagination.Next
+        key="next"
+        disabled={currentPage === maxPage}
+        onClick={() => setPage(currentPage + 1)}
+      />,
+      <Pagination.Last
+        key="last"
+        disabled={currentPage === maxPage}
+        onClick={() => setPage(maxPage)}
+      />
+    );
+
+    return items;
+  };
+
   return (
     <>
       <div className="EventContainerDiv">
@@ -65,13 +114,20 @@ const AdminEventBoard = () => {
               {/* 검색창 */}
               <Row className="my-4">
                 <Col md={2}>
-                  <Form.Select>
-                    <option>제목</option>
-                    <option>내용</option>
+                  <Form.Select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                  >
+                    <option value={"eventName"}>제목</option>
+                    <option value={"eventContent"}>내용</option>
                   </Form.Select>
                 </Col>
                 <Col md={8}>
-                  <Form.Control placeholder="검색어 입력" />
+                  <Form.Control
+                    value={searchKeyword}
+                    onChange={(e) => setSearchKeyword(e.target.value)}
+                    placeholder="검색어 입력"
+                  />
                 </Col>
                 <Col md={1}>
                   <Button
@@ -115,24 +171,26 @@ const AdminEventBoard = () => {
                             <th>번호</th>
                             <th>제목</th>
                             <th>작성자</th>
-                            <th>작성일자</th>
+                            <th>시작일자</th>
+                            <th>마감일자</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {posts.map((post) => (
+                          {events.map((event) => (
                             <tr
-                              key={post.evnetNo}
+                              key={event.eventtNo}
                               style={{ cursor: "pointer" }}
                               onClick={() =>
                                 navigate("/admin/goAdminEventDetailPage", {
-                                  state: { post }, // ← 여기서 객체 넘기기
+                                  state: { event }, // ← 여기서 객체 넘기기
                                 })
                               }
                             >
-                              <td>{post.evnetNo}</td>
-                              <td>{post.title}</td>
-                              <td>{post.author}</td>
-                              <td>{post.period}</td>
+                              <td>{event.eventNo}</td>
+                              <td>{event.eventName}</td>
+                              <td>{event.memberNickname}</td>
+                              <td>{event.startDate}</td>
+                              <td>{event.endDate}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -145,8 +203,7 @@ const AdminEventBoard = () => {
 
             <footer className="footer-pagination mt-auto">
               <Pagination className="justify-content-center mb-0">
-                <Pagination.Item active>{1}</Pagination.Item>
-                <Pagination.Item>{2}</Pagination.Item>
+                {renderPagination()}
               </Pagination>
             </footer>
           </div>
