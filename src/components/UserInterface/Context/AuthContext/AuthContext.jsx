@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "react-toastify";
 
-
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -72,7 +71,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("memberName");
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
-    alert('로그아웃 되었습니다.')
+    alert("로그아웃 되었습니다.");
     window.location.href = "/";
   };
 
