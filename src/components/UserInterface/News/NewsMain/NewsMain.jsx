@@ -159,6 +159,7 @@ const NewsMain = ({ backendUrl = "http://localhost:80" }) => {
   useEffect(() => {
     setLoading(true);
     handleSearch();
+    window.scrollTo(0, 0);
   }, []);
 
   const renderTopNews = () => (
