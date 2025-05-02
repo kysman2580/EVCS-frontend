@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Container, Row, Col, Form, Button, Table } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 /* nav 관련 애들 */
 import AdminRentCarNav from "../../AdminCommon/AdminNav/AdminRentCarNav";
@@ -10,44 +9,36 @@ import {
   RentBodyDiv,
 } from "../AdminRentCarCommon/AdminRentCar.styles";
 
-const CarManagement = () => {
+const RentCarManagement = () => {
   const navigate = useNavigate();
 
   const [category, setCategory] = useState("");
   const [manufacturer, setManufacturer] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState();
-  const [totalPages, setTotalPages] = useState();
-  const [startPage, setStartPage] = useState(1);
-  const [carInfo, setCarInfo] = useState([]);
 
-  useEffect(() => {
-    console.log(currentPage);
-    axios
-      .get(`http://localhost/car/${currentPage}`)
-      .then((result) => {
-        console.log(result.data);
-        const res = result.data;
-        setCarInfo(res.carInfo);
-        setStartPage(res.pageInfo.startPage);
-        setPageSize(res.pageInfo.pageSize);
-        setTotalPages(res.pageInfo.totalPages);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, [currentPage]);
   // 예시용 차량 리스트
-  const carList = carInfo.map((carinformation) => ({
-    no: carinformation.carNo,
-    name: carinformation.carName,
-    type: carinformation.carType,
-    year: carinformation.carYear,
-    company: carinformation.carCompany,
-    battery: carinformation.carBattery,
-    enrollDate: carinformation.enrollDate,
-  }));
+  const carList = [
+    {
+      id: 1,
+      category: "SUV",
+      carNo: "12가3456",
+      modelName: "쏘렌토",
+      maker: "기아",
+      year: "2023",
+      location: "서울 강남구",
+      price: "3,000,000원",
+    },
+    {
+      id: 2,
+      category: "세단",
+      carNo: "12나3456",
+      modelName: "그랜저",
+      maker: "현대",
+      year: "2022",
+      location: "부산 해운대",
+      price: "2,800,000원",
+    },
+  ];
 
   const handleSearch = () => {
     // 여기서 검색 기능 추가할 수 있음
@@ -55,26 +46,6 @@ const CarManagement = () => {
       `검색어: ${searchKeyword}, 제조사: ${manufacturer}, 카테고리: ${category}`
     );
   };
-
-  const Previous = () => {
-    if (startPage > 5) {
-      setStartPage(startPage - pageSize);
-      setCurrentPage(startPage - pageSize);
-    }
-  };
-
-  const Next = () => {
-    if (startPage + 5 <= totalPages) {
-      setStartPage(startPage + 5);
-      setPage(startPage + 5);
-    }
-  };
-  const pageNumbers = [];
-  for (let i = 0; i < pageSize; i++) {
-    if (startPage + i <= totalPages) {
-      pageNumbers.push(startPage + i);
-    }
-  }
 
   return (
     <>
@@ -100,7 +71,7 @@ const CarManagement = () => {
                   >
                     <option value="">카테고리</option>
                     <option value="SUV">SUV</option>
-                    <option value="SEDAN">SEDAN</option>
+                    <option value="세단">세단</option>
                     <option value="전기차">전기차</option>
                   </Form.Select>
                 </Col>
@@ -131,7 +102,7 @@ const CarManagement = () => {
                 <Col md={1}>
                   <Button
                     variant="dark"
-                    onClick={() => navigate("/admin/insertCar")} // 등록 페이지로 이동
+                    onClick={() => navigate("/admin/insertRentCar")} // 등록 페이지로 이동
                   >
                     등록하기
                   </Button>
@@ -142,46 +113,40 @@ const CarManagement = () => {
               <Table bordered hover responsive>
                 <thead className="table-secondary">
                   <tr>
+                    <th>카테고리</th>
+                    <th>차 번호</th>
                     <th>모델명</th>
-                    <th>차종</th>
-                    <th>연식</th>
                     <th>제조사</th>
-                    <th>배터리 용량</th>
-                    <th>등록일</th>
+                    <th>연식</th>
+                    <th>등록 주소지</th>
+                    <th>가격</th>
                   </tr>
                 </thead>
                 <tbody>
                   {carList.length === 0 ? (
                     <tr>
-                      <td colSpan="7" className="text-center">
+                      <td colSpan="6" className="text-center">
                         등록된 차량이 없습니다.
                       </td>
                     </tr>
                   ) : (
-                    carList.map((car, index) => (
+                    carList.map((car) => (
                       <tr
-                        key={index}
+                        key={car.id}
                         onClick={() =>
-                          navigate("/admin/carDetails", {
-                            state: {
-                              no: car.no,
-                              name: car.name,
-                              type: car.type,
-                              year: car.year,
-                              company: car.company,
-                              battery: car.battery,
-                              enrollDate: car.enrollDate,
-                            },
+                          navigate("/admin/rentCarDetails", {
+                            state: { car }, // ← 여기서 객체 넘기기
                           })
                         }
                         style={{ cursor: "pointer" }}
                       >
-                        <td>{car.name}</td>
-                        <td>{car.type}</td>
+                        <td>{car.category}</td>
+                        <td>{car.carNo}</td>
+                        <td>{car.modelName}</td>
+                        <td>{car.maker}</td>
                         <td>{car.year}</td>
-                        <td>{car.company}</td>
-                        <td>{car.battery}</td>
-                        <td>{car.enrollDate}</td>
+                        <td>{car.location}</td>
+                        <td>{car.price}</td>
                       </tr>
                     ))
                   )}
@@ -189,25 +154,7 @@ const CarManagement = () => {
               </Table>
             </Container>
             {/* 페이징 처리 (간단히만 보여줌) */}
-
-            <div style={{ textAlign: "center", marginTop: "30px" }}>
-              <button onClick={Previous}>이전</button>
-
-              {pageNumbers.map((num) => (
-                <button
-                  key={num}
-                  onClick={() => setCurrentPage(num)}
-                  style={{
-                    margin: "0 5px",
-                    fontWeight: currentPage === num ? "bold" : "normal",
-                  }}
-                >
-                  {num}
-                </button>
-              ))}
-
-              <button onClick={Next}>다음</button>
-            </div>
+            <div className="text-center mt-4">페이징 처리</div>
           </RentBodyDiv>
         </div>
       </RentContainerDiv>
@@ -215,4 +162,4 @@ const CarManagement = () => {
   );
 };
 
-export default CarManagement;
+export default RentCarManagement;

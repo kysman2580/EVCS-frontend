@@ -3,13 +3,12 @@ import GlobalStyle from "./components/UserInterface/Common/Header/GlobalStyle";
 import AdminMain from "./components/AdminInterface/Main/AdminMain";
 import Main from "./components/UserInterface/Main/Main";
 
-
 /* alert 대신 깔끔한 UX  */
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 /* 드라이빙 루뜨 관련 */
-import DRBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteBoard/drBoard";
+import DRBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteBoard/DRBoard";
 /* 누스 관련 */
 import NewsMain from "./components/UserInterface/News/NewsMain/NewsMain";
 import NewsDetail from "./components/UserInterface/News/NewsDetail/NewsDetail";
@@ -48,10 +47,6 @@ import SubscribeRentCar from "./components/UserInterface/RentCar/SubscribeRentCa
 import LongTermRentCar from "./components/UserInterface/RentCar/LongTermRentCar/LongTermRentCar";
 import HotdealRentCar from "./components/UserInterface/RentCar/HotdealRentCar/HotdealRentCar";
 import RentalPage from "./components/UserInterface/RentCar/TimeRentCar/RentalPage";
-import TimeRentCar from "./components/AdminInterface/RentCar/TimeRentCar/TimeRentCar";
-import AdminLongTermRentCar from "./components/AdminInterface/RentCar/LongTermRentCar/AdminLongTermRentCar";
-import AdminRentCarEnrollPage from "./components/AdminInterface/RentCar/LongTermRentCar/AdminRentCarEnrollPage";
-import AdminRentCarUpdatePage from "./components/AdminInterface/RentCar/LongTermRentCar/AdminRentCarUpdatePage";
 
 /* User, Admin Interce 분리 관련 */
 import UserLayout from "./components/Layout/UserInterface/UserLayout";
@@ -63,11 +58,14 @@ import AdminHotDealRentCarEnrollForm from "./components/AdminInterface/RentCar/H
 import CarDetails from "./components/AdminInterface/RentCar/CarManagement/CarDetails";
 import SignUpPage from "./components/UserInterface/Member/SignPage/SignPage";
 import AdminHotDealRentCarUpdate from "./components/AdminInterface/RentCar/HotDealRentCar/AdminHotDealRentCarUpdate";
+import InsertRentCar from "./components/AdminInterface/RentCar/RentCarManagement/InsertRentCar";
+import RentCarManagement from "./components/AdminInterface/RentCar/RentCarManagement/RentCarManagement";
+import RentCarDetails from "./components/AdminInterface/RentCar/RentCarManagement/RenCarDetails";
 
 function App() {
   return (
     <>
-      <ToastContainer/>
+      <ToastContainer />
       <GlobalStyle />
       <AuthProvider>
         <Routes>
@@ -106,7 +104,7 @@ function App() {
               element={<ReportDetail useDummyData={true} />}
             />
 
-            {/* 누스 관련 */}
+            {/* 뉴스 관련 */}
             <Route path="/newsMain" element={<NewsMain />} />
             <Route path="/newsDetail" element={<NewsDetail />} />
 
@@ -129,24 +127,13 @@ function App() {
               <Route path="main" element={<AdminMain />} />
 
               {/* 렌트카 관련 */}
-
-              <Route path="timeCar" element={<TimeRentCar />}></Route>
               <Route path="insertCar" element={<InsertCar />}></Route>
               <Route path="carManagement" element={<CarManagement />}></Route>
               <Route path="carDetails" element={<CarDetails />}></Route>
 
-              <Route
-                path="/admin/adminLongTermRentCar"
-                element={<AdminLongTermRentCar />}
-              />
-              <Route
-                path="/admin/rentCarEnrollPage"
-                element={<AdminRentCarEnrollPage />}
-              />
-              <Route
-                path="/admin/goUpdateRentCarPage/*"
-                element={<AdminRentCarUpdatePage />}
-              />
+              <Route path="insertRentCar" element={<InsertRentCar />} />
+              <Route path="rentCarManagement" element={<RentCarManagement />} />
+              <Route path="rentCarDetails" element={<RentCarDetails />} />
               <Route
                 path="/admin/goHotdealUpdate/*"
                 element={<AdminHotDealRentCarUpdate />}
