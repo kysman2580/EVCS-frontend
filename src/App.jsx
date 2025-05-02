@@ -3,16 +3,16 @@ import GlobalStyle from "./components/UserInterface/Common/Header/GlobalStyle";
 import AdminMain from "./components/AdminInterface/Main/AdminMain";
 import Main from "./components/UserInterface/Main/Main";
 
-
 /* alert 대신 깔끔한 UX  */
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 /* 드라이빙 루뜨 관련 */
 import DRBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteBoard/drBoard";
 /* 누스 관련 */
 import NewsMain from "./components/UserInterface/News/NewsMain/NewsMain";
 import NewsDetail from "./components/UserInterface/News/NewsDetail/NewsDetail";
+import NewsList from "./components/UserInterface/News/NewsList/NewsList";
 
 /* 충전소 위치 관련 */
 import ChargingMap from "./components/UserInterface/ChargingMap/ChargingMap";
@@ -67,7 +67,7 @@ import AdminHotDealRentCarUpdate from "./components/AdminInterface/RentCar/HotDe
 function App() {
   return (
     <>
-      <ToastContainer/>
+      <ToastContainer />
       <GlobalStyle />
       <AuthProvider>
         <Routes>
@@ -109,6 +109,7 @@ function App() {
             {/* 누스 관련 */}
             <Route path="/newsMain" element={<NewsMain />} />
             <Route path="/newsDetail" element={<NewsDetail />} />
+            <Route path="/news-list" element={<NewsList />} />
 
             {/* 렌트카 관련 */}
             <Route path="/hotRentCar" element={<HotdealRentCar />} />

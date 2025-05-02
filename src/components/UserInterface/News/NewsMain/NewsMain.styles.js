@@ -551,3 +551,43 @@ export const NewsListChatIcon = styled.img`
   margin-left: 8px;
   vertical-align: middle;
 `;
+
+export const SortButtons = styled.div`
+  display: flex;
+  gap: 8px;
+  padding: 0 20px;
+  margin-bottom: 10px;
+`;
+
+export const ListContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 20px;
+`;
+
+// styled-components 예시
+export const Pagination = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin: 30px 0;
+
+  button {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    background-color: white;
+    color: #333;
+    cursor: pointer;
+
+    &:disabled {
+      background-color: #03c75a;
+      color: white;
+      font-weight: bold;
+    }
+
+    &:hover:not(:disabled) {
+      background-color: #f0f0f0;
+    }
+  }
+`;
