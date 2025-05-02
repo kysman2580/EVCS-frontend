@@ -40,6 +40,7 @@ import AdminEventBoardEnrollForm from "./components/AdminInterface/Board/Event/A
 import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
 import MemberRating from "./components/UserInterface/Member/Mypage/MemberRating";
 import ChangePasswordPage from "./components/UserInterface/Member/Mypage/ChangePassword";
+import FindByPwPage from "./components/UserInterface/Member/FindByPasswordPage/FindPwPage";
 
 /* 렌트카 관련 */
 import LongTermRentCarDetail from "./components/UserInterface/RentCar/LongTermRentCar/LongTermRentCarDetail";
@@ -64,6 +65,7 @@ import MyPage from "./components/UserInterface/Member/Mypage/Mypage";
 import InsertRentCar from "./components/AdminInterface/RentCar/RentCarManagement/InsertRentCar";
 import RentCarManagement from "./components/AdminInterface/RentCar/RentCarManagement/RentCarManagement";
 import RentCarDetails from "./components/AdminInterface/RentCar/RentCarManagement/RenCarDetails";
+import UpdatePwPage from "./components/UserInterface/Member/UpdatePasswordPage/UpdatePwPage";
 
 function App() {
   return (
@@ -99,6 +101,11 @@ function App() {
             <Route path="/myPage" element={<MyPage />} />
 
             <Route path="/changePasswordPage" element={<ChangePasswordPage />} />
+
+            <Route path="/findByPwPage" element={<FindByPwPage />} />
+
+            <Route path="/updatePwPage" element={<UpdatePwPage />} />
+
 
             {/* 신고 관련 */}
             <Route path="/report/*" element={<Report useDummyData={true} />} />
