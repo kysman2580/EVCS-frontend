@@ -140,3 +140,7 @@ export const CommentActions = styled.div`
   gap: 10px;
   margin-top: 6px;
 `;
+
+export const CommentSectionContainer = styled.div`
+  margin-top: 20px;
+`;
