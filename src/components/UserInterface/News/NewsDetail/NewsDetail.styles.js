@@ -4,7 +4,6 @@ export const Container = styled.div`
   padding: 20px;
   max-width: 800px;
   margin: 0 auto;
-  font-family: "Malgun Gothic", sans-serif;
 `;
 
 export const Loading = styled.div`
