@@ -39,6 +39,7 @@ import AdminEventBoardEnrollForm from "./components/AdminInterface/Board/Event/A
 /* 회원관련 */
 import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
 import MemberRating from "./components/UserInterface/Member/Mypage/MemberRating";
+import ChangePasswordPage from "./components/UserInterface/Member/Mypage/ChangePassword";
 
 /* 렌트카 관련 */
 import LongTermRentCarDetail from "./components/UserInterface/RentCar/LongTermRentCar/LongTermRentCarDetail";
@@ -59,6 +60,7 @@ import AdminHotDealRentCarEnrollForm from "./components/AdminInterface/RentCar/H
 import CarDetails from "./components/AdminInterface/RentCar/CarManagement/CarDetails";
 import SignUpPage from "./components/UserInterface/Member/SignPage/SignPage";
 import AdminHotDealRentCarUpdate from "./components/AdminInterface/RentCar/HotDealRentCar/AdminHotDealRentCarUpdate";
+import MyPage from "./components/UserInterface/Member/Mypage/Mypage";
 import InsertRentCar from "./components/AdminInterface/RentCar/RentCarManagement/InsertRentCar";
 import RentCarManagement from "./components/AdminInterface/RentCar/RentCarManagement/RentCarManagement";
 import RentCarDetails from "./components/AdminInterface/RentCar/RentCarManagement/RenCarDetails";
@@ -93,6 +95,10 @@ function App() {
             <Route path="/memberRating" element={<MemberRating />} />
 
             <Route path="/signUpPage" element={<SignUpPage />} />
+
+            <Route path="/myPage" element={<MyPage />} />
+
+            <Route path="/changePasswordPage" element={<ChangePasswordPage />} />
 
             {/* 신고 관련 */}
             <Route path="/report/*" element={<Report useDummyData={true} />} />
