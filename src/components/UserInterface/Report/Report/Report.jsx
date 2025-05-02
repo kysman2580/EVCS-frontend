@@ -5,68 +5,10 @@ import { Report2 } from "./Report.styled";
 import { useAuth } from "../../Context/AuthContext/AuthContext";
 import axios from "axios";
 
-// 개발 및 테스트용 더미 데이터 (신고자와 피의자 모두 사람)
-const dummyReports = [
-  {
-    boardNo: 1,
-    displayId: 1,
-    title: "전기차 충전소 오류 신고",
-    reporter: "홍길동",
-    defendant: "박영수",
-    applicationDate: "2025-04-20",
-    status: "접수",
-  },
-  {
-    boardNo: 2,
-    displayId: 2,
-    title: "충전 대기 시간 지연",
-    reporter: "김철수",
-    defendant: "최민수",
-    applicationDate: "2025-04-18",
-    status: "처리중",
-  },
-  {
-    boardNo: 3,
-    displayId: 3,
-    title: "결제 오류 발생",
-    reporter: "이영희",
-    defendant: "정유진",
-    applicationDate: "2025-04-15",
-    status: "완료",
-  },
-  {
-    boardNo: 4,
-    displayId: 4,
-    title: "신고",
-    reporter: "홍길동",
-    defendant: "정유진",
-    applicationDate: "2025-04-15",
-    status: "완료",
-  },
-  {
-    boardNo: 5,
-    displayId: 5,
-    title: "신고인데요~",
-    reporter: "홍길동",
-    defendant: "정유진",
-    applicationDate: "2025-04-15",
-    status: "완료",
-  },
-  {
-    boardNo: 6,
-    displayId: 6,
-    title: "결제 오류 발생",
-    reporter: "홍길동",
-    defendant: "정유진",
-    applicationDate: "2025-04-15",
-    status: "완료",
-  },
-];
-
-const Report = ({ useDummyData = true }) => {
-  const navi = useNavigate();
-  const { auth } = useAuth(); // ← 여기서 auth 꺼내고
-  const currentUser = auth.user.name; // ← name을 currentUser로 사용
+const Report = ({ useDummyData = false }) => {
+  const navigate = useNavigate();
+  const { auth } = useAuth();
+  const currentUser = auth.user.name; // (필요시 memberNo 대신 이름 표시)
 
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -74,20 +16,30 @@ const Report = ({ useDummyData = true }) => {
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [titleQuery, setTitleQuery] = useState("");
+  const [keyQuery, setKeyQuery] = useState("");
 
-  // 데이터 로드 (현재 사용자 기준)
+  // 데이터 로드
   useEffect(() => {
     if (useDummyData) {
-      setReports(dummyReports.filter((r) => r.reporter === currentUser));
+      // 테스트용 더미 데이터가 있다면 여기에 필터 적용
+      setReports([]);
       return;
     }
+
     const fetchReports = async () => {
       setLoading(true);
       setError(null);
       try {
         const { data } = await axios.get("/api/reports", {
-          params: { reporter: currentUser, page: 0, size: 10 },
+          params: {
+            // backend 가 이 파라미터를 처리하도록 구현되어 있어야 합니다.
+            reporter: currentUser,
+            startDate: startDate || undefined,
+            endDate: endDate || undefined,
+            keyField: keyQuery || undefined,
+            page: 0,
+            size: 20,
+          },
         });
         setReports(data);
       } catch (err) {
@@ -97,42 +49,9 @@ const Report = ({ useDummyData = true }) => {
         setLoading(false);
       }
     };
-    fetchReports();
-  }, [useDummyData, currentUser]);
 
-  // 검색/필터
-  const handleSearch = () => {
-    if (useDummyData) {
-      let filtered = dummyReports.filter((r) => r.reporter === currentUser);
-      if (titleQuery)
-        filtered = filtered.filter((r) => r.title.includes(titleQuery));
-      if (startDate)
-        filtered = filtered.filter((r) => r.applicationDate >= startDate);
-      if (endDate)
-        filtered = filtered.filter((r) => r.applicationDate <= endDate);
-      setReports(filtered);
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    axios
-      .get("/api/reports", {
-        params: {
-          reporter: currentUser,
-          title: titleQuery || undefined,
-          startDate: startDate || undefined,
-          endDate: endDate || undefined,
-          page: 0,
-          size: 10,
-        },
-      })
-      .then((res) => setReports(res.data))
-      .catch((err) => {
-        console.error(err);
-        setError("검색 중 오류가 발생했습니다.");
-      })
-      .finally(() => setLoading(false));
-  };
+    fetchReports();
+  }, [useDummyData, currentUser, startDate, endDate, keyQuery]);
 
   // 기간 단축 버튼
   const handlePreset = (days) => {
@@ -143,8 +62,16 @@ const Report = ({ useDummyData = true }) => {
     setEndDate(end.toISOString().slice(0, 10));
   };
 
+  // 검색
+  const handleSearch = () => {
+    // useEffect 의 의존성에 startDate, endDate, keyQuery 가 포함되어 있으므로
+    // 단순히 set* 해주면 재조회됩니다.
+  };
+
   // 행 클릭
-  const handleRowClick = (boardNo) => navi(`/reports/${boardNo}`);
+  const handleRowClick = (rpNo) => {
+    navigate(`/reports/${rpNo}`);
+  };
 
   return (
     <Report2>
@@ -164,10 +91,11 @@ const Report = ({ useDummyData = true }) => {
         />
         <input
           type="text"
-          placeholder="제목 검색"
-          value={titleQuery}
-          onChange={(e) => setTitleQuery(e.target.value)}
+          placeholder="신고 대상 키 검색"
+          value={keyQuery}
+          onChange={(e) => setKeyQuery(e.target.value)}
         />
+
         <button onClick={() => handlePreset(7)}>1주일</button>
         <button onClick={() => handlePreset(30)}>1개월</button>
         <button onClick={() => handlePreset(90)}>3개월</button>
@@ -190,22 +118,34 @@ const Report = ({ useDummyData = true }) => {
           <table className="report-table">
             <thead>
               <tr>
-                <th>번호</th>
-                <th>제목</th>
-                <th>신고자</th>
-                <th>피의자</th>
-                <th>신청일</th>
-                <th>추진상황</th>
+                <th>신고번호</th>
+                <th>대상(Key)</th>
+                <th>분류(Field)</th>
+                <th>내용</th>
+                <th>파일</th>
+                <th>등록일</th>
+                <th>상태</th>
               </tr>
             </thead>
             <tbody>
               {reports.map((r) => (
-                <tr key={r.boardNo} onClick={() => handleRowClick(r.boardNo)}>
-                  <td>{r.displayId}</td>
-                  <td className="report-title">{r.title}</td>
-                  <td>{r.reporter}</td>
-                  <td>{r.defendant}</td>
-                  <td>{r.applicationDate}</td>
+                <tr key={r.rpNo} onClick={() => handleRowClick(r.rpNo)}>
+                  <td>{r.rpNo}</td>
+                  <td>{r.keyField}</td>
+                  <td>{r.field || "-"}</td>
+                  <td>
+                    {r.content.length > 20
+                      ? r.content.slice(0, 20) + "…"
+                      : r.content}
+                  </td>
+                  <td>
+                    {r.fileNo ? (
+                      <a href={`/api/files/${r.fileNo}`}>{r.fileNo}</a>
+                    ) : (
+                      "-"
+                    )}
+                  </td>
+                  <td>{r.enrollDate?.slice(0, 10)}</td>
                   <td>{r.status}</td>
                 </tr>
               ))}
