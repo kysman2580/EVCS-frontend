@@ -11,7 +11,7 @@ const RentCarNav = () => {
           <StyledHeaderBtn onClick={() => navi("/admin/carManagement")}>
             차종 관리
           </StyledHeaderBtn>
-          <StyledHeaderBtn onClick={() => navi("/admin/adminLongTermRentCar")}>
+          <StyledHeaderBtn onClick={() => navi("/admin/rentCarManagement")}>
             렌트카 관리
           </StyledHeaderBtn>
           <StyledHeaderBtn onClick={() => navi("/admin/hotDealRentCar")}>

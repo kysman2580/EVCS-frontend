@@ -11,7 +11,6 @@ const CommentSection = ({ newsNo, backendUrl }) => {
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editContent, setEditContent] = useState("");
   const memberNo = Number(localStorage.getItem("memberNo"));
-  // const memberNo = 161;
 
   useEffect(() => {
     fetchComments();
@@ -20,9 +19,9 @@ const CommentSection = ({ newsNo, backendUrl }) => {
   const fetchComments = async () => {
     try {
       const res = await axios.get(`${backendUrl}/api/news/comment/list`, {
-        params: { newsNo },
+        params: { newsNo, memberNo }, // memberNo 같이 보내야 hasLiked/hasHated 받을 수 있다
       });
-      setComments(res.data);
+      setComments(res.data); // 서버가 likes, dislikes, hasLiked, hasHated 모두 내려준다
     } catch (error) {
       console.error("댓글 불러오기 실패", error);
     }
@@ -60,25 +59,61 @@ const CommentSection = ({ newsNo, backendUrl }) => {
     }
   };
 
-  const handleLikeComment = async (commentId) => {
+  const toggleLike = async (commentId) => {
+    if (!memberNo) {
+      alert("로그인 필요");
+      return;
+    }
     try {
-      await axios.post(`${backendUrl}/api/news/comment/like`, null, {
-        params: { newsCmtId: commentId, memberNo },
-      });
-      fetchComments();
+      const current = comments.find((c) => c.id === commentId);
+      if (!current) return;
+
+      if (current.hasLiked) {
+        await axios.delete(`${backendUrl}/api/news/comment/like`, {
+          params: { newsCmtId: commentId, memberNo },
+        });
+      } else {
+        if (current.hasHated) {
+          await axios.delete(`${backendUrl}/api/news/comment/hate`, {
+            params: { newsCmtId: commentId, memberNo },
+          });
+        }
+        await axios.post(`${backendUrl}/api/news/comment/like`, null, {
+          params: { newsCmtId: commentId, memberNo },
+        });
+      }
+      fetchComments(); // 상태를 다시 불러온다
     } catch (error) {
-      console.error("댓글 좋아요 실패", error);
+      console.error("좋아요 토글 실패", error);
     }
   };
 
-  const handleHateComment = async (commentId) => {
+  const toggleHate = async (commentId) => {
+    if (!memberNo) {
+      alert("로그인 필요");
+      return;
+    }
     try {
-      await axios.post(`${backendUrl}/api/news/comment/hate`, null, {
-        params: { newsCmtId: commentId, memberNo },
-      });
-      fetchComments();
+      const current = comments.find((c) => c.id === commentId);
+      if (!current) return;
+
+      if (current.hasHated) {
+        await axios.delete(`${backendUrl}/api/news/comment/hate`, {
+          params: { newsCmtId: commentId, memberNo },
+        });
+      } else {
+        if (current.hasLiked) {
+          await axios.delete(`${backendUrl}/api/news/comment/like`, {
+            params: { newsCmtId: commentId, memberNo },
+          });
+        }
+        await axios.post(`${backendUrl}/api/news/comment/hate`, null, {
+          params: { newsCmtId: commentId, memberNo },
+        });
+      }
+      fetchComments(); // 상태를 다시 불러온다
     } catch (error) {
-      console.error("댓글 싫어요 실패", error);
+      console.error("싫어요 토글 실패", error);
     }
   };
 
@@ -98,7 +133,7 @@ const CommentSection = ({ newsNo, backendUrl }) => {
   };
 
   const handleDeleteComment = async (commentId) => {
-    if (!window.confirm("정말 이 댓글을 삭제하시겠습니까?")) return;
+    if (!window.confirm("댓글을 삭제할까요?")) return;
     try {
       await axios.delete(`${backendUrl}/api/news/comment/${commentId}`, {
         headers: {
@@ -156,13 +191,15 @@ const CommentSection = ({ newsNo, backendUrl }) => {
                   <S.CommentActions>
                     <Button
                       size="sm"
-                      onClick={() => handleLikeComment(comment.id)}
+                      variant={comment.hasLiked ? "primary" : "outline-primary"}
+                      onClick={() => toggleLike(comment.id)}
                     >
                       👍 {comment.likes || 0}
                     </Button>
                     <Button
                       size="sm"
-                      onClick={() => handleHateComment(comment.id)}
+                      variant={comment.hasHated ? "danger" : "outline-danger"}
+                      onClick={() => toggleHate(comment.id)}
                     >
                       👎 {comment.dislikes || 0}
                     </Button>
