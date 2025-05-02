@@ -90,6 +90,13 @@ const InsertRentCar = () => {
       });
   };
 
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("등록된 데이터:", form);
