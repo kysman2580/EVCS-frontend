@@ -1,6 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import {
   Container,
   Row,
@@ -10,33 +9,46 @@ import {
   Image,
   Card,
 } from "react-bootstrap";
+
 /* nav 관련 애들 */
 import AdminRentCarNav from "../../AdminCommon/AdminNav/AdminRentCarNav";
 import {
   RentContainerDiv,
   RentBodyDiv,
 } from "../AdminRentCarCommon/AdminRentCar.styles";
+import RentCarManagement from "./RentCarManagement";
 
-const InsertCar = () => {
-  const [imagePreview, setImagePreview] = useState(null);
-  const navi = useNavigate();
+const RentCarDetails = () => {
+  const location = useLocation();
+  const car = location.state?.car;
+
+  useEffect(() => {
+    if (car) {
+      setForm({
+        modelName: car.modelName,
+        carNo: car.carNo,
+        year: car.year,
+        category: car.category,
+        price: car.price,
+        address: car.address,
+      });
+    }
+  }, [car]);
 
   const [form, setForm] = useState({
-    name: "",
-    type: "",
+    modelName: "",
+    carNo: "",
     year: "",
-    company: "",
-    battery: "",
-    image: "",
+    category: "",
+    price: "",
+    address: "",
   });
+
+  const [imagePreview, setImagePreview] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
-  };
-
-  const handleCancel = (e) => {
-    navi(-1);
   };
 
   const handleImageUpload = (e) => {
@@ -44,36 +56,14 @@ const InsertCar = () => {
     if (file) {
       setImagePreview(URL.createObjectURL(file));
     }
-    setForm({ ...form, image: file });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(form);
-    const formData = new FormData();
-    formData.append("carName", form.name);
-    formData.append("carType", form.type);
-    formData.append("carYear", form.year);
-    formData.append("carCompany", form.company);
-    formData.append("carBattery", form.battery);
-    formData.append("image", form.image);
-
-    axios
-      .post("http://localhost/car/insert", formData, {
-        headers: {
-          "content-Type": "multipart/form-data",
-        },
-      })
-      .then((result) => {
-        console.log("등록된 데이터:", result);
-        alert("차량이 등록되었습니다!");
-        navi("/admin/carManagement");
-      })
-      .catch((error) => {
-        console.log(error);
-        alert("오류");
-      });
+    console.log("등록된 데이터:", form);
+    alert("차량이 등록되었습니다!");
   };
+
   return (
     <>
       <RentContainerDiv>
@@ -113,35 +103,17 @@ const InsertCar = () => {
                 />
               </div>
 
-              <Form>
+              <Form onSubmit={handleSubmit}>
                 {/* 차 이름 */}
-                <Row className="mb-3">
-                  <Col>
-                    <Form.Group className="mb-3" controlId="carName">
-                      <Form.Label className="fw-bold ">모델명 :</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="name"
-                        value={form.name}
-                        onChange={handleChange}
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col>
-                    <Form.Group controlId="carType">
-                      <Form.Label className="fw-bold ">차종 :</Form.Label>
-                      <Form.Select
-                        name="type"
-                        value={form.type}
-                        onChange={handleChange}
-                      >
-                        <option value="">선택</option>
-                        <option value="SUV">SUV</option>
-                        <option value="SEDAN">SEDAN</option>
-                      </Form.Select>
-                    </Form.Group>
-                  </Col>
-                </Row>
+                <Form.Group className="mb-3" controlId="carName">
+                  <Form.Label className="fw-bold ">차 이름 :</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="name"
+                    value={form.modelName}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
 
                 {/* 연식 + 카테고리 */}
                 <Row className="mb-3">
@@ -157,44 +129,62 @@ const InsertCar = () => {
                     </Form.Group>
                   </Col>
                   <Col>
-                    <Form.Group controlId="carCompany">
-                      <Form.Label className="fw-bold ">제조사 :</Form.Label>
+                    <Form.Group controlId="carCategory">
+                      <Form.Label className="fw-bold ">카테고리 :</Form.Label>
                       <Form.Select
-                        name="company"
-                        value={form.company}
+                        name="category"
+                        value={form.category}
                         onChange={handleChange}
                       >
                         <option value="">선택</option>
-                        <option value="HYUNDAI">HYUNDAI</option>
-                        <option value="KIA">KIA</option>
-                        <option value="VOLVO">VOLVO</option>
+                        <option value="시간별 렌트카">시간별 렌트카</option>
+                        <option value="장기 렌트카">장기 렌트카</option>
+                        <option value="구독 렌트카">구독 렌트카</option>
                       </Form.Select>
                     </Form.Group>
                   </Col>
                 </Row>
 
-                {/* 배터리 용량 */}
-                <Form.Group className="mb-3" controlId="Battery">
-                  <Form.Label className="fw-bold ">배터리 용량 :</Form.Label>
+                {/* 가격 */}
+                <Row>
+                  <Col>
+                    <Form.Group className="mb-3" controlId="carPrice">
+                      <Form.Label className="fw-bold ">가격 :</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="price"
+                        value={form.price}
+                        onChange={handleChange}
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col>
+                    <Form.Group className="mb-3" controlId="carPrice">
+                      <Form.Label className="fw-bold ">차 번호 :</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="carNo"
+                        value={form.carNo}
+                        onChange={handleChange}
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+
+                {/* 주소 */}
+                <Form.Group className="mb-4" controlId="carAddress">
+                  <Form.Label className="fw-bold ">등록 주소 :</Form.Label>
                   <Form.Control
                     type="text"
-                    name="battery"
-                    value={form.battery}
+                    name="address"
+                    value={form.address}
                     onChange={handleChange}
                   />
                 </Form.Group>
 
                 <div className="text-center">
-                  <Button
-                    type="submit"
-                    variant="dark"
-                    onClick={handleSubmit}
-                    style={{ margin: "20px" }}
-                  >
-                    등록하기
-                  </Button>
-                  <Button type="submit" variant="dark" onClick={handleCancel}>
-                    취소하기
+                  <Button type="submit" variant="dark">
+                    수정하기
                   </Button>
                 </div>
               </Form>
@@ -206,4 +196,4 @@ const InsertCar = () => {
   );
 };
 
-export default InsertCar;
+export default RentCarDetails;

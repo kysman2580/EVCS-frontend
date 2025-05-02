@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
 import {
   Container,
   Row,
@@ -9,7 +10,6 @@ import {
   Image,
   Card,
 } from "react-bootstrap";
-
 /* nav 관련 애들 */
 import AdminRentCarNav from "../../AdminCommon/AdminNav/AdminRentCarNav";
 import {
@@ -17,22 +17,45 @@ import {
   RentBodyDiv,
 } from "../AdminRentCarCommon/AdminRentCar.styles";
 
-const CarDetails = () => {
+const InsertCar = () => {
+  const location = useLocation();
+  const [imagePreview, setImagePreview] = useState(null);
+  const [disabled, setDisabled] = useState(true);
+  const navi = useNavigate();
+
+  const { no, name, type, year, company, battery, enrollDate } = location.state;
+
   const [form, setForm] = useState({
-    number: "",
-    name: "",
-    category: "",
-    year: "",
-    company: "",
-    battery: "",
-    enrollDate: "",
+    carNo: no,
+    carName: name,
+    carType: type,
+    carYear: year,
+    carCompany: company,
+    carBattery: battery,
+    enrollDate: enrollDate,
   });
 
-  const [imagePreview, setImagePreview] = useState(null);
+  console.log(form);
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost/car/image/${name}`)
+      .then((result) => {
+        console.log(result.data);
+        setImagePreview(result.data.fileLoad);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
+  };
+
+  const handleCancel = (e) => {
+    navi(-1);
   };
 
   const handleImageUpload = (e) => {
@@ -40,16 +63,62 @@ const CarDetails = () => {
     if (file) {
       setImagePreview(URL.createObjectURL(file));
     }
+    setForm({ ...form, image: file });
   };
 
-  const handleSubmit = (e) => {
+  const handleWrite = (e) => {
+    setDisabled(false);
+  };
+
+  const handleUpdate = (e) => {
     e.preventDefault();
-    console.log("등록된 데이터:", form);
-    alert("차량이 등록되었습니다!");
+    console.log(form);
+
+    const formData = new FormData();
+    formData.append("carNo", form.carNo);
+    formData.append("carName", form.carName);
+    formData.append("carType", form.carType);
+    formData.append("carYear", form.carYear);
+    formData.append("carCompany", form.carCompany);
+    formData.append("carBattery", form.carBattery);
+    formData.append("image", form.image);
+
+    axios
+      .post("http://localhost/car/update", formData, {
+        headers: {
+          "content-Type": "multipart/form-data",
+        },
+      })
+      .then((result) => {
+        console.log("등록된 데이터:", result);
+        alert("차량이 수정되었습니다.");
+        setDisabled(true);
+      })
+      .catch((error) => {
+        console.log(error);
+        alert("오류");
+      });
   };
 
-  const location = useLocation();
-  const car = location.state?.car;
+  const handleDelete = (e) => {
+    console.log(form);
+    axios
+      .post("http://localhost/car/delete", form, {
+        headers: {
+          "content-Type": "application/json",
+        },
+      })
+      .then((result) => {
+        console.log("삭제된 데이터:", result);
+        alert("차량이 삭제되었습니다.");
+        navi("/admin/carManagement");
+      })
+      .catch((error) => {
+        console.log(error);
+        alert("오류");
+      });
+  };
+
   return (
     <>
       <RentContainerDiv>
@@ -86,20 +155,11 @@ const CarDetails = () => {
                   accept="image/*"
                   onChange={handleImageUpload}
                   className="mt-2"
+                  disabled={disabled}
                 />
               </div>
 
-              <Form onSubmit={handleSubmit}>
-                {/* 차량 번호 */}
-                <Form.Group className="mb-3" controlId="carNumber">
-                  <Form.Label className="fw-bold ">차량 번호 :</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="number"
-                    value={form.number}
-                    onChange={handleChange}
-                  />
-                </Form.Group>
+              <Form>
                 {/* 차 이름 */}
                 <Row className="mb-3">
                   <Col>
@@ -107,27 +167,30 @@ const CarDetails = () => {
                       <Form.Label className="fw-bold ">모델명 :</Form.Label>
                       <Form.Control
                         type="text"
-                        name="name"
-                        value={form.name}
+                        name="carName"
                         onChange={handleChange}
+                        value={form.carName}
+                        disabled={disabled}
                       />
                     </Form.Group>
                   </Col>
                   <Col>
-                    <Form.Group controlId="carCategory">
+                    <Form.Group controlId="carType">
                       <Form.Label className="fw-bold ">차종 :</Form.Label>
                       <Form.Select
-                        name="category"
-                        value={form.category}
+                        name="carType"
+                        value={form.carType}
                         onChange={handleChange}
+                        disabled={disabled}
                       >
                         <option value="">선택</option>
                         <option value="SUV">SUV</option>
-                        <option value="세단">세단</option>
+                        <option value="SEDAN">SEDAN</option>
                       </Form.Select>
                     </Form.Group>
                   </Col>
                 </Row>
+
                 {/* 연식 + 카테고리 */}
                 <Row className="mb-3">
                   <Col>
@@ -135,9 +198,10 @@ const CarDetails = () => {
                       <Form.Label className="fw-bold ">연식 :</Form.Label>
                       <Form.Control
                         type="text"
-                        name="year"
-                        value={form.year}
+                        name="carYear"
+                        value={form.carYear}
                         onChange={handleChange}
+                        disabled={disabled}
                       />
                     </Form.Group>
                   </Col>
@@ -145,9 +209,10 @@ const CarDetails = () => {
                     <Form.Group controlId="carCompany">
                       <Form.Label className="fw-bold ">제조사 :</Form.Label>
                       <Form.Select
-                        name="category"
-                        value={form.company}
+                        name="carCompany"
+                        value={form.carCompany}
                         onChange={handleChange}
+                        disabled={disabled}
                       >
                         <option value="">선택</option>
                         <option value="HYUNDAI">HYUNDAI</option>
@@ -159,42 +224,42 @@ const CarDetails = () => {
                 </Row>
 
                 {/* 배터리 용량 */}
-                <Form.Group className="mb-3" controlId="Battery">
+                <Form.Group className="mb-3" controlId="carBattery">
                   <Form.Label className="fw-bold ">배터리 용량 :</Form.Label>
                   <Form.Control
                     type="text"
-                    name="price"
-                    value={form.battery}
+                    name="carBattery"
+                    value={form.carBattery}
                     onChange={handleChange}
-                  />
-                </Form.Group>
-
-                {/* 등록일 */}
-                <Form.Group className="mb-4" controlId="enrollDate">
-                  <Form.Label className="fw-bold ">등록 일시 :</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="address"
-                    value={form.enrollDate}
-                    onChange={handleChange}
-                  />
-                </Form.Group>
-
-                {/* 주소 */}
-                <Form.Group className="mb-4" controlId="carAddress">
-                  <Form.Label className="fw-bold ">등록 주소 :</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="address"
-                    value={car.address}
-                    onChange={handleChange}
+                    disabled={disabled}
                   />
                 </Form.Group>
 
                 <div className="text-center">
-                  <Button type="submit" variant="dark">
-                    수정하기
-                  </Button>
+                  {disabled ? (
+                    <>
+                      <Button
+                        type="button"
+                        variant="dark"
+                        onClick={handleWrite}
+                        style={{ marginRight: "10px" }}
+                      >
+                        수정하기
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="dark"
+                        onClick={handleDelete}
+                        style={{ margin: "20px" }}
+                      >
+                        삭제하기
+                      </Button>
+                    </>
+                  ) : (
+                    <Button type="button" variant="dark" onClick={handleUpdate}>
+                      수정완료
+                    </Button>
+                  )}
                 </div>
               </Form>
             </Card>
@@ -205,4 +270,4 @@ const CarDetails = () => {
   );
 };
 
-export default CarDetails;
+export default InsertCar;
