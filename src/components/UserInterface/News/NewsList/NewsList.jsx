@@ -1,9 +1,17 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { ListNewsItem, SearchBar } from "../NewsMain/NewsItemComponents";
+import { useNavigate } from "react-router-dom";
+import {
+  ListNewsItem,
+  SearchBar,
+  removeHtmlTags,
+  formatDate,
+} from "../NewsMain/NewsItemComponents";
 import * as S from "../NewsMain/NewsMain.styles";
 
 const NewsList = ({ backendUrl = "http://localhost:80" }) => {
+  const navigate = useNavigate();
+
   const [query, setQuery] = useState("전기차");
   const [sort, setSort] = useState("sim");
   const [page, setPage] = useState(1);
@@ -12,6 +20,30 @@ const NewsList = ({ backendUrl = "http://localhost:80" }) => {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [imageResults, setImageResults] = useState({});
+
+  const fetchNews = async (targetPage = 1) => {
+    setLoading(true);
+    try {
+      const res = await axios.get(`${backendUrl}/api/naver-news-list`, {
+        params: { query, sort, page: targetPage, size },
+      });
+
+      const rawItems = res.data.items || [];
+
+      // 중복 제거: originallink 기준
+      const uniqueItems = Array.from(
+        new Map(rawItems.map((item) => [item.originallink, item])).values()
+      );
+
+      setItems(uniqueItems);
+      setTotal(res.data.total || 0);
+      setPage(targetPage);
+    } catch (err) {
+      console.error("뉴스 리스트 요청 실패", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const extractKeywords = (title) => {
     const clean = title
@@ -25,19 +57,19 @@ const NewsList = ({ backendUrl = "http://localhost:80" }) => {
   };
 
   const getImageUrl = (item) => {
-    const key = item.title.replace(/<[^>]+>/g, "");
+    const key = removeHtmlTags(item.title);
     return imageResults[key] || "/images/loading.png";
   };
 
   const handleChatClick = async (item) => {
-    const key = item.title.replace(/<[^>]+>/g, "");
+    const key = removeHtmlTags(item.title);
     let imageUrl = getImageUrl(item);
 
     if (imageUrl === "/images/loading.png") {
       try {
-        const keywords = extractKeywords(key);
+        const kws = extractKeywords(key);
         const res = await axios.get(`${backendUrl}/api/naver-image`, {
-          params: { query: keywords },
+          params: { query: kws },
         });
         const hits = res.data.items || [];
         imageUrl = hits[0]?.thumbnail || hits[0]?.link || "/images/loading.png";
@@ -47,48 +79,28 @@ const NewsList = ({ backendUrl = "http://localhost:80" }) => {
       }
     }
 
-    window.location.href = `/newsDetail?title=${encodeURIComponent(
-      key
-    )}&img=${encodeURIComponent(imageUrl)}`;
-  };
-
-  const fetchNews = async (targetPage = 1) => {
-    setLoading(true);
-    try {
-      const res = await axios.get(`${backendUrl}/api/naver-news-list`, {
-        params: { query, sort, page: targetPage, size },
-      });
-      const rawItems = res.data.items || [];
-
-      // originallink 기준 중복 제거
-      const uniqueItems = Array.from(
-        new Map(rawItems.map((item) => [item.originallink, item])).values()
-      );
-
-      setItems(uniqueItems);
-      setTotal(Math.min(res.data.total || 0, 1000)); // 최대 1000 제한
-      setPage(targetPage);
-    } catch (err) {
-      console.error("뉴스 리스트 요청 실패", err);
-    } finally {
-      setLoading(false);
-    }
+    navigate("/newsDetail", {
+      state: {
+        title: removeHtmlTags(item.title),
+        description: removeHtmlTags(item.description),
+        pubDate: formatDate(item.pubDate),
+        imageUrl,
+        originallink: item.originallink,
+        query,
+      },
+    });
   };
 
   useEffect(() => {
     fetchNews(1);
   }, [query, sort]);
 
-  // 페이지네이션 그룹 (10개 단위)
-  const totalPages = Math.ceil(total / size);
-  const groupSize = 10;
-  const currentGroup = Math.floor((page - 1) / groupSize);
-  const startPage = currentGroup * groupSize + 1;
-  const endPage = Math.min(startPage + groupSize - 1, totalPages);
-  const pageNumbers = [];
-  for (let i = startPage; i <= endPage; i++) {
-    pageNumbers.push(i);
-  }
+  const totalPages = Math.ceil(Math.min(total, 1000) / size);
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+  const visiblePages = pages.slice(
+    Math.floor((page - 1) / 10) * 10,
+    Math.floor((page - 1) / 10) * 10 + 10
+  );
 
   return (
     <S.Container>
@@ -122,16 +134,22 @@ const NewsList = ({ backendUrl = "http://localhost:80" }) => {
       </S.ListContainer>
 
       <S.Pagination>
-        {startPage > 1 && (
-          <button onClick={() => fetchNews(startPage - 1)}>&lt;</button>
+        {page > 10 && (
+          <button onClick={() => fetchNews(page - 10)}>{`<<`}</button>
         )}
-        {pageNumbers.map((p) => (
+        {page > 1 && <button onClick={() => fetchNews(page - 1)}>{`<`}</button>}
+
+        {visiblePages.map((p) => (
           <button key={p} onClick={() => fetchNews(p)} disabled={p === page}>
             {p}
           </button>
         ))}
-        {endPage < totalPages && (
-          <button onClick={() => fetchNews(endPage + 1)}>&gt;</button>
+
+        {page < totalPages && (
+          <button onClick={() => fetchNews(page + 1)}>{`>`}</button>
+        )}
+        {page + 10 <= totalPages && (
+          <button onClick={() => fetchNews(page + 10)}>{`>>`}</button>
         )}
       </S.Pagination>
     </S.Container>
