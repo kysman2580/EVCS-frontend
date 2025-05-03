@@ -17,6 +17,7 @@ import axios from "axios";
 const AdminEventBoard = () => {
   const navigate = useNavigate();
   const [category, setCategory] = useState("eventName");
+  const [ingCategory, setIngCategory] = useState("allEvent");
   const [searchKeyword, setSearchKeyword] = useState("");
   const [events, setEvents] = useState([]);
   const [page, setPage] = useState(1);
@@ -30,10 +31,11 @@ const AdminEventBoard = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost/events", {
-        params: { page, category, searchKeyword },
+      .get("http://localhost/admin-events", {
+        params: { page, category, ingCategory, searchKeyword },
       })
       .then((res) => {
+        console.log("effect data : ", res.data);
         setEvents(res.data.eventList);
         setPageInfo(res.data.pageInfo);
       })
@@ -41,18 +43,15 @@ const AdminEventBoard = () => {
   }, [page]);
 
   const handleSearch = () => {
-    console.log(
-      "category : " + category + ", searchKeyword : " + searchKeyword
-    );
+    setPage(1);
     axios
-      .get("http://localhost/events", {
-        params: { page, category, searchKeyword },
+      .get("http://localhost/admin-events", {
+        params: { page, category, ingCategory, searchKeyword },
       })
       .then((res) => {
         console.log("data : ", res.data);
         setEvents(res.data.eventList);
         setPageInfo(res.data.pageInfo);
-        setPage(1);
       })
       .catch(console.error);
   };
@@ -64,14 +63,14 @@ const AdminEventBoard = () => {
     items.push(
       <Pagination.First
         key="first"
-        disabled={currentPage === 1 || count === 0}
+        disabled={currentPage === 1}
         onClick={() => setPage(1)}
       >
         맨앞
       </Pagination.First>,
       <Pagination.Prev
         key="prev"
-        disabled={currentPage === 1 || count === 0}
+        disabled={currentPage === 1}
         onClick={() => setPage(currentPage - 1)}
       >
         이전
@@ -121,6 +120,16 @@ const AdminEventBoard = () => {
             <Row className="my-4">
               <Col md={2}>
                 <Form.Select
+                  value={ingCategory}
+                  onChange={(e) => setIngCategory(e.target.value)}
+                >
+                  <option value="allEvent">전체</option>
+                  <option value="ingEvent">진행중</option>
+                  <option value="endEvent">마감</option>
+                </Form.Select>
+              </Col>
+              <Col md={2}>
+                <Form.Select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                 >
@@ -128,10 +137,16 @@ const AdminEventBoard = () => {
                   <option value="eventContent">내용</option>
                 </Form.Select>
               </Col>
-              <Col md={8}>
+              <Col md={6}>
                 <Form.Control
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault(); // 폼 submit 방지
+                      handleSearch(); // 검색 함수 호출
+                    }
+                  }}
                   placeholder="검색어 입력"
                 />
               </Col>
@@ -170,26 +185,44 @@ const AdminEventBoard = () => {
                           <th>작성자</th>
                           <th>시작일자</th>
                           <th>마감일자</th>
+                          <th>상태</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {events.map((ev) => (
-                          <tr
-                            key={ev.eventNo}
-                            style={{ cursor: "pointer" }}
-                            onClick={() =>
-                              navigate("/admin/goAdminEventDetailPage", {
-                                state: { event: ev },
-                              })
-                            }
-                          >
-                            <td>{ev.eventNo}</td>
-                            <td>{ev.eventName}</td>
-                            <td>{ev.memberNickname}</td>
-                            <td>{ev.startDate}</td>
-                            <td>{ev.endDate}</td>
+                        {events.length === 0 ? (
+                          <tr>
+                            <td colSpan="5">검색 결과가 없습니다.</td>
                           </tr>
-                        ))}
+                        ) : (
+                          events.map((ev) => (
+                            <tr
+                              key={ev.eventNo}
+                              style={{ cursor: "pointer" }}
+                              onClick={() =>
+                                navigate("/admin/goAdminEventDetailPage", {
+                                  state: { event: ev },
+                                })
+                              }
+                            >
+                              <td>{ev.eventNo}</td>
+                              <td>{ev.eventName}</td>
+                              <td>{ev.memberNickname}</td>
+                              <td>{ev.startDate}</td>
+                              <td>{ev.endDate}</td>
+                              <td
+                                className={
+                                  ev.statusName === "진행중"
+                                    ? "text-success fw-bold"
+                                    : ev.statusName === "마감"
+                                    ? "text-danger fw-bold"
+                                    : ""
+                                }
+                              >
+                                {ev.statusName}
+                              </td>
+                            </tr>
+                          ))
+                        )}
                       </tbody>
                     </Table>
                   </Card.Body>

@@ -1,19 +1,18 @@
 import NoticeNav from "../../AdminCommon/AdminNav/AdminNoitceNav";
 import { Container, Row, Col, Card, Button, Form } from "react-bootstrap";
 import { BoardContainerDiv } from "../../../UserInterface/Board/Board.styles";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useState, useRef } from "react";
 
 // import { StyledDatePicker } from "../../../UserInterface/RentCar/RentCarCommon/RentCar.styles";
 import { StyledDatePicker } from "./AdminEventBoard.styled";
 
 import DatePicker from "react-datepicker";
+import axios from "axios";
 
 const AdminEventBoardEnrollForm = () => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
-  const location = useLocation();
-  const post = location.state?.post;
   const navigate = useNavigate();
 
   // 로컬 상태로 바꿔주기
@@ -28,11 +27,72 @@ const AdminEventBoardEnrollForm = () => {
     setPreview(URL.createObjectURL(file));
   };
 
-  const handleSubmit = (e) => {
+  const titleRef = useRef();
+  const contentRef = useRef();
+  const fileRef = useRef();
+
+  const validateForm = () => {
+    if (!title.trim()) {
+      alert("이벤트 제목을 입력하세요.");
+      titleRef.current.focus();
+      return false;
+    }
+    if (!content.trim()) {
+      alert("이벤트 내용을 입력하세요.");
+      contentRef.current.focus();
+      return false;
+    }
+    if (!startDate || !endDate) {
+      alert("이벤트 날짜를 선택하세요.");
+      return false;
+    }
+    if (!imageFile) {
+      alert("이벤트 이미지를 업로드하세요.");
+      fileRef.current.focus();
+      return false;
+    }
+    if (startDate > endDate) {
+      alert("이벤트 시작일은 마감일보다 빨라야 합니다.");
+      return false;
+    }
+    return true;
+  };
+
+  const insertEvent = (e) => {
     e.preventDefault();
-    // TODO: axios로 수정 API 호출
-    console.log({ title, content, imageFile });
-    navigate(-1); // 완료 후 뒤로
+
+    if (!validateForm()) {
+      return; // 검증 실패 시 종료
+    }
+
+    const formData = new FormData();
+    formData.append("eventName", title);
+    formData.append("eventContent", content);
+    formData.append("startDate", startDate.toISOString().split("T")[0]); // yyyy-MM-dd
+    formData.append("endDate", endDate.toISOString().split("T")[0]);
+
+    if (imageFile) {
+      formData.append("file", imageFile); // key 이름이 백엔드와 일치해야 함
+    }
+
+    console.log("startDate : ", startDate);
+    console.log("endDate : ", endDate);
+
+    axios
+      .post("http://localhost/admin-events", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      })
+      .then((res) => {
+        alert("이벤트가 등록되었습니다.");
+        navigate(-1);
+      })
+      .catch((error) => {
+        console.error("등록 실패:", error);
+        alert("등록 중 오류가 발생했습니다.");
+      });
   };
 
   return (
@@ -43,7 +103,7 @@ const AdminEventBoardEnrollForm = () => {
           <Row className="justify-content-center">
             <Col md={8}>
               <Card className="p-4">
-                <Form onSubmit={handleSubmit}>
+                <Form onSubmit={insertEvent}>
                   {/* 이미지 업로드 */}
                   <Form.Group className="mb-4 text-center">
                     {preview ? (
@@ -67,13 +127,14 @@ const AdminEventBoardEnrollForm = () => {
                           justifyContent: "center",
                         }}
                       >
-                        <span className="text-muted">차 사진</span>
+                        <span className="text-muted">이벤트 사진</span>
                       </div>
                     )}
                     <Form.Label className="d-block">
                       이벤트 이미지
                       <Form.Control
                         type="file"
+                        ref={fileRef}
                         accept="image/*"
                         onChange={handleImageChange}
                         className="mt-2"
@@ -86,6 +147,7 @@ const AdminEventBoardEnrollForm = () => {
                     <Form.Label className="fw-bold ">이벤트 제목</Form.Label>
                     <Form.Control
                       type="text"
+                      ref={titleRef}
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       placeholder="제목을 입력하세요"
@@ -140,6 +202,7 @@ const AdminEventBoardEnrollForm = () => {
                     <Form.Label className="fw-bold ">이벤트 내용</Form.Label>
                     <Form.Control
                       as="textarea"
+                      ref={contentRef}
                       rows={6}
                       value={content}
                       onChange={(e) => setContent(e.target.value)}
@@ -152,8 +215,8 @@ const AdminEventBoardEnrollForm = () => {
                     <Button variant="secondary" onClick={() => navigate(-1)}>
                       취소
                     </Button>
-                    <Button variant="primary" type="submit">
-                      저장하기
+                    <Button variant="dark" type="submit">
+                      등록하기
                     </Button>
                   </div>
                 </Form>

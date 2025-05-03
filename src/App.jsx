@@ -98,7 +98,10 @@ function App() {
 
             <Route path="/myPage" element={<MyPage />} />
 
-            <Route path="/changePasswordPage" element={<ChangePasswordPage />} />
+            <Route
+              path="/changePasswordPage"
+              element={<ChangePasswordPage />}
+            />
 
             {/* 신고 관련 */}
             <Route path="/report/*" element={<Report useDummyData={true} />} />
