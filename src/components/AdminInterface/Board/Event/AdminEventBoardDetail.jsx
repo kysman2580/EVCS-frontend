@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 const AdminEventBoardDetail = () => {
   const location = useLocation();
-  const post = location.state?.post;
+  const event = location.state?.event;
   const navigate = useNavigate();
 
   return (
@@ -20,7 +20,7 @@ const AdminEventBoardDetail = () => {
                   {/* 사진 */}
                   <div className="text-center mb-4">
                     <img
-                      src={post.image}
+                      src={event.filePath}
                       alt="이벤트 이미지"
                       className="img-fluid rounded"
                       style={{ maxHeight: "200px", objectFit: "cover" }}
@@ -31,7 +31,7 @@ const AdminEventBoardDetail = () => {
                   <div className="mb-3">
                     <strong>이벤트 제목:</strong>
                     <div className="border rounded p-2 mt-1 bg-light">
-                      {post.title}
+                      {event.eventName}
                     </div>
                   </div>
 
@@ -41,7 +41,7 @@ const AdminEventBoardDetail = () => {
                       <div className="mb-3">
                         <strong>이벤트 기간:</strong>
                         <div className="border rounded p-2 mt-1 bg-light">
-                          {post.period}
+                          {event.startDate} ~ {event.endDate}
                         </div>
                       </div>
                     </Col>
@@ -54,7 +54,7 @@ const AdminEventBoardDetail = () => {
                       className="border rounded p-3 mt-1 bg-light"
                       style={{ minHeight: "300px" }}
                     >
-                      {post.content}
+                      {event.eventContent}
                     </div>
                   </div>
 
@@ -70,7 +70,7 @@ const AdminEventBoardDetail = () => {
                         variant="dark"
                         onClick={() =>
                           navigate("/admin/goAdminEventUpdateForm", {
-                            state: { post }, // ← 여기서 객체 넘기기
+                            state: { event }, // ← 여기서 객체 넘기기
                           })
                         }
                       >
