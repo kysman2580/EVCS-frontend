@@ -115,6 +115,7 @@ const NewsList = ({ backendUrl = "http://localhost:80" }) => {
         <button onClick={() => setSort("sim")} disabled={sort === "sim"}>
           유사도순
         </button>
+        {" | "}
         <button onClick={() => setSort("date")} disabled={sort === "date"}>
           최신순
         </button>

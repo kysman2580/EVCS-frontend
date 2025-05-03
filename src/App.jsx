@@ -13,6 +13,7 @@ import DRBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteBoar
 import NewsMain from "./components/UserInterface/News/NewsMain/NewsMain";
 import NewsDetail from "./components/UserInterface/News/NewsDetail/NewsDetail";
 import NewsList from "./components/UserInterface/News/NewsList/NewsList";
+import MyNews from "./components/UserInterface/News/MyNews/MyNews";
 
 /* 충전소 위치 관련 */
 import ChargingMap from "./components/UserInterface/ChargingMap/ChargingMap";
@@ -118,6 +119,7 @@ function App() {
             <Route path="/newsMain" element={<NewsMain />} />
             <Route path="/newsDetail" element={<NewsDetail />} />
             <Route path="/news-list" element={<NewsList />} />
+            <Route path="/newsMyPage" element={<MyNews />} />
 
             {/* 렌트카 관련 */}
             <Route path="/hotRentCar" element={<HotdealRentCar />} />

@@ -111,6 +111,26 @@ export const Report2 = styled.div`
     margin: 16px 0;
     color: #666;
   }
+
+  .pagination {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  .pagination button {
+    padding: 6px 12px;
+    background: #f9f9f9;
+    border: 1px solid #ccc;
+    cursor: pointer;
+  }
+
+  .pagination button.active {
+    font-weight: bold;
+    background: #dcefff;
+    border-color: #007bff;
+  }
 `;
 export const Report3 = styled.div`
   margin: 0 auto;
