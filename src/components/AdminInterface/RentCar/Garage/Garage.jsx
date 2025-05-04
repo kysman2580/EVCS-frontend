@@ -16,44 +16,64 @@ import { RentContainerDiv } from "../../../UserInterface/RentCar/RentCarCommon/R
 
 const Garage = () => {
   const navigate = useNavigate();
-  const [category, setCategory] = useState("all");
-  const [regionSido, setRegionSido] = useState("all");
-  const [regionSigungu, setRegionSigungu] = useState("all");
-  const [resigonDong, setResigonDong] = useState("all");
+  const [regionSido, setRegionSido] = useState("");
+  const [regionSigungu, setRegionSigungu] = useState("");
+  const [regionDong, setRegionDong] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
   const [garages, setGarages] = useState([]);
+  const [regionList, setRegionList] = useState([]);
+  const [status, setStatus] = useState("");
+
+  // 중복 제거 함수
+  const getUniqueList = (arr, key) => {
+    const seen = new Set();
+    return arr.filter((item) => {
+      const value = item[key];
+      if (seen.has(value)) return false;
+      seen.add(value);
+      return true;
+    });
+  };
+
+  const filteredSigungu = regionList.filter(
+    (item) => item.regionSido === regionSido
+  );
+  const filteredDong = filteredSigungu.filter(
+    (item) => item.regionSigungu === regionSigungu
+  );
+
+  const sidoOptions = getUniqueList(regionList, "regionSido");
+  const sigunguOptions = getUniqueList(filteredSigungu, "regionSigungu");
+  const dongOptions = getUniqueList(filteredDong, "regionDong");
 
   useEffect(() => {
     axios
-      .get("http://localhost/garage-list", {
-        params: { category, searchKeyword },
+      .get("http://localhost/admin-garages", {
+        params: {
+          regionSido,
+          regionSigungu,
+          regionDong,
+          searchKeyword,
+          status,
+        },
       })
       .then((res) => {
-        setGarages(res.data.garageList);
+        console.log(res.data);
+        setGarages(res.data.garageList || []);
+        setRegionList(res.data.regionList || []);
       })
       .catch(console.error);
-  }, []);
-
-  useEffect(() => {
-    // 예시 데이터
-    const dummyGarages = Array.from({ length: 20 }, (_, i) => ({
-      garageNo: i + 1,
-      allAddress: `서울특별시 강남구 테헤란로 ${10 + i}길`,
-      postcode: `060${10 + i}`,
-      detailAddress: `빌딩 ${i + 1}층`,
-      enrollDate: `2024-05-${String(i + 1).padStart(2, "0")}`,
-    }));
-
-    setGarages(dummyGarages);
-  }, []);
+  }, [regionSido, regionSigungu, regionDong, status]);
 
   const handleSearch = () => {
     axios
-      .get("http://localhost/garage-list", {
-        params: { category, searchKeyword },
+      .get("http://localhost/admin-garages", {
+        params: { regionSido, regionSigungu, regionDong, searchKeyword },
       })
       .then((res) => {
-        setGarages(res.data.garageList);
+        console.log(res.data);
+        setGarages(res.data.garageList || []);
+        setRegionList(res.data.regionList || []);
       })
       .catch(console.error);
   };
@@ -64,31 +84,72 @@ const Garage = () => {
       <Container className="flex-grow-1 mt-4">
         <Row className="mb-3">
           <Col md={2}>
-            <Form.Select onChange={(e) => setRegionSido(e.target.value)}>
-              <option value="all">전체</option>
-              <option value="서울특별시">서울특별시</option>
-              <option value="경기도">경기도</option>
+            <Form.Select
+              value={status}
+              onChange={(e) => {
+                setStatus(e.target.value);
+                setSearchKeyword(""); // 선택 시 검색어 초기화
+              }}
+            >
+              <option value="">전체</option>
+              <option value="ing">사용중</option>
+              <option value="noIng">사용중지</option>
             </Form.Select>
           </Col>
           <Col md={2}>
             <Form.Select
-              value={category}
-              onChange={(e) => setRegionSigungu(e.target.value)}
+              value={regionSido}
+              onChange={(e) => {
+                setRegionSido(e.target.value);
+                setRegionSigungu("");
+                setRegionDong("");
+                setSearchKeyword("");
+              }}
             >
-              <option value="all">전체</option>
-              <option value="detailAddress">상세 주소</option>
+              <option value="">시/도 선택</option>
+              {sidoOptions.map((item) => (
+                <option key={item.regionSido} value={item.regionSido}>
+                  {item.regionSido}
+                </option>
+              ))}
             </Form.Select>
           </Col>
           <Col md={2}>
             <Form.Select
-              value={category}
-              onChange={(e) => setResigonDong(e.target.value)}
+              value={regionSigungu}
+              onChange={(e) => {
+                setRegionSigungu(e.target.value);
+                setRegionDong("");
+                setSearchKeyword("");
+              }}
+              disabled={!regionSido}
             >
-              <option value="all">전체</option>
-              <option value="detailAddress">상세 주소</option>
+              <option value="">시군구 선택</option>
+              {sigunguOptions.map((item) => (
+                <option key={item.regionSigungu} value={item.regionSigungu}>
+                  {item.regionSigungu}
+                </option>
+              ))}
             </Form.Select>
           </Col>
-          <Col md={4}>
+          <Col md={2}>
+            <Form.Select
+              value={regionDong}
+              onChange={(e) => {
+                setRegionDong(e.target.value);
+                setSearchKeyword("");
+              }}
+              disabled={!regionSigungu}
+            >
+              <option value="">동 선택</option>
+              {dongOptions.map((item) => (
+                <option key={item.regionDong} value={item.regionDong}>
+                  {item.regionDong}
+                </option>
+              ))}
+            </Form.Select>
+          </Col>
+          <Col md={2}>
             <Form.Control
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
@@ -137,10 +198,11 @@ const Garage = () => {
                         <th>우편번호</th>
                         <th>상세 주소</th>
                         <th>등록일</th>
+                        <th>상태</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {garages.length === 0 ? (
+                      {Array.isArray(garages) && garages.length === 0 ? (
                         <tr>
                           <td colSpan="5">검색 결과가 없습니다.</td>
                         </tr>
@@ -157,9 +219,20 @@ const Garage = () => {
                           >
                             <td>{garage.garageNo}</td>
                             <td>{garage.allAddress}</td>
-                            <td>{garage.postcode}</td>
-                            <td>{garage.detailAddress}</td>
+                            <td>{garage.postAdd}</td>
+                            <td>{garage.address}</td>
                             <td>{garage.enrollDate}</td>
+                            <td
+                              className={
+                                garage.statusName === "사용중"
+                                  ? "text-success fw-bold"
+                                  : garage.statusName === "사용중지"
+                                  ? "text-danger fw-bold"
+                                  : ""
+                              }
+                            >
+                              {garage.statusName}
+                            </td>
                           </tr>
                         ))
                       )}

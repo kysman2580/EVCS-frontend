@@ -10,12 +10,12 @@ const GarageEnrollForm = () => {
   const navigate = useNavigate();
 
   const [addressInfo, setAddressInfo] = useState({
+    allAddress: "",
+    regionSido: "",
+    regionSigungu: "",
+    regionDong: "",
     address: "",
-    categoryL: "",
-    categoryM: "",
-    categoryS: "",
-    detailAddress: "",
-    postcode: "",
+    postAdd: "",
   });
 
   const openPostcode = () => {
@@ -27,11 +27,11 @@ const GarageEnrollForm = () => {
 
         setAddressInfo((prev) => ({
           ...prev,
-          address: data.roadAddress || data.address,
-          postcode: data.zonecode,
-          categoryL: data.sido,
-          categoryM: data.sigungu,
-          categoryS: data.bname,
+          allAddress: data.roadAddress || data.address,
+          regionSido: data.sido,
+          regionSigungu: data.sigungu,
+          regionDong: data.bname,
+          postAdd: data.zonecode,
         }));
         elementLayer.style.display = "none";
       },
@@ -63,24 +63,25 @@ const GarageEnrollForm = () => {
     e.preventDefault();
 
     const garageData = {
-      allAddress: address,
-      categoryL,
-      categoryM,
-      categoryS,
-      address: detailAddress,
+      allAddress: addressInfo.allAddress,
+      regionSido: addressInfo.regionSido,
+      regionSigungu: addressInfo.regionSigungu,
+      regionDong: addressInfo.regionDong,
+      address: addressInfo.address,
+      postAdd: addressInfo.postAdd,
     };
 
+    console.log("garageData : ", garageData);
     axios
-      .post("http://localhost/garage", {
-        allAddress: addressInfo.address,
-        categoryL: addressInfo.categoryL,
-        categoryM: addressInfo.categoryM,
-        categoryS: addressInfo.categoryS,
-        address: addressInfo.detailAddress,
+      .post("http://localhost/admin-garages", garageData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
       })
       .then(() => {
         alert("차고지가 등록되었습니다.");
-        navigate("/admin/garage");
+        navigate("/admin/garagePage");
       })
       .catch((error) => {
         console.error("등록 실패:", error);
@@ -101,14 +102,14 @@ const GarageEnrollForm = () => {
               <div className="d-flex align-items-center">
                 <Form.Control
                   type="text"
-                  value={addressInfo.address}
+                  value={addressInfo.allAddress}
                   readOnly
                   className="me-2"
                   style={{ height: "40px" }}
                 />
                 <Form.Control
                   type="text"
-                  value={addressInfo.postcode}
+                  value={addressInfo.postAdd}
                   readOnly
                   className="me-2"
                   style={{ width: "100px", height: "40px" }}
@@ -130,7 +131,7 @@ const GarageEnrollForm = () => {
                   <Form.Label className="fw-bold">대분류</Form.Label>
                   <Form.Control
                     type="text"
-                    value={addressInfo.categoryL}
+                    value={addressInfo.regionSido}
                     readOnly
                   />
                 </Form.Group>
@@ -140,7 +141,7 @@ const GarageEnrollForm = () => {
                   <Form.Label className="fw-bold">중분류</Form.Label>
                   <Form.Control
                     type="text"
-                    value={addressInfo.categoryM}
+                    value={addressInfo.regionSigungu}
                     readOnly
                   />
                 </Form.Group>
@@ -150,7 +151,7 @@ const GarageEnrollForm = () => {
                   <Form.Label className="fw-bold">소분류</Form.Label>
                   <Form.Control
                     type="text"
-                    value={addressInfo.categoryS}
+                    value={addressInfo.regionDong}
                     readOnly
                   />
                 </Form.Group>
@@ -162,11 +163,11 @@ const GarageEnrollForm = () => {
               <Form.Label className="fw-bold">상세 주소</Form.Label>
               <Form.Control
                 type="text"
-                value={addressInfo.detailAddress}
+                value={addressInfo.address}
                 onChange={(e) =>
                   setAddressInfo({
                     ...addressInfo,
-                    detailAddress: e.target.value,
+                    address: e.target.value,
                   })
                 }
               />

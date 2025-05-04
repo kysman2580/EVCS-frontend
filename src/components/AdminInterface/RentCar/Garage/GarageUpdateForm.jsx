@@ -8,26 +8,26 @@ import axios from "axios";
 const GarageUpdateForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const garage = location.state?.event;
+  const garage = location.state?.garage;
 
   const [addressInfo, setAddressInfo] = useState({
+    allAddress: "",
+    regionSido: "",
+    regionSigungu: "",
+    regionDong: "",
     address: "",
-    categoryL: "",
-    categoryM: "",
-    categoryS: "",
-    detailAddress: "",
-    postcode: "",
+    postAdd: "",
   });
 
   useEffect(() => {
     if (garage) {
       setAddressInfo({
-        address: garage.allAddress || "",
-        categoryL: garage.categoryL || "",
-        categoryM: garage.categoryM || "",
-        categoryS: garage.categoryS || "",
-        detailAddress: garage.address || "",
-        postcode: garage.postcode || "",
+        allAddress: garage.allAddress || "",
+        regionSido: garage.regionSido || "",
+        regionSigungu: garage.regionSigungu || "",
+        regionDong: garage.regionDong || "",
+        address: garage.address || "",
+        postAdd: garage.postAdd || "", // 혹시 없으면 공백으로
       });
     }
   }, [garage]);
@@ -39,11 +39,11 @@ const GarageUpdateForm = () => {
       oncomplete: function (data) {
         setAddressInfo((prev) => ({
           ...prev,
-          address: data.roadAddress || data.address,
-          categoryL: data.sido,
-          categoryM: data.sigungu,
-          categoryS: data.bname,
-          postcode: data.zonecode,
+          allAddress: data.roadAddress || data.address,
+          regionSido: data.sido,
+          regionSigungu: data.sigungu,
+          regionDong: data.bname,
+          postAdd: data.zonecode,
         }));
         elementLayer.style.display = "none";
       },
@@ -76,23 +76,43 @@ const GarageUpdateForm = () => {
 
     const garageData = {
       garageNo: garage.garageNo,
-      allAddress: addressInfo.address,
-      categoryL: addressInfo.categoryL,
-      categoryM: addressInfo.categoryM,
-      categoryS: addressInfo.categoryS,
-      address: addressInfo.detailAddress,
-      postcode: addressInfo.postcode,
+      allAddress: addressInfo.allAddress,
+      regionSido: addressInfo.regionSido,
+      regionSigungu: addressInfo.regionSigungu,
+      regionDong: addressInfo.regionDong,
+      address: addressInfo.address,
+      postAdd: addressInfo.postAdd,
     };
 
     axios
-      .put(`http://localhost/garage/${garage.garageNo}`, garageData)
+      .put(`http://localhost/admin-garages/${garage.garageNo}`, garageData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      })
       .then(() => {
         alert("차고지 정보가 수정되었습니다.");
-        navigate("/admin/garageList");
+        navigate("/admin/garagePage");
       })
       .catch((error) => {
         console.error("수정 실패:", error);
         alert("수정 중 오류가 발생했습니다.");
+      });
+  };
+
+  const deleteGarage = () => {
+    if (!window.confirm("정말 삭제하시겠습니까?")) return;
+
+    axios
+      .delete(`http://localhost/admin-garages/${garage.garageNo}`)
+      .then(() => {
+        alert("차고지가 삭제되었습니다.");
+        navigate("/admin/garagePage", { replace: true });
+      })
+      .catch((error) => {
+        console.error("삭제 실패:", error);
+        alert("삭제 중 오류가 발생했습니다.");
       });
   };
 
@@ -109,14 +129,14 @@ const GarageUpdateForm = () => {
               <div className="d-flex align-items-center">
                 <Form.Control
                   type="text"
-                  value={addressInfo.address}
+                  value={addressInfo.allAddress}
                   readOnly
                   className="me-2"
                   style={{ height: "40px" }}
                 />
                 <Form.Control
                   type="text"
-                  value={addressInfo.postcode}
+                  value={addressInfo.postAdd}
                   readOnly
                   className="me-2"
                   style={{ width: "100px", height: "40px" }}
@@ -138,7 +158,7 @@ const GarageUpdateForm = () => {
                   <Form.Label className="fw-bold">대분류</Form.Label>
                   <Form.Control
                     type="text"
-                    value={addressInfo.categoryL}
+                    value={addressInfo.regionSido}
                     readOnly
                   />
                 </Form.Group>
@@ -148,7 +168,7 @@ const GarageUpdateForm = () => {
                   <Form.Label className="fw-bold">중분류</Form.Label>
                   <Form.Control
                     type="text"
-                    value={addressInfo.categoryM}
+                    value={addressInfo.regionSigungu}
                     readOnly
                   />
                 </Form.Group>
@@ -158,7 +178,7 @@ const GarageUpdateForm = () => {
                   <Form.Label className="fw-bold">소분류</Form.Label>
                   <Form.Control
                     type="text"
-                    value={addressInfo.categoryS}
+                    value={addressInfo.regionDong}
                     readOnly
                   />
                 </Form.Group>
@@ -170,11 +190,11 @@ const GarageUpdateForm = () => {
               <Form.Label className="fw-bold">상세 주소</Form.Label>
               <Form.Control
                 type="text"
-                value={addressInfo.detailAddress}
+                value={addressInfo.address}
                 onChange={(e) =>
                   setAddressInfo((prev) => ({
                     ...prev,
-                    detailAddress: e.target.value,
+                    address: e.target.value,
                   }))
                 }
               />
@@ -188,8 +208,9 @@ const GarageUpdateForm = () => {
               <div>
                 <Button
                   variant="danger"
-                  type="submit"
+                  type="button"
                   style={{ marginRight: "30px" }}
+                  onClick={deleteGarage}
                 >
                   삭제하기
                 </Button>

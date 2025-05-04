@@ -4,34 +4,32 @@ import { RentContainerDiv } from "../../../UserInterface/RentCar/RentCarCommon/R
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 
-import axios from "axios";
-
 const GarageDetails = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const event = location.state?.event;
+  const garage = location.state?.garage;
 
   const [addressInfo, setAddressInfo] = useState({
+    allAddress: "",
+    regionSido: "",
+    regionSigungu: "",
+    regionDong: "",
     address: "",
-    categoryL: "",
-    categoryM: "",
-    categoryS: "",
-    detailAddress: "",
-    postcode: "",
+    postAdd: "",
   });
 
   useEffect(() => {
-    if (event) {
+    if (garage) {
       setAddressInfo({
-        address: event.allAddress || "",
-        categoryL: event.categoryL || "",
-        categoryM: event.categoryM || "",
-        categoryS: event.categoryS || "",
-        detailAddress: event.address || "",
-        postcode: event.postcode || "", // 혹시 없으면 공백으로
+        allAddress: garage.allAddress || "",
+        regionSido: garage.regionSido || "",
+        regionSigungu: garage.regionSigungu || "",
+        regionDong: garage.regionDong || "",
+        address: garage.address || "",
+        postAdd: garage.postAdd || "", // 혹시 없으면 공백으로
       });
     }
-  }, [event]);
+  }, [garage]);
 
   return (
     <RentContainerDiv style={{ marginTop: "30px" }}>
@@ -46,14 +44,14 @@ const GarageDetails = () => {
               <div className="d-flex align-items-center">
                 <Form.Control
                   type="text"
-                  value={addressInfo.address}
+                  value={addressInfo.allAddress}
                   readOnly
                   className="me-2"
                   style={{ height: "40px" }}
                 />
                 <Form.Control
                   type="text"
-                  value={addressInfo.postcode}
+                  value={addressInfo.postAdd}
                   readOnly
                   className="me-2"
                   style={{ width: "100px", height: "40px" }}
@@ -68,7 +66,7 @@ const GarageDetails = () => {
                   <Form.Label className="fw-bold">대분류</Form.Label>
                   <Form.Control
                     type="text"
-                    value={addressInfo.categoryL}
+                    value={addressInfo.regionSido}
                     readOnly
                   />
                 </Form.Group>
@@ -78,7 +76,7 @@ const GarageDetails = () => {
                   <Form.Label className="fw-bold">중분류</Form.Label>
                   <Form.Control
                     type="text"
-                    value={addressInfo.categoryM}
+                    value={addressInfo.regionSigungu}
                     readOnly
                   />
                 </Form.Group>
@@ -88,7 +86,7 @@ const GarageDetails = () => {
                   <Form.Label className="fw-bold">소분류</Form.Label>
                   <Form.Control
                     type="text"
-                    value={addressInfo.categoryS}
+                    value={addressInfo.regionDong}
                     readOnly
                   />
                 </Form.Group>
@@ -98,11 +96,7 @@ const GarageDetails = () => {
             {/* 상세주소 */}
             <Form.Group className="mb-3">
               <Form.Label className="fw-bold">상세 주소</Form.Label>
-              <Form.Control
-                type="text"
-                value={addressInfo.detailAddress}
-                readOnly
-              />
+              <Form.Control type="text" value={addressInfo.address} readOnly />
             </Form.Group>
 
             {/* 버튼 */}
@@ -115,7 +109,7 @@ const GarageDetails = () => {
                 type="button"
                 onClick={() =>
                   navigate("/admin/goGarageUpdateForm", {
-                    state: { event },
+                    state: { garage },
                   })
                 }
               >
