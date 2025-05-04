@@ -65,6 +65,10 @@ import MyPage from "./components/UserInterface/Member/Mypage/Mypage";
 import InsertRentCar from "./components/AdminInterface/RentCar/RentCarManagement/InsertRentCar";
 import RentCarManagement from "./components/AdminInterface/RentCar/RentCarManagement/RentCarManagement";
 import RentCarDetails from "./components/AdminInterface/RentCar/RentCarManagement/RenCarDetails";
+import Garage from "./components/AdminInterface/RentCar/Garage/Garage";
+import GarageEnrollForm from "./components/AdminInterface/RentCar/Garage/GarageEnrollForm";
+import GarageDetails from "./components/AdminInterface/RentCar/Garage/GarageDetails";
+import GarageUpdateForm from "./components/AdminInterface/RentCar/Garage/GarageUpdateForm";
 
 function App() {
   return (
@@ -150,6 +154,19 @@ function App() {
               <Route
                 path="/admin/goHotdealUpdate/*"
                 element={<AdminHotDealRentCarUpdate />}
+              />
+              <Route path="garagePage" element={<Garage />} />
+              <Route
+                path="/admin/goGarageEnrollForm/*"
+                element={<GarageEnrollForm />}
+              />
+              <Route
+                path="/admin/goGarageDetail*"
+                element={<GarageDetails />}
+              />
+              <Route
+                path="/admin/goGarageUpdateForm"
+                element={<GarageUpdateForm />}
               />
 
               {/* 게시판 페이지 관련 */}
