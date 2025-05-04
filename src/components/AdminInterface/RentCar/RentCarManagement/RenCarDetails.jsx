@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 import {
   Container,
   Row,
@@ -20,48 +21,93 @@ import RentCarManagement from "./RentCarManagement";
 
 const RentCarDetails = () => {
   const location = useLocation();
-  const car = location.state?.car;
-
-  useEffect(() => {
-    if (car) {
-      setForm({
-        modelName: car.modelName,
-        carNo: car.carNo,
-        year: car.year,
-        category: car.category,
-        price: car.price,
-        address: car.address,
-      });
-    }
-  }, [car]);
+  const navi = useNavigate();
+  const [disabled, setDisabled] = useState(true);
+  const [carInfoDisabled, setCarInfoDisabled] = useState(true);
+  const [imagePreview, setImagePreview] = useState(null);
+  const {
+    carNo,
+    carName,
+    carCompany,
+    carType,
+    carYear,
+    rentCarNo,
+    categoryName,
+    rentCarPrice,
+    enrollPlace,
+    status,
+  } = location.state;
 
   const [form, setForm] = useState({
-    modelName: "",
-    carNo: "",
-    year: "",
-    category: "",
-    price: "",
-    address: "",
+    carNo: carNo,
+    carName: carName,
+    carCompany: carCompany,
+    carType: carType,
+    carYear: carYear,
+    rentCarNo: rentCarNo,
+    categoryName: categoryName,
+    rentCarPrice: rentCarPrice,
+    enrollPlace: enrollPlace,
+    status: status,
   });
 
-  const [imagePreview, setImagePreview] = useState(null);
+  console.log(form);
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost/car/image/${carName}`)
+      .then((result) => {
+        console.log(result.data);
+        setImagePreview(result.data.fileLoad);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   };
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImagePreview(URL.createObjectURL(file));
-    }
+  const handleWrite = (e) => {
+    setDisabled(false);
   };
 
-  const handleSubmit = (e) => {
+  const handleUpdate = (e) => {
     e.preventDefault();
-    console.log("등록된 데이터:", form);
-    alert("차량이 등록되었습니다!");
+    console.log(form);
+
+    axios
+      .post("http://localhost/rentCar/update", form)
+      .then((result) => {
+        console.log("등록된 데이터:", result);
+        alert("차량이 수정되었습니다.");
+        setDisabled(true);
+      })
+      .catch((error) => {
+        console.log(error);
+        alert("오류");
+      });
+  };
+
+  const handleDelete = (e) => {
+    console.log(form);
+    axios
+      .post("http://localhost/rentCar/delete", form, {
+        headers: {
+          "content-Type": "application/json",
+        },
+      })
+      .then((result) => {
+        console.log("삭제된 데이터:", result);
+        alert("차량이 삭제되었습니다.");
+        navi("/admin/rentCarManagement");
+      })
+      .catch((error) => {
+        console.log(error);
+        alert("오류");
+      });
   };
 
   return (
@@ -95,25 +141,34 @@ const RentCarDetails = () => {
                     <span>차 사진</span>
                   </div>
                 )}
-                <Form.Control
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="mt-2"
-                />
               </div>
-
-              <Form onSubmit={handleSubmit}>
-                {/* 차 이름 */}
-                <Form.Group className="mb-3" controlId="carName">
-                  <Form.Label className="fw-bold ">차 이름 :</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="name"
-                    value={form.modelName}
-                    onChange={handleChange}
-                  />
-                </Form.Group>
+              <Form>
+                <Row className="mb-3">
+                  {/* 차 이름 */}
+                  <Col>
+                    <Form.Group className="mb-3" controlId="carName">
+                      <Form.Label className="fw-bold ">모델명 :</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="carName"
+                        value={form.carName}
+                        disabled={carInfoDisabled}
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col>
+                    <Form.Group className="mb-3" controlId="rentCarNo">
+                      <Form.Label className="fw-bold ">차 번호 :</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="rentCarNo"
+                        value={form.rentCarNo}
+                        onChange={handleChange}
+                        disabled={carInfoDisabled}
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
 
                 {/* 연식 + 카테고리 */}
                 <Row className="mb-3">
@@ -122,25 +177,35 @@ const RentCarDetails = () => {
                       <Form.Label className="fw-bold ">연식 :</Form.Label>
                       <Form.Control
                         type="text"
-                        name="year"
-                        value={form.year}
+                        name="carYear"
+                        value={form.carYear}
                         onChange={handleChange}
+                        disabled={carInfoDisabled}
                       />
                     </Form.Group>
                   </Col>
                   <Col>
-                    <Form.Group controlId="carCategory">
-                      <Form.Label className="fw-bold ">카테고리 :</Form.Label>
-                      <Form.Select
-                        name="category"
-                        value={form.category}
+                    <Form.Group controlId="carType">
+                      <Form.Label className="fw-bold ">차종 :</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="carType"
+                        value={form.carType}
                         onChange={handleChange}
-                      >
-                        <option value="">선택</option>
-                        <option value="시간별 렌트카">시간별 렌트카</option>
-                        <option value="장기 렌트카">장기 렌트카</option>
-                        <option value="구독 렌트카">구독 렌트카</option>
-                      </Form.Select>
+                        disabled={carInfoDisabled}
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col>
+                    <Form.Group controlId="carCompany">
+                      <Form.Label className="fw-bold ">제조사 :</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="carCompany"
+                        value={form.carCompany}
+                        onChange={handleChange}
+                        disabled={carInfoDisabled}
+                      />
                     </Form.Group>
                   </Col>
                 </Row>
@@ -148,44 +213,72 @@ const RentCarDetails = () => {
                 {/* 가격 */}
                 <Row>
                   <Col>
-                    <Form.Group className="mb-3" controlId="carPrice">
-                      <Form.Label className="fw-bold ">가격 :</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="price"
-                        value={form.price}
+                    <Form.Group controlId="categoryName">
+                      <Form.Label className="fw-bold ">카테고리 :</Form.Label>
+                      <Form.Select
+                        name="categoryName"
+                        value={form.categoryName}
                         onChange={handleChange}
-                      />
+                        disabled={disabled}
+                      >
+                        <option>선택</option>
+                        <option>시간별렌트카</option>
+                        <option>장기렌트카</option>
+                        <option>구독렌트카</option>
+                      </Form.Select>
                     </Form.Group>
                   </Col>
                   <Col>
-                    <Form.Group className="mb-3" controlId="carPrice">
-                      <Form.Label className="fw-bold ">차 번호 :</Form.Label>
+                    <Form.Group className="mb-3" controlId="rentCarPrice">
+                      <Form.Label className="fw-bold ">가격 :</Form.Label>
                       <Form.Control
                         type="text"
-                        name="carNo"
-                        value={form.carNo}
+                        name="rentCarPrice"
+                        value={form.rentCarPrice}
                         onChange={handleChange}
+                        disabled={disabled}
                       />
                     </Form.Group>
                   </Col>
                 </Row>
 
                 {/* 주소 */}
-                <Form.Group className="mb-4" controlId="carAddress">
+                <Form.Group className="mb-4" controlId="enrollPlace">
                   <Form.Label className="fw-bold ">등록 주소 :</Form.Label>
                   <Form.Control
                     type="text"
-                    name="address"
-                    value={form.address}
+                    name="enrollPlace"
+                    value={form.enrollPlace}
                     onChange={handleChange}
+                    disabled={disabled}
                   />
                 </Form.Group>
 
                 <div className="text-center">
-                  <Button type="submit" variant="dark">
-                    수정하기
-                  </Button>
+                  {disabled ? (
+                    <>
+                      <Button
+                        type="button"
+                        variant="dark"
+                        onClick={handleWrite}
+                        style={{ marginRight: "10px" }}
+                      >
+                        수정하기
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="dark"
+                        onClick={handleDelete}
+                        style={{ margin: "20px" }}
+                      >
+                        삭제하기
+                      </Button>
+                    </>
+                  ) : (
+                    <Button type="button" variant="dark" onClick={handleUpdate}>
+                      수정완료
+                    </Button>
+                  )}
                 </div>
               </Form>
             </Card>
