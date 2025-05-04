@@ -1,0 +1,77 @@
+/* 좌측 사이드 + 우측 콘텐츠 2단 레이아웃 */
+.EventContainerDiv {
+  display: flex;
+  height: 750px;
+}
+
+/* 오른쪽 콘텐츠 전체영역 */
+.content-area {
+  width: 100%;
+  /* 화면 높이의 70%만 차지하게 */
+  height: 60vh;
+}
+
+/* 세로 Flex 컨테이너: 검색+테이블 / 페이징 분리 */
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* 부모(.content-area) 높이를 그대로 물려받음 */
+}
+
+/* 페이지 푸터: 항상 맨 아래 */
+.footer-pagination {
+  /* 위쪽 여유 */
+  margin-top: 1rem;
+  /* 버튼 중앙 정렬 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 버튼 간격 */
+.footer-pagination .pagination {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+}
+
+/* 버튼 기본 스타일 */
+.footer-pagination .page-link {
+  color: #000;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+}
+
+/* 버튼 호버 */
+.footer-pagination .page-link:hover,
+.footer-pagination .page-link:focus {
+  background-color: #fafafa;
+  border-color: #ccc;
+}
+
+/* disabled */
+.footer-pagination .page-item.disabled .page-link {
+  color: #aaa;
+  background-color: #fff;
+  border-color: #ddd;
+}
+
+/* active */
+.footer-pagination .page-item.active .page-link {
+  background-color: #f1f1f1;
+  color: #555;
+  font-weight: bold;
+  border-color: #ccc;
+}
+
+/* 좌우 끝 모서리 둥글게 */
+.footer-pagination .page-item:first-child .page-link {
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+}
+.footer-pagination .page-item:last-child .page-link {
+  border-top-right-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
