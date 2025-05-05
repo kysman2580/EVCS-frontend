@@ -68,7 +68,13 @@ const Garage = () => {
   const handleSearch = () => {
     axios
       .get("http://localhost/admin-garages", {
-        params: { regionSido, regionSigungu, regionDong, searchKeyword },
+        params: {
+          regionSido,
+          regionSigungu,
+          regionDong,
+          searchKeyword,
+          status,
+        },
       })
       .then((res) => {
         console.log(res.data);
