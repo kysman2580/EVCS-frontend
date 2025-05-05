@@ -276,7 +276,7 @@ const InsertRentCar = () => {
                     value={form.enrollPlace}
                     onChange={handleChange}
                     placeholder="주소 찾기 버튼을 이용해주세요"
-                    disabled={true}
+                    disabled={false}
                     style={{ marginTop: "20px" }}
                   />
                 </Form.Group>

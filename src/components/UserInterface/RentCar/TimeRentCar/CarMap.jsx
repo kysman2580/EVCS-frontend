@@ -6,6 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Card, Container, Row, Col, Button, Image } from "react-bootstrap";
 import { ContainerDiv, DetailDiv } from "./CarMap.styles";
 import axios from "axios";
+import { set } from "date-fns";
 
 const Map = styled.div`
   width: 800px;
@@ -22,7 +23,10 @@ const CarMap = () => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
+  const [timeRentCarResult, setTimeRentCarResult] = useState([]);
+  const [carResult, setCarResult] = useState([]);
+  const [enrollPlace, setEnrollPlace] = useState([]);
+  const [enrollPosition, setEnrollPosition] = useState([]);
   const car = {
     image: "images/아이오닉 5.png", // 이미지 URL 넣을 수 있음
     name: "쏘나타 EV",
@@ -47,29 +51,41 @@ const CarMap = () => {
     axios
       .get("http://localhost/rentCar/timeRentCarInfo")
       .then((result) => {
-        console.log(result.data.timeRentCarResult);
+        console.log(result.data);
+        setCarResult(result.data.carResult);
+        setTimeRentCarResult(result.data.timeRentCarResult);
+        const enrollPlaceDatas = result.data.timeRentCarResult.map(
+          (item) => item.enrollPlace
+        );
+        setEnrollPlace(enrollPlaceDatas);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
     // 주소-좌표 변환 객체를 생성합니다
-    var geocoder = new kakao.maps.services.Geocoder();
+    var geocoder = new window.kakao.maps.services.Geocoder();
 
+    const place = [];
     // 주소로 좌표를 검색합니다
-    geocoder.addressSearch(
-      "제주특별자치도 제주시 첨단로 242",
-      function (result, status) {
+    const EnrollPlace = enrollPlace.map((item) => {
+      geocoder.addressSearch(item, function (result, status) {
         // 정상적으로 검색이 완료됐으면
-        if (status === kakao.maps.services.Status.OK) {
-          var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-          console.log("좌표", coords);
+        if (status === window.kakao.maps.services.Status.OK) {
+          var coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
+          place.push(coords);
         }
-      }
-    );
+      });
+    });
+    setEnrollPosition(place);
   }, []);
 
+  console.log("enrollPosition", enrollPosition);
+  console.log("carResult", carResult);
+  console.log("timeRentCarResult", timeRentCarResult);
+
   useEffect(() => {
-    if (!loaded) return;
+    if (!loaded || enrollPosition.length === 0 || carResult.length === 0)
+      return;
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function (position) {
@@ -84,9 +100,8 @@ const CarMap = () => {
 
         const map = new window.kakao.maps.Map(mapContainer, mapOption);
 
-        const positions = [
-          {
-            content: `
+        const positions = enrollPosition.map((item, index) => ({
+          content: `
               <div class="wrap">
                 <div class="info">
                   <div class="title">
@@ -99,19 +114,20 @@ const CarMap = () => {
                         <img src="images/아이오닉 5.png" width="43" height="40">
                       </div>
                       <div class="desc">
-                        <div class="carTitle">2121 아이오닉 5</div>
-                        <div class="jibun carTitle">HYUNDAI</div>
+                        <div class="carTitle">${carResult[index].carName}</div>
+                        <div class="jibun carTitle">${carResult[index].carType}</div>
+                        <div class="jibun carTitle">${carResult[index].carYear}</div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             `,
-            latlng: new window.kakao.maps.LatLng(37.5652352, 126.9891072),
-          },
-        ];
+          latlng: new window.kakao.maps.LatLng(item.Ma, item.La),
+        }));
 
         for (let i = 0; i < positions.length; i++) {
+          console.log(positions.length);
           const marker = new window.kakao.maps.Marker({
             map: map,
             position: positions[i].latlng,
@@ -136,7 +152,7 @@ const CarMap = () => {
 
           // 마커 클릭 시 오버레이 표시
           window.kakao.maps.event.addListener(marker, "click", function () {
-            overlay.setMap(map);
+            overlay.setMap(map); // 여기가 핵심
           });
 
           // 오버레이 닫기용 함수도 만들면 이렇게 가능
