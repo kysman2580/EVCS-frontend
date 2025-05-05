@@ -11,44 +11,88 @@ import {
 
 import NoticeNav from "../../Common/Nav/NoticeNav";
 import { BoardContainerDiv, BoardBodyDiv } from "../Board.styles";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const EventBoard = () => {
   const navigate = useNavigate();
-  const [searchType, setSearchType] = useState("title");
-  const [searchText, setSearchText] = useState("");
+  const [events, setEvents] = useState([]);
+  const [page, setPage] = useState(1);
+  const [pageInfo, setPageInfo] = useState({
+    startPage: 1,
+    endPage: 1,
+    currentPage: 1,
+    maxPage: 1,
+    count: 0,
+  });
 
-  const posts = [
-    {
-      evnetNo: 1,
-      title: "핫딜 3시간 할인 이벤트 아 뜨겁다 뜨거워 ",
-      author: "관리자",
-      date: "2025-04-20",
-      image: "/event/hot_deal_img.png",
-      content: "핫딜 이벤트입니다 미쳐쮸",
-    },
-    {
-      evnetNo: 2,
-      title: "첫 사용자 할인 이벤트~ 처음이시면 아 싸다 싸 미쳐따",
-      author: "운영팀",
-      date: "2025-04-18",
-      image: "/event/first_sale_img.png",
-      content: "전기충만 처음 이용하시나요? 그럼 할인받으세요 ~",
-    },
-    {
-      evnetNo: 3,
-      title: "밤에는 싸게 싸게 타고 노세요 이거 안타면 바보다 바보",
-      author: "마케팅팀",
-      date: "2025-04-15",
-      image: "/event/night_sale_img.png",
-      content: "야간에는 싸게 싸게 경치좀 보자",
-    },
-  ];
+  useEffect(() => {
+    axios
+      .get("http://localhost/user-events", {
+        params: { page },
+      })
+      .then((res) => {
+        console.log("effect data : ", res.data);
+        setEvents(res.data.eventList);
+        setPageInfo(res.data.pageInfo);
+      })
+      .catch(console.error);
+  }, [page]);
 
-  const handleSearch = () => {
-    alert(`"${searchType}"에서 "${searchText}" 검색! (예시 alert)`);
+  const renderPagination = () => {
+    const items = [];
+    const { startPage, endPage, currentPage, maxPage, count } = pageInfo;
+
+    items.push(
+      <Pagination.First
+        key="first"
+        disabled={currentPage === 1}
+        onClick={() => setPage(1)}
+      >
+        맨앞
+      </Pagination.First>,
+      <Pagination.Prev
+        key="prev"
+        disabled={currentPage === 1}
+        onClick={() => setPage(currentPage - 1)}
+      >
+        이전
+      </Pagination.Prev>
+    );
+
+    for (let num = startPage; num <= endPage && num <= maxPage; num++) {
+      items.push(
+        <Pagination.Item
+          key={num}
+          active={num === currentPage}
+          onClick={() => setPage(num)}
+        >
+          {num}
+        </Pagination.Item>
+      );
+    }
+
+    items.push(
+      <Pagination.Next
+        key="next"
+        disabled={currentPage === maxPage || count === 0}
+        onClick={() => setPage(currentPage + 1)}
+      >
+        다음
+      </Pagination.Next>,
+      <Pagination.Last
+        key="last"
+        disabled={currentPage === maxPage || count === 0}
+        onClick={() => setPage(maxPage)}
+      >
+        마지막
+      </Pagination.Last>
+    );
+
+    return items;
   };
+
   return (
     <>
       <BoardContainerDiv>
@@ -62,28 +106,9 @@ const EventBoard = () => {
             }}
           >
             <Container className="flex-grow-1">
-              {/* 검색창 */}
-              <Row className="my-4">
-                <Col md={2}>
-                  <Form.Select>
-                    <option>제목</option>
-                    <option>내용</option>
-                  </Form.Select>
-                </Col>
-                <Col md={9}>
-                  <Form.Control placeholder="검색어 입력" />
-                </Col>
-                <Col md={1}>
-                  <Button
-                    className="w-100"
-                    variant="secondary"
-                    onClick={handleSearch}
-                  >
-                    검색
-                  </Button>
-                </Col>
+              <Row style={{ marginTop: "20px" }}>
+                <Col></Col>
               </Row>
-
               {/* 테이블 */}
               <Row>
                 <Col>
@@ -110,20 +135,20 @@ const EventBoard = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {posts.map((post) => (
+                          {events.map((event) => (
                             <tr
-                              key={post.evnetNo}
+                              key={event.evnetNo}
                               style={{ cursor: "pointer" }}
                               onClick={() =>
                                 navigate("/goEventDetailPage", {
-                                  state: { post }, // ← 여기서 객체 넘기기
+                                  state: { event: event }, // ← 여기서 객체 넘기기
                                 })
                               }
                             >
-                              <td>{post.evnetNo}</td>
-                              <td>{post.title}</td>
-                              <td>{post.author}</td>
-                              <td>{post.date}</td>
+                              <td>{event.eventNo}</td>
+                              <td>{event.eventName}</td>
+                              <td>{event.memberNickname}</td>
+                              <td>{event.enrollDate}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -134,11 +159,10 @@ const EventBoard = () => {
               </Row>
             </Container>
 
-            {/* ⬇️ 항상 아래 고정처럼 보이게 만드는 페이징 */}
-            <footer className="footer-pagination mt-auto">
+            {/* 항상 아래에 붙는 페이징 */}
+            <footer className="footer-pagination">
               <Pagination className="justify-content-center mb-0">
-                <Pagination.Item active>{1}</Pagination.Item>
-                <Pagination.Item>{2}</Pagination.Item>
+                {renderPagination()}
               </Pagination>
             </footer>
           </div>

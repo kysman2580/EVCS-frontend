@@ -4,8 +4,8 @@ import Offcanvas from "react-bootstrap/Offcanvas";
 import "./CarMap.css"; // 필요하면 유지
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Card, Container, Row, Col, Button, Image } from "react-bootstrap";
-import RentCarNav from "../../Common/Nav/RentCarNav";
 import { ContainerDiv, DetailDiv } from "./CarMap.styles";
+import axios from "axios";
 
 const Map = styled.div`
   width: 800px;
@@ -19,7 +19,6 @@ const Map = styled.div`
 
 const CarMap = () => {
   const [loaded, setLoaded] = useState(false);
-  const [carModal, setCarModal] = useState(false);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -41,6 +40,32 @@ const CarMap = () => {
     window.kakao.maps.load(() => {
       setLoaded(true);
     });
+  }, []);
+
+  useEffect(() => {
+    // 시간별 렌트카 정보를 조회해옴
+    axios
+      .get("http://localhost/rentCar/timeRentCarInfo")
+      .then((result) => {
+        console.log(result.data.timeRentCarResult);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+    // 주소-좌표 변환 객체를 생성합니다
+    var geocoder = new kakao.maps.services.Geocoder();
+
+    // 주소로 좌표를 검색합니다
+    geocoder.addressSearch(
+      "제주특별자치도 제주시 첨단로 242",
+      function (result, status) {
+        // 정상적으로 검색이 완료됐으면
+        if (status === kakao.maps.services.Status.OK) {
+          var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+          console.log("좌표", coords);
+        }
+      }
+    );
   }, []);
 
   useEffect(() => {
@@ -130,7 +155,6 @@ const CarMap = () => {
     <>
       <Map id="map" />
 
-      {/* 오프캔버스: customBody 클릭 시 나타남 */}
       <Offcanvas
         show={show}
         onHide={handleClose}

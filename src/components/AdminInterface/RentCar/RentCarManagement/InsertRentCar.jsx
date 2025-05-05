@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
   Container,
@@ -16,19 +17,25 @@ import {
   RentContainerDiv,
   RentBodyDiv,
 } from "../AdminRentCarCommon/AdminRentCar.styles";
+import { add } from "date-fns";
 
 const InsertRentCar = () => {
-  const [form, setForm] = useState({
-    carName: "",
-    carCompany: "",
-    rentCarNo: "",
-    carYear: "",
-    categoryName: "",
-    rentCarPrice: "",
-    enrollPlace: "",
-  });
-
+  const navi = useNavigate();
+  const [imagePreview, setImagePreview] = useState(null);
   const [category, setCategory] = useState([]);
+  const [carInfo, setCarInfo] = useState([]);
+  const [addressModal, setAddressModal] = useState(false);
+  const [form, setForm] = useState({
+    rentCarNo: "",
+    categoryName: "",
+    carNo: "",
+    rentCarPrice: "",
+    carName: "",
+    enrollPlace: "",
+    carCompany: "",
+    carYear: "",
+    carType: "",
+  });
 
   useEffect(() => {
     axios
@@ -45,13 +52,24 @@ const InsertRentCar = () => {
       .get("http://localhost/rentCar/carInfo")
       .then((result) => {
         console.log(result.data);
+        const carData = result.data.carInfoResult.map((item, index) => ({
+          carNo: item.carNo,
+          carName: item.carName,
+          carType: item.carType,
+          carCompany: item.carCompany,
+          carYear: item.carYear,
+          carImage: result.data.imageResult[index].fileLoad,
+        }));
+        setCarInfo(carData);
       })
       .catch((error) => {
         console.log(error);
       });
   }, []);
 
-  const [imagePreview, setImagePreview] = useState(null);
+  const handleAdress = () => {
+    setAddressModal(true);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,17 +77,19 @@ const InsertRentCar = () => {
   };
 
   const handleCarName = (e) => {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
-    console.log("form : ", form);
-    axios
-      .get(`http://localhost/rentCar/${form.carName}`)
-      .then((result) => {
-        console.log(result.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    carInfo.map((item) => {
+      if (item.carName == e.target.value) {
+        setForm({
+          ...form,
+          carNo: item.carNo,
+          carName: item.carName,
+          carType: item.carType,
+          carCompany: item.carCompany,
+          carYear: item.carYear,
+        });
+        setImagePreview(item.carImage);
+      }
+    });
   };
 
   const handleImageUpload = (e) => {
@@ -81,12 +101,27 @@ const InsertRentCar = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("등록된 데이터:", form);
-    alert("차량이 등록되었습니다!");
+
+    axios
+      .post("http://localhost/rentCar/insert", {
+        rentCarNo: form.rentCarNo,
+        categoryName: form.categoryName,
+        carNo: form.carNo,
+        rentCarPrice: form.rentCarPrice,
+        enrollPlace: form.enrollPlace,
+      })
+      .then((result) => {
+        alert("차량이 등록되었습니다!");
+        navi("/admin/rentCarManagement");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
-  console.log(category);
-  console.log(form);
+  console.log("category :", category);
+  console.log("form :", form);
+  console.log("carInfo :", carInfo);
 
   return (
     <>
@@ -132,68 +167,13 @@ const InsertRentCar = () => {
                         value={form.carName}
                         onChange={handleCarName}
                       >
-                        <option value="">선택</option>
-                        <option>모델 y</option>
-                        <option>쏘렌토</option>
-                        <option>소나타</option>
-                      </Form.Select>
-                    </Form.Group>
-                  </Col>
-                  <Col>
-                    {/* 차 이름 */}
-                    <Form.Group className="mb-3" controlId="carCompany">
-                      <Form.Label className="fw-bold ">제조사 :</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="carCompany"
-                        value={form.carCompany}
-                        onChange={handleChange}
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
-
-                {/* 연식 + 카테고리 */}
-                <Row className="mb-3">
-                  <Col>
-                    <Form.Group controlId="carYear">
-                      <Form.Label className="fw-bold ">연식 :</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="carYear"
-                        value={form.yecarYearar}
-                        onChange={handleChange}
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col>
-                    <Form.Group controlId="categoryName">
-                      <Form.Label className="fw-bold ">카테고리 :</Form.Label>
-                      <Form.Select
-                        name="categoryName"
-                        value={form.categoryName}
-                        onChange={handleChange}
-                      >
-                        <option value="">선택</option>
-                        {category.map((item) => {
-                          return <option key={item}>{item}</option>;
+                        <option>선택</option>
+                        {carInfo.map((item) => {
+                          return (
+                            <option key={item.carNo}>{item.carName}</option>
+                          );
                         })}
                       </Form.Select>
-                    </Form.Group>
-                  </Col>
-                </Row>
-
-                {/* 가격 */}
-                <Row>
-                  <Col>
-                    <Form.Group className="mb-3" controlId="rentCarPrice">
-                      <Form.Label className="fw-bold">가격 :</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="rentCarPrice"
-                        value={form.rentCarPrice}
-                        onChange={handleChange}
-                      />
                     </Form.Group>
                   </Col>
                   <Col>
@@ -209,14 +189,95 @@ const InsertRentCar = () => {
                   </Col>
                 </Row>
 
+                {/* 연식 + 카테고리 */}
+                <Row className="mb-3">
+                  <Col>
+                    <Form.Group controlId="carYear">
+                      <Form.Label className="fw-bold ">연식 :</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="carYear"
+                        value={form.carYear}
+                        onChange={handleChange}
+                        disabled={true}
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col>
+                    <Form.Group controlId="carType">
+                      <Form.Label className="fw-bold ">차종 :</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="carType"
+                        value={form.carType}
+                        onChange={handleChange}
+                        disabled={true}
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col>
+                    {/* 제조사 */}
+                    <Form.Group className="mb-3" controlId="carCompany">
+                      <Form.Label className="fw-bold ">제조사 :</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="carCompany"
+                        value={form.carCompany}
+                        onChange={handleChange}
+                        disabled={true}
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+
+                {/* 가격 */}
+                <Row>
+                  <Col>
+                    <Form.Group controlId="categoryName">
+                      <Form.Label className="fw-bold ">카테고리 :</Form.Label>
+                      <Form.Select
+                        name="categoryName"
+                        value={form.categoryName}
+                        onChange={handleChange}
+                      >
+                        <option>선택</option>
+                        {category.map((item) => {
+                          return <option key={item}>{item}</option>;
+                        })}
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+                  <Col>
+                    <Form.Group className="mb-3" controlId="rentCarPrice">
+                      <Form.Label className="fw-bold">가격 :</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="rentCarPrice"
+                        value={form.rentCarPrice}
+                        onChange={handleChange}
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+
                 {/* 주소 */}
                 <Form.Group className="mb-4" controlId="enrollPlace">
                   <Form.Label className="fw-bold ">등록 주소 :</Form.Label>
+                  <Button
+                    variant="dark"
+                    onClick={handleAdress}
+                    style={{ marginLeft: "375px" }}
+                  >
+                    주소 찾기
+                  </Button>
                   <Form.Control
                     type="text"
                     name="enrollPlace"
                     value={form.enrollPlace}
                     onChange={handleChange}
+                    placeholder="주소 찾기 버튼을 이용해주세요"
+                    disabled={true}
+                    style={{ marginTop: "20px" }}
                   />
                 </Form.Group>
 
@@ -229,6 +290,14 @@ const InsertRentCar = () => {
             </Card>
           </Container>
         </RentBodyDiv>
+
+        {/* {addressModal && (
+          <AddressModal
+            closeModal={() => {
+              setAddressModal(false);
+            }}
+          />
+        )} */}
       </RentContainerDiv>
     </>
   );

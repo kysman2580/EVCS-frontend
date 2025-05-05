@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const EventBoardDetail = () => {
   const location = useLocation();
-  const post = location.state?.post;
+  const event = location.state?.event;
   const navigate = useNavigate();
 
   return (
@@ -21,7 +21,7 @@ const EventBoardDetail = () => {
                   {/* 사진 */}
                   <div className="text-center mb-4">
                     <img
-                      src={post.image}
+                      src={event.filePath}
                       alt="이벤트 이미지"
                       className="img-fluid rounded"
                       style={{ maxHeight: "200px", objectFit: "cover" }}
@@ -32,7 +32,7 @@ const EventBoardDetail = () => {
                   <div className="mb-3">
                     <strong>이벤트 제목:</strong>
                     <div className="border rounded p-2 mt-1 bg-light">
-                      {post.title}
+                      {event.eventName}
                     </div>
                   </div>
 
@@ -43,13 +43,16 @@ const EventBoardDetail = () => {
                       className="border rounded p-3 mt-1 bg-light"
                       style={{ minHeight: "300px" }}
                     >
-                      {post.content}
+                      {event.eventContent}
                     </div>
                   </div>
 
                   {/* 목록으로 돌아가기 */}
                   <div className="text-center">
-                    <Button variant="secondary" onClick={() => navigate(-1)}>
+                    <Button
+                      variant="secondary"
+                      onClick={() => navigate("/EventBoard")}
+                    >
                       목록으로
                     </Button>
                   </div>

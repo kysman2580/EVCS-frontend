@@ -1,7 +1,7 @@
 import { NavDiv, StyledHeaderBtn, NavRentContentDiv } from "./Nav.styles";
 import { useNavigate } from "react-router-dom";
 
-
+// prettier-ignore
 const MyPageNav = () => {
     const navi = useNavigate();
 
@@ -15,6 +15,10 @@ const MyPageNav = () => {
 
                     <StyledHeaderBtn onClick={() => navi("/#")}>
                         내 리뷰
+                    </StyledHeaderBtn>
+
+                    <StyledHeaderBtn onClick={() => navi("/newsMyPage")}>
+                        내 뉴스
                     </StyledHeaderBtn>
 
                     <StyledHeaderBtn onClick={() => navi("/#")}>
