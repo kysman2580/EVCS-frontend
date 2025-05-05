@@ -140,7 +140,10 @@ const CarManagement = () => {
 
               {/* 차량 리스트 테이블 */}
               <Table bordered hover responsive>
-                <thead className="table-secondary">
+                <thead
+                  className="table-secondary"
+                  style={{ textAlign: "center" }}
+                >
                   <tr>
                     <th>모델명</th>
                     <th>차종</th>

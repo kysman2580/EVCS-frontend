@@ -27,6 +27,8 @@ const CarMap = () => {
   const [carResult, setCarResult] = useState([]);
   const [enrollPlace, setEnrollPlace] = useState([]);
   const [enrollPosition, setEnrollPosition] = useState([]);
+  const [currentPosition, setCurrentPosition] = useState(null);
+  const [selectedCar, setSelectedCar] = useState(null);
   const car = {
     image: "images/아이오닉 5.png", // 이미지 URL 넣을 수 있음
     name: "쏘나타 EV",
@@ -47,6 +49,15 @@ const CarMap = () => {
   }, []);
 
   useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords;
+        setCurrentPosition(new window.kakao.maps.LatLng(latitude, longitude));
+      });
+    }
+  }, []);
+
+  useEffect(() => {
     // 시간별 렌트카 정보를 조회해옴
     axios
       .get("http://localhost/rentCar/timeRentCarInfo")
@@ -62,22 +73,39 @@ const CarMap = () => {
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
-    // 주소-좌표 변환 객체를 생성합니다
-    var geocoder = new window.kakao.maps.services.Geocoder();
-
-    const place = [];
-    // 주소로 좌표를 검색합니다
-    const EnrollPlace = enrollPlace.map((item) => {
-      geocoder.addressSearch(item, function (result, status) {
-        // 정상적으로 검색이 완료됐으면
-        if (status === window.kakao.maps.services.Status.OK) {
-          var coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
-          place.push(coords);
-        }
-      });
-    });
-    setEnrollPosition(place);
   }, []);
+
+  useEffect(() => {
+    if (enrollPlace.length === 0) return;
+
+    const geocoder = new window.kakao.maps.services.Geocoder();
+
+    const getCoords = (address) =>
+      new Promise((resolve, reject) => {
+        geocoder.addressSearch(address, (result, status) => {
+          if (status === window.kakao.maps.services.Status.OK) {
+            const coords = new window.kakao.maps.LatLng(
+              result[0].y,
+              result[0].x
+            );
+            resolve(coords);
+          } else {
+            reject(`Geocode failed for ${address}`);
+          }
+        });
+      });
+
+    const fetchAllCoords = async () => {
+      try {
+        const promises = enrollPlace.map((address) => getCoords(address));
+        const results = await Promise.all(promises);
+        setEnrollPosition(results);
+      } catch (err) {
+        console.error("Geocoding error:", err);
+      }
+    };
+    fetchAllCoords();
+  }, [enrollPlace]);
 
   console.log("enrollPosition", enrollPosition);
   console.log("carResult", carResult);
@@ -87,85 +115,110 @@ const CarMap = () => {
     if (!loaded || enrollPosition.length === 0 || carResult.length === 0)
       return;
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function (position) {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
+    const mapContainer = document.getElementById("map");
+    const mapOption = {
+      center: currentPosition,
+      level: 5,
+    };
 
-        const mapContainer = document.getElementById("map");
-        const mapOption = {
-          center: new window.kakao.maps.LatLng(lat, lon),
-          level: 5,
-        };
+    const map = new window.kakao.maps.Map(mapContainer, mapOption);
 
-        const map = new window.kakao.maps.Map(mapContainer, mapOption);
+    const uniquePositions = [
+      ...new Set(enrollPosition.map((item) => `${item.Ma}-${item.La}`)),
+    ];
 
-        const positions = enrollPosition.map((item, index) => ({
-          content: `
-              <div class="wrap">
-                <div class="info">
-                  <div class="title">
-                    카카오 스페이스닷원
-                    <div class="close" title="닫기"/></div>
+    const positions = uniquePositions.map((key) => {
+      const [Ma, La] = key.split("-");
+      const latlng = new window.kakao.maps.LatLng(Ma, La);
+
+      const carsAtSamePosition = enrollPosition
+        .map((pos, index) => ({ pos, index }))
+        .filter(
+          ({ pos }) =>
+            parseFloat(pos.Ma) === parseFloat(Ma) &&
+            parseFloat(pos.La) === parseFloat(La)
+        );
+
+      const content = `
+        <div class="wrap">
+          <div class="info">
+            <div class="title">이용 가능한 차량<div class="close" title="닫기"></div></div>
+            ${carsAtSamePosition
+              .map(
+                ({ index }) => `
+              <div class="wrapper">
+                <div class="customBody" style="cursor:pointer; padding:5px;">
+                  <div class="img">
+                    <img src="images/아이오닉 5.png" width="43" height="40">
                   </div>
-                  <div class="wrapper">
-                    <div class="customBody" style="cursor:pointer; padding:5px;">
-                      <div class="img">
-                        <img src="images/아이오닉 5.png" width="43" height="40">
-                      </div>
-                      <div class="desc">
-                        <div class="carTitle">${carResult[index].carName}</div>
-                        <div class="jibun carTitle">${carResult[index].carType}</div>
-                        <div class="jibun carTitle">${carResult[index].carYear}</div>
-                      </div>
-                    </div>
+                  <div class="desc">
+                    <div class="carTitle">${carResult[index].carName}</div>
+                    <div class="carPrice">${timeRentCarResult[index].rentCarPrice}</div>
                   </div>
                 </div>
-              </div>
-            `,
-          latlng: new window.kakao.maps.LatLng(item.Ma, item.La),
-        }));
+              </div>`
+              )
+              .join("")}
+          </div>
+        </div>
+      `;
 
-        for (let i = 0; i < positions.length; i++) {
-          console.log(positions.length);
-          const marker = new window.kakao.maps.Marker({
-            map: map,
-            position: positions[i].latlng,
-          });
+      return { latlng, content, carsAtSamePosition };
+    });
 
-          const container = document.createElement("div");
-          container.innerHTML = positions[i].content;
+    for (let i = 0; i < positions.length; i++) {
+      const { latlng, content, carsAtSamePosition } = positions[i];
 
-          const customBody = container.querySelector(".customBody");
-          if (customBody) {
-            customBody.addEventListener("click", () => {
-              console.log("클릭됨");
-              handleShow();
-            });
-          }
-
-          const overlay = new window.kakao.maps.CustomOverlay({
-            content: container,
-            position: positions[i].latlng,
-            map: null,
-          });
-
-          // 마커 클릭 시 오버레이 표시
-          window.kakao.maps.event.addListener(marker, "click", function () {
-            overlay.setMap(map); // 여기가 핵심
-          });
-
-          // 오버레이 닫기용 함수도 만들면 이렇게 가능
-          const closeBtn = container.querySelector(".close");
-          if (closeBtn) {
-            closeBtn.addEventListener("click", () => {
-              overlay.setMap(null);
-            });
-          }
-        }
+      const marker = new window.kakao.maps.Marker({
+        map: map,
+        position: positions[i].latlng,
       });
+
+      const container = document.createElement("div");
+      container.innerHTML = positions[i].content;
+
+      const bodies = container.querySelectorAll(".customBody");
+      bodies.forEach((el, index) => {
+        el.addEventListener("click", () => {
+          const carIndex = carsAtSamePosition[index].index;
+          setSelectedCar({
+            carBattery: carResult[carIndex].carBattery,
+            carCompany: carResult[carIndex].carCompany,
+            carName: carResult[carIndex].carName,
+            carNo: carResult[carIndex].carNo,
+            carType: carResult[carIndex].carType,
+            carYear: carResult[carIndex].carYear,
+            categoryName: timeRentCarResult[carIndex].categoryName,
+            enrollPlace: timeRentCarResult[carIndex].enrollPlace,
+            garageNo: timeRentCarResult[carIndex].garageNo,
+            postAdd: timeRentCarResult[carIndex].postAdd,
+            rentCarNo: timeRentCarResult[carIndex].rentCarNo,
+            rentCarPrice: timeRentCarResult[carIndex].rentCarPrice,
+            status: timeRentCarResult[carIndex].status,
+          });
+          handleShow();
+        });
+      });
+
+      const overlay = new window.kakao.maps.CustomOverlay({
+        content: container,
+        position: positions[i].latlng,
+        map: null,
+      });
+
+      window.kakao.maps.event.addListener(marker, "click", function () {
+        overlay.setMap(map);
+        map.setCenter(positions[i].latlng);
+      });
+
+      const closeBtn = container.querySelector(".close");
+      if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+          overlay.setMap(null);
+        });
+      }
     }
-  }, [loaded]);
+  }, [loaded, enrollPosition, carResult, timeRentCarResult, currentPosition]);
 
   return (
     <>
@@ -191,7 +244,7 @@ const CarMap = () => {
                   <Col md={6} style={{ height: "100%", width: "100%" }}>
                     <Card>
                       <Image
-                        src={car.image}
+                        src={"images/아이오닉 5.png"} // 필요시 차량마다 다르게 처리도 가능
                         alt="차 이미지"
                         fluid
                         style={{
@@ -202,49 +255,24 @@ const CarMap = () => {
                       />
 
                       <Card.Body>
-                        {/* 차량 정보 */}
                         <Row className="text-center mb-3">
                           <Col>
-                            <h4>{car.name}</h4>
+                            <h4>{selectedCar?.carName || "차량명"}</h4>
                             <div className="text-muted">
-                              {car.year} / {car.location}
+                              {selectedCar?.carYear} / {selectedCar?.carCompany}
                             </div>
                           </Col>
                         </Row>
 
                         <hr />
 
-                        {/* 요금 정보 */}
                         <Row className="mb-3 px-3">
                           <Col>
                             <h6 className="fw-bold">요금 정보</h6>
                             <Row>
                               <Col>월 요금</Col>
-                              <Col className="text-end">{car.monthlyFee}</Col>
-                            </Row>
-                            <Row>
-                              <Col>원래 가격 / 실제 가격</Col>
                               <Col className="text-end">
-                                {car.originalPrice} / {car.discountedPrice}
-                              </Col>
-                            </Row>
-                          </Col>
-                        </Row>
-
-                        <hr />
-
-                        {/* 계산 가격 + 결제 */}
-                        <Row className="mb-3 px-3">
-                          <Col>
-                            <Row className="align-items-center">
-                              <Col>
-                                <strong>계산할 가격</strong>
-                              </Col>
-                              <Col className="text-center fw-bold">
-                                {car.totalEstimate}
-                              </Col>
-                              <Col className="text-end">
-                                <Button variant="dark">결제하기</Button>
+                                {selectedCar?.rentCarPrice?.toLocaleString()}원
                               </Col>
                             </Row>
                           </Col>
