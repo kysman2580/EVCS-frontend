@@ -23,18 +23,35 @@ const FindByPwPage = () => {
     const [email, setEmail] = useState("");
     const [code, setCode] = useState("");
     const [showCodeInput, setShowCodeInput] = useState(false);
+    const [isVerified, setIsVerified] = useState(false); // ✅ 인증 성공 여부 추가
+
+
+    const validateEmail = (email) => {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
+    };
 
     const sendCode = (e) => {
         e.preventDefault();
 
-        const sendCode = {
+        const data = {
             email: email
+        };
+
+        if (!email || email.trim() === "") {
+            toast.warn("이메일을 입력해주세요.");
+            return;
         }
 
-        axios.post('http://localhost:80/mail/password-reset', sendCode)
+        if (!validateEmail(email)) {
+            toast.warn("올바른 이메일 형식이 아닙니다.");
+            return;
+        }
+
+        axios.post('http://localhost:80/mail/password-reset', data)
             .then(response => {
-                console.log("뭐가 찍히나 : ", response.data);
                 toast.success('인증코드 전송 성공!');
+                setShowCodeInput(true);
             })
             .catch(error => {
                 console.error('코드 전송 실패!');
@@ -44,26 +61,33 @@ const FindByPwPage = () => {
                     toast.error('뭐야 오류 발생');
                 }
             });
-        setShowCodeInput(true);
+
     };
 
     const codeVerify = (e) => {
         e.preventDefault();
 
-        const sendCode = {
+        if (!email || email.trim() === "") {
+            toast.warn("이메일을 입력해주세요.");
+            return;
+        }
+
+        if (!code || code.trim() === "") {
+            toast.warn("인증번호를 입력해주세요.");
+            return;
+        }
+
+        const verify = {
             email: email,
             code: code
         }
 
-        axios.post('http://localhost:80/mail/password-verify', sendCode)
+        axios.post('http://localhost:80/mail/password-verify', verify)
             .then(response => {
-                console.log("뭐가 찍히나 : ", response.data);
                 toast.success('인증 성공!');
-                navi("/updatePwPage", { state: { email } }); // <-- 인증된 이메일 넘김
-
+                setIsVerified(true); // ✅ 인증 성공 시 상태 변경
             })
             .catch(error => {
-                console.error('인증 실패');
                 if (error.response) {
                     toast.error(error.response.data.message);
                 } else {
@@ -73,7 +97,18 @@ const FindByPwPage = () => {
     };
 
 
+    const goToUpdatePwPage = () => {
+        if (!email || email.trim() === "") {
+            toast.warn("이메일을 입력해주세요.");
+            return;
+        }
 
+        if (!isVerified) {
+            toast.warn("이메일 인증을 먼저 완료해주세요.");
+            return;
+        }
+        navi("/updatePwPage", { state: { email } });
+    };
 
 
 
@@ -89,22 +124,30 @@ const FindByPwPage = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                 />
-                {showCodeInput && (
-                    <VerifyField>
-                        <FindInput
-                            type="text"
-                            placeholder="인증번호를 입력하세요"
-                            value={code}
-                            onChange={(e) => setCode(e.target.value)}
-                        />
-                        <AuthenticationBtn onClick={codeVerify}>확인</AuthenticationBtn>
-                    </VerifyField>
+
+                {!showCodeInput && (
+                    <FindButton type="button" onClick={sendCode}>
+                        인증코드 전송
+                    </FindButton>
                 )}
-                <FindButton type="submit" onClick={() => navi('/updatePwPage')}>
-                    {showCodeInput ? "다음" : "인증코드 전송"}
-                </FindButton>
 
+                {showCodeInput && (
+                    <>
+                        <VerifyField>
+                            <FindInput
+                                type="text"
+                                placeholder="인증번호를 입력하세요"
+                                value={code}
+                                onChange={(e) => setCode(e.target.value)}
+                            />
+                            <AuthenticationBtn onClick={codeVerify}>확인</AuthenticationBtn>
+                        </VerifyField>
 
+                        <FindButton type="button" onClick={goToUpdatePwPage}>
+                            다음
+                        </FindButton>
+                    </>
+                )}
             </FindForm>
         </FindContainer>
     )

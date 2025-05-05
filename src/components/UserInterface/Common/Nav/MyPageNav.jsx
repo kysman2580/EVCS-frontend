@@ -21,7 +21,7 @@ const MyPageNav = () => {
                         내 평점
                     </StyledHeaderBtn>
 
-                    <StyledHeaderBtn onClick={() => navi("/#")}>
+                    <StyledHeaderBtn onClick={() => navi("/report")}>
                         신고 내역
                     </StyledHeaderBtn>
 
