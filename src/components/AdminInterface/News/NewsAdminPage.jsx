@@ -11,28 +11,23 @@ import CommunityNav from "../AdminCommon/AdminNav/AdminComunityNav";
 const backendUrl = "http://localhost:80";
 
 const NewsAdminPage = () => {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+
   const [categories, setCategories] = useState([]);
   const [newsList, setNewsList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("latest");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   const [newCategory, setNewCategory] = useState("");
   const [editingCategoryNo, setEditingCategoryNo] = useState(null);
   const [editingCategoryName, setEditingCategoryName] = useState("");
 
-  const [searchClicked, setSearchClicked] = useState(false);
-
-  const navigate = useNavigate();
-  const page = parseInt(searchParams.get("page") || "1");
+  const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
   const size = 5;
-
-  useEffect(() => {
-    fetchCategories();
-    fetchNews();
-    setSearchParams({ page: 1 });
-  }, []);
 
   const fetchCategories = async () => {
     try {
@@ -52,11 +47,17 @@ const NewsAdminPage = () => {
     }
   };
 
+  useEffect(() => {
+    fetchCategories();
+    fetchNews();
+  }, []);
+
   const handlePageChange = (newPage) => {
+    setPage(newPage);
     setSearchParams({ page: newPage });
   };
 
-  const handleChatClick = async (item) => {
+  const handleRowClick = (item) => {
     navigate("/newsDetail", {
       state: {
         title: removeHtmlTags(item.title),
@@ -109,18 +110,28 @@ const NewsAdminPage = () => {
     }
   };
 
-  const handleSearchClick = () => {
-    setSearchClicked(!searchClicked); // 강제 렌더링 트리거
+  const handlePreset = (days) => {
+    const end = new Date();
+    const start = new Date();
+    start.setDate(end.getDate() - days);
+    setStartDate(start.toISOString().slice(0, 10));
+    setEndDate(end.toISOString().slice(0, 10));
   };
 
   const filteredNews = newsList
-    .filter(
-      (n) =>
+    .filter((n) => {
+      const pub = new Date(n.pubDate);
+      const start = startDate ? new Date(startDate) : null;
+      const end = endDate ? new Date(endDate) : null;
+      return (
         (!searchTerm ||
           removeHtmlTags(n.title || "").includes(searchTerm) ||
           (n.query && n.query.includes(searchTerm))) &&
-        (!selectedCategory || n.query === selectedCategory)
-    )
+        (!selectedCategory || n.query === selectedCategory) &&
+        (!start || pub >= start) &&
+        (!end || pub <= end)
+      );
+    })
     .sort((a, b) => {
       if (sortOption === "latest")
         return new Date(b.pubDate) - new Date(a.pubDate);
@@ -128,8 +139,15 @@ const NewsAdminPage = () => {
       return 0;
     });
 
-  const pagedList = filteredNews.slice((page - 1) * size, page * size);
   const totalPages = Math.ceil(filteredNews.length / size);
+  const pagedList = filteredNews.slice((page - 1) * size, page * size);
+  const currentBlock = Math.floor((page - 1) / 10);
+  const startPage = currentBlock * 10 + 1;
+  const endPage = Math.min(startPage + 9, totalPages);
+  const visiblePages = Array.from(
+    { length: endPage - startPage + 1 },
+    (_, i) => startPage + i
+  );
 
   return (
     <Report2>
@@ -138,7 +156,6 @@ const NewsAdminPage = () => {
         <h1 className="text-2xl font-bold mb-4">뉴스 관리</h1>
 
         <div className="flex gap-8">
-          {/* 좌측: 카테고리 관리 */}
           <div className="w-1/3">
             <h2 className="text-xl font-semibold mb-2">카테고리 관리</h2>
             <div className="flex gap-2 mb-2">
@@ -194,16 +211,37 @@ const NewsAdminPage = () => {
             </ul>
           </div>
 
-          {/* 우측: 뉴스 목록 */}
           <div className="w-2/3">
             <h2 className="text-xl font-semibold mb-2">뉴스 게시판 관리</h2>
-            <div className="report-filters mb-4 flex gap-2">
+            <div className="report-filters mb-4 flex gap-2 flex-wrap items-center">
               <input
                 type="text"
                 placeholder="제목 또는 키워드 검색"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+              <button onClick={() => handlePreset(7)}>1주일</button>
+              <button onClick={() => handlePreset(30)}>1개월</button>
+              <button onClick={() => handlePreset(180)}>6개월</button>
+              <button onClick={() => handlePreset(365)}>1년</button>
+              <button
+                onClick={() => {
+                  setStartDate("");
+                  setEndDate("");
+                }}
+              >
+                날짜 초기화
+              </button>{" "}
               <select
                 value={sortOption}
                 onChange={(e) => setSortOption(e.target.value)}
@@ -232,21 +270,19 @@ const NewsAdminPage = () => {
                     <th>카테고리</th>
                     <th>등록일</th>
                     <th>조회수</th>
-                    <th>상세</th>
                   </tr>
                 </thead>
                 <tbody>
                   {pagedList.map((item) => (
-                    <tr key={item.newsNo} className="hover:bg-gray-50">
+                    <tr
+                      key={item.newsNo}
+                      className="hover:bg-gray-50 cursor-pointer"
+                      onClick={() => handleRowClick(item)}
+                    >
                       <td>{removeHtmlTags(item.title)}</td>
                       <td>{item.query}</td>
                       <td>{formatDate(item.pubDate)}</td>
                       <td>{item.count}</td>
-                      <td>
-                        <button onClick={() => handleChatClick(item)}>
-                          📄
-                        </button>
-                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -254,27 +290,33 @@ const NewsAdminPage = () => {
             </div>
 
             <div className="pagination mt-4">
-              <button
-                onClick={() => handlePageChange(Math.max(1, page - 1))}
-                disabled={page === 1}
-              >
-                ◀ 이전
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => (
+              {page > 1 && (
+                <button onClick={() => handlePageChange(1)}>{"<<"}</button>
+              )}
+              {startPage > 1 && (
+                <button onClick={() => handlePageChange(startPage - 1)}>
+                  {"<"}
+                </button>
+              )}
+              {visiblePages.map((p) => (
                 <button
-                  key={i}
-                  onClick={() => handlePageChange(i + 1)}
-                  className={page === i + 1 ? "active" : ""}
+                  key={p}
+                  onClick={() => handlePageChange(p)}
+                  className={page === p ? "active" : ""}
                 >
-                  {i + 1}
+                  {p}
                 </button>
               ))}
-              <button
-                onClick={() => handlePageChange(Math.min(totalPages, page + 1))}
-                disabled={page === totalPages}
-              >
-                다음 ▶
-              </button>
+              {endPage < totalPages && (
+                <button onClick={() => handlePageChange(endPage + 1)}>
+                  {">"}
+                </button>
+              )}
+              {page < totalPages && (
+                <button onClick={() => handlePageChange(totalPages)}>
+                  {">>"}
+                </button>
+              )}
             </div>
           </div>
         </div>
