@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import * as S from "./NewsDetail.styles";
+import * as S1 from "../NewsMain/NewsMain.styles";
 import { Button } from "react-bootstrap";
 import axios from "axios";
 import { useAuth } from "../../Context/AuthContext/AuthContext";
@@ -191,9 +192,13 @@ const NewsDetail = ({ backendUrl = "http://localhost:80" }) => {
           <S.ArticleCategory>{article.pubDate}</S.ArticleCategory>
           <S.ArticleText>
             <h2>{article.title}</h2>
-            <h5>기사의 요약 내용</h5>
+            <h5>
+              <S1.SectionIcon>|</S1.SectionIcon>기사의 요약 내용
+            </h5>
             <div>{article.description}</div>
-            <div>기사 이미지</div>
+            <div>
+              <S1.SectionIcon>|</S1.SectionIcon>기사 이미지
+            </div>
             <img
               src={article.imageUrl}
               alt="기사 이미지"

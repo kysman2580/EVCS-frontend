@@ -14,6 +14,7 @@ import NewsMain from "./components/UserInterface/News/NewsMain/NewsMain";
 import NewsDetail from "./components/UserInterface/News/NewsDetail/NewsDetail";
 import NewsList from "./components/UserInterface/News/NewsList/NewsList";
 import MyNews from "./components/UserInterface/News/MyNews/MyNews";
+import AdminNews from "./components/AdminInterface/News/NewsAdminPage";
 
 /* 충전소 위치 관련 */
 import ChargingMap from "./components/UserInterface/ChargingMap/ChargingMap";
@@ -114,7 +115,6 @@ function App() {
 
             <Route path="/updatePwPage" element={<UpdatePwPage />} />
 
-
             {/* 신고 관련 */}
             <Route path="/report/*" element={<Report useDummyData={true} />} />
             <Route
@@ -209,6 +209,9 @@ function App() {
                 path="/admin/reports/:boardNo"
                 element={<ReportDetail useDummyData={true} />}
               />
+
+              {/* 뉴스 관련 */}
+              <Route path="/admin/adminNews" element={<AdminNews />} />
             </Route>
           </Route>
         </Routes>
