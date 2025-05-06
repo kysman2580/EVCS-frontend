@@ -9,7 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 /* 드라이빙 루뜨 관련 */
 import DRBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteBoard/DRBoard";
-/* 누스 관련 */
+/* 뉴스 관련 */
 import NewsMain from "./components/UserInterface/News/NewsMain/NewsMain";
 import NewsDetail from "./components/UserInterface/News/NewsDetail/NewsDetail";
 import NewsList from "./components/UserInterface/News/NewsList/NewsList";

@@ -20,7 +20,6 @@ const NewsDetail = ({ backendUrl = "http://localhost:80" }) => {
   const [hasLiked, setHasLiked] = useState(false);
   const [hasHated, setHasHated] = useState(false);
   const memberNo = Number(localStorage.getItem("memberNo"));
-  // const memberNo = 161;
 
   useEffect(() => {
     if (!title || !originallink) return;
@@ -38,7 +37,7 @@ const NewsDetail = ({ backendUrl = "http://localhost:80" }) => {
         },
         {
           params: {
-            memberNo: memberNo, // ← 추가!
+            memberNo: memberNo,
           },
         }
       )
@@ -178,6 +177,30 @@ const NewsDetail = ({ backendUrl = "http://localhost:80" }) => {
     }
   };
 
+  const handleBlock = () => {
+    if (!auth?.user || !article) {
+      alert("로그인이 필요하거나 뉴스 정보가 없습니다.");
+      return;
+    }
+
+    navigate("/reportingPage", {
+      state: {
+        boardInfo: {
+          boardId: article.newsNo,
+          boardTitle: article.title,
+        },
+        reporter: {
+          userId: auth.user.memberNo,
+          userName: auth.user.name,
+        },
+        reported: {
+          userId: article.newsNo,
+          userName: "뉴스 게시판 신고",
+        },
+      },
+    });
+  };
+
   if (!article) return <S.Loading>기사를 불러오는 중입니다...</S.Loading>;
 
   return (
@@ -248,6 +271,14 @@ const NewsDetail = ({ backendUrl = "http://localhost:80" }) => {
                   onClick={handleBookmark}
                 >
                   {bookmarked ? "🔖 북마크됨" : "📌 북마크"}
+                </Button>
+
+                <Button
+                  size="sm"
+                  variant="outline-secondary"
+                  onClick={handleBlock}
+                >
+                  ⛔게시판 차단
                 </Button>
               </>
             )}
