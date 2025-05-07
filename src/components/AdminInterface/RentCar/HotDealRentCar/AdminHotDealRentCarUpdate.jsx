@@ -24,176 +24,144 @@ import {
 const AdminHotDealRentCarUpdate = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { hotdeal } = location.state || {};
+  const hotdeal = location.state?.hotdeal;
+
+  const isClosed = hotdeal.status === "N";
 
   // 핫딜 초기값 세팅용 state
-  const [hotdealName, setHotdealName] = useState("");
-  const [discountRate, setDiscountRate] = useState(0);
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [hotdealName, setHotdealName] = useState(hotdeal?.hotdealName || "");
+  const [dealPercent, setDealPercent] = useState(hotdeal?.dealPercent || "");
+  const [startDate, setStartDate] = useState(
+    hotdeal.startDate ? new Date(hotdeal.startDate) : null
+  );
+  const [endDate, setEndDate] = useState(
+    hotdeal.endDate ? new Date(hotdeal.endDate) : null
+  );
+
+  const [useStatus, setUseStatus] = useState("");
+  const [carCategory, setCarCategory] = useState("");
+  const [searchCategory, setSearchCategory] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState("");
 
   // API 데이터
   const [rentCarInfo, setRentCarInfo] = useState([]);
-  const [carInfo, setCarInfo] = useState([]);
+
   // 체크박스 상태
   const [selectedCars, setSelectedCars] = useState({});
-  // 검색/필터 상태
-  const [filterStatus, setFilterStatus] = useState("");
-  const [category1, setCategory1] = useState("");
-  const [category2, setCategory2] = useState("");
-  const [dateFrom, setDateFrom] = useState(null);
-  const [dateTo, setDateTo] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [criteria, setCriteria] = useState({
-    status: "",
-    category: "",
-    from: null,
-    to: null,
-    keyword: "",
-  });
 
   // 모달용 state
   const [showModal, setShowModal] = useState(false);
   const [selectedCar, setSelectedCar] = useState(null);
 
-  useEffect(() => {
-    if (hotdeal) {
-      setHotdealName(hotdeal.hotdealName);
-      setDiscountRate(parseInt(hotdeal.discountRate, 10) || 0);
+  // YYYY-MM-DD HH:mm 포맷 헬퍼 (로컬 타임존 기준)
+  const formatLocalDateTime = (date) => {
+    const y = date.getFullYear();
+    const M = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    const h = String(date.getHours()).padStart(2, "0");
+    const m = String(date.getMinutes()).padStart(2, "0");
+    return `${y}-${M}-${d} ${h}:${m}`;
+  };
 
-      // "YYYY.MM.DD HH:mm ~ YYYY.MM.DD[.HH:mm]" 파싱
-      const [startStr, endStr] = hotdeal.hotdealPeriod
-        .split("~")
-        .map((s) => s.trim());
-
-      // normalize 함수 전체 교체
-      const normalize = (str) => {
-        // 끝에 .HH:mm 패턴을 " HH:mm" 으로 변경
-        const withSpace = str.replace(/\.(\d{2}:\d{2})$/, " $1");
-        // 날짜 구분점(.)을 하이픈(-)으로 변경
-        return withSpace.replace(/\./g, "-");
-      };
-
-      setStartDate(new Date(normalize(startStr)));
-      setEndDate(new Date(normalize(endStr)));
-    }
-  }, [hotdeal]);
   // 1) 데이터 로드
   useEffect(() => {
     axios
-      .get("http://localhost/rentCar/1", {
-        params: { useStatus: "", category: "", searchKeyword: "" },
+      .get("http://localhost/admin-hotdeals/hotdealCars", {
+        params: {
+          hotdealNo: hotdeal.hotdealNo,
+          useStatus: useStatus,
+          carCategory: carCategory,
+          searchCategory: searchCategory,
+          searchKeyword: searchKeyword,
+        },
       })
       .then((res) => {
-        const data = res.data;
-        setRentCarInfo(
-          data.rentCarInfo.map((r) => ({
-            rentCarNo: r.rentCarNo,
-            categoryName: r.categoryName,
-            carNo: r.carNo,
-            rentCarPrice: r.rentCarPrice,
-            enrollPlace: r.enrollPlace,
-            postAdd: r.postAdd,
-            enrollDate: r.enrollDate,
-            statusName: r.statusName,
-            status: r.status,
-            imageUrl: r.fileLoad,
-          }))
-        );
-        setCarInfo(
-          data.carInfo.map((c) => ({
-            carNo: c.carNo,
-            carName: c.carName,
-            carType: c.carType,
-            carYear: c.carYear,
-            carCompany: c.carCompany,
-          }))
-        );
+        const list = res.data.rentCarList;
+
+        setRentCarInfo(list);
+
+        const sel = {};
+        list.forEach((r) => (sel[r.rentCarNo] = true));
+        setSelectedCars(sel);
       })
       .catch((err) => console.error(err));
   }, []);
 
   // 2) 전체선택 토글
   const handleSelectAll = () => {
-    const ids = filteredRows.map((r) => r.rentCarNo);
-    const allSelected = ids.every((id) => selectedCars[id]);
-    if (allSelected) {
-      setSelectedCars((prev) => {
-        const nxt = { ...prev };
-        ids.forEach((id) => delete nxt[id]);
-        return nxt;
-      });
-    } else {
-      const all = {};
-      ids.forEach((id) => (all[id] = true));
-      setSelectedCars(all);
-    }
+    const ids = rentCarInfo.map((r) => r.rentCarNo);
+    const all = ids.every((id) => selectedCars[id]);
+    setSelectedCars(all ? {} : ids.reduce((a, id) => ((a[id] = true), a), {}));
   };
 
   // 3) 개별 체크박스 토글
   const toggleCar = (rentCarNo) =>
-    setSelectedCars((prev) => ({
-      ...prev,
-      [rentCarNo]: !prev[rentCarNo],
-    }));
+    setSelectedCars((prev) => ({ ...prev, [rentCarNo]: !prev[rentCarNo] }));
 
-  // 4) 검색 실행
   const handleSearch = () => {
-    setCriteria({
-      status: filterStatus,
-      category: category1 || category2,
-      from: dateFrom,
-      to: dateTo,
-      keyword: searchTerm.trim(),
-    });
+    axios
+      .get("http://localhost/admin-hotdeals/cars", {
+        params: {
+          hotdealNo: hotdeal.hotdealNo,
+          useStatus,
+          carCategory,
+          searchCategory,
+          searchKeyword,
+        },
+      })
+      .then((res) => setRentCarInfo(res.data.rentCarList || []))
+      .catch((err) => console.error(err));
   };
 
-  // 5) 데이터 머징
-  const mergedRows = useMemo(
-    () =>
-      rentCarInfo.map((r) => {
-        const car = carInfo.find((c) => c.carNo === r.carNo) || {};
-        return { ...r, ...car };
-      }),
-    [rentCarInfo, carInfo]
-  );
-
-  // 6) 필터링
-  const filteredRows = useMemo(
-    () =>
-      mergedRows.filter((item) => {
-        if (criteria.status && item.statusName !== criteria.status)
-          return false;
-        if (criteria.category && item.categoryName !== criteria.category)
-          return false;
-        const ed = new Date(item.enrollDate);
-        if (criteria.from && ed < criteria.from) return false;
-        if (criteria.to && ed > criteria.to) return false;
-        if (
-          criteria.keyword &&
-          !(
-            String(item.rentCarNo).includes(criteria.keyword) ||
-            item.carName.includes(criteria.keyword)
-          )
-        )
-          return false;
-        return true;
-      }),
-    [mergedRows, criteria]
-  );
-
-  // 7) 핫딜 수정
   const handleSubmit = (e) => {
     e.preventDefault();
     const payload = {
       hotdealName,
-      discountRate,
-      startDate,
-      endDate,
-      cars: Object.keys(selectedCars).filter((id) => selectedCars[id]),
+      dealPercent,
+      startDate: formatLocalDateTime(startDate),
+      endDate: formatLocalDateTime(endDate),
+      carNos: Object.keys(selectedCars).filter((id) => selectedCars[id]),
     };
-    console.log("🔥 수정할 핫딜:", payload);
-    alert("핫딜이 수정되었습니다!");
+    axios
+      .put(`http://localhost/admin-hotdeals/${hotdeal.hotdealNo}`, payload, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      })
+      .then(() => {
+        alert("이벤트가 수정되었습니다.");
+        navigate("/admin/hotDealRentCar", { replace: true });
+      })
+      .catch((error) => {
+        const code = error.response?.data?.code;
+        const msg = error.response?.data?.message;
+
+        if (code === "HOTDEAL_OVERLAP") {
+          alert(msg); // "중복된 차량이 있습니다"
+        } else {
+          console.error("등록 실패:", error);
+          alert("등록 중 오류가 발생했습니다.");
+        }
+      });
+  };
+
+  const handleDelete = () => {
+    if (!window.confirm("정말 이 핫딜을 삭제하시겠습니까?")) return; // 취소 시 종료
+    axios
+      .delete(`http://localhost/admin-hotdeals/${hotdeal.hotdealNo}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      })
+      .then(() => {
+        alert("핫딜이 삭제되었습니다.");
+        navigate("/admin/hotDealRentCar", { replace: true });
+      })
+      .catch((error) => {
+        console.error("삭제 실패:", error);
+        alert("삭제 중 오류가 발생했습니다.");
+      });
   };
 
   return (
@@ -205,38 +173,38 @@ const AdminHotDealRentCarUpdate = () => {
           <Row className="mb-3 g-2 align-items-center">
             <Col md={1}>
               <Form.Select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
+                value={useStatus}
+                onChange={(e) => setUseStatus(e.target.value)}
                 size="sm"
               >
                 <option value="">전체 상태</option>
-                <option value="진행중">진행중</option>
-                <option value="마감">마감</option>
+                <option value="ing">진행중</option>
+                <option value="noIng">마감</option>
               </Form.Select>
             </Col>
             <Col md={1}>
               <Form.Select
-                value={category1}
-                onChange={(e) => setCategory1(e.target.value)}
+                value={carCategory}
+                onChange={(e) => setCarCategory(e.target.value)}
                 size="sm"
               >
                 <option value="">전체</option>
-                <option value="시간별렌트카">시간별렌트카</option>
-                <option value="장기렌트카">장기렌트카</option>
-                <option value="구독렌트카">구독렌트카</option>
+                <option value="timeRentCar">시간별렌트카</option>
+                <option value="longRentCar">장기렌트카</option>
+                <option value="subsRentCar">구독렌트카</option>
               </Form.Select>
             </Col>
             <Col md={1}>
               <Form.Select
-                value={category2}
-                onChange={(e) => setCategory2(e.target.value)}
+                value={searchCategory}
+                onChange={(e) => setSearchCategory(e.target.value)}
                 size="sm"
               >
                 <option value="">전체</option>
-                <option value="주소">등록주소지</option>
-                <option value="차종">차종</option>
-                <option value="제조사">제조사</option>
-                <option value="모델명">모델명</option>
+                <option value="allAddress">등록주소지</option>
+                <option value="carType">차종</option>
+                <option value="carCompany">제조사</option>
+                <option value="carName">모델명</option>
               </Form.Select>
             </Col>
             <Col md={4}>
@@ -244,8 +212,14 @@ const AdminHotDealRentCarUpdate = () => {
                 size="sm"
                 type="text"
                 placeholder="검색어"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault(); // 폼 submit 방지
+                    handleSearch(); // 검색 함수 호출
+                  }
+                }}
               />
             </Col>
             <Col md={1}>
@@ -278,8 +252,8 @@ const AdminHotDealRentCarUpdate = () => {
                           type="checkbox"
                           onChange={handleSelectAll}
                           checked={
-                            filteredRows.length > 0 &&
-                            filteredRows.every((r) => selectedCars[r.rentCarNo])
+                            rentCarInfo.length > 0 &&
+                            rentCarInfo.every((r) => selectedCars[r.rentCarNo])
                           }
                         />
                       </th>
@@ -290,19 +264,18 @@ const AdminHotDealRentCarUpdate = () => {
                       <th>제조사</th>
                       <th>주소</th>
                       <th>우편번호</th>
-                      <th>예약</th>
                       <th>상태</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredRows.length === 0 ? (
+                    {rentCarInfo.length === 0 ? (
                       <tr>
                         <td colSpan={10} className="text-center text-muted">
                           조회된 차량이 없습니다.
                         </td>
                       </tr>
                     ) : (
-                      filteredRows.map((r) => (
+                      rentCarInfo.map((r) => (
                         <tr
                           key={r.rentCarNo}
                           style={{ cursor: "pointer" }}
@@ -328,7 +301,6 @@ const AdminHotDealRentCarUpdate = () => {
                           <td>{r.carCompany}</td>
                           <td>{r.enrollPlace}</td>
                           <td>{r.postAdd}</td>
-                          <td>{r.status}</td>
                           <td
                             className={
                               r.statusName === "사용중"
@@ -403,10 +375,8 @@ const AdminHotDealRentCarUpdate = () => {
                         type="number"
                         min={0}
                         max={100}
-                        value={discountRate}
-                        onChange={(e) =>
-                          setDiscountRate(Number(e.target.value))
-                        }
+                        value={dealPercent}
+                        onChange={(e) => setDealPercent(Number(e.target.value))}
                         className="w-25"
                       />
                     </Form.Group>
@@ -414,19 +384,21 @@ const AdminHotDealRentCarUpdate = () => {
                       <Button variant="secondary" onClick={() => navigate(-1)}>
                         취소
                       </Button>
-                      <div>
-                        <Button
-                          variant="danger"
-                          type="button"
-                          style={{ marginRight: "30px" }}
-                          // onClick={deleteHotdeal}
-                        >
-                          삭제하기
-                        </Button>
-                        <Button variant="dark" type="submit">
-                          수정하기
-                        </Button>
-                      </div>
+                      {!isClosed && (
+                        <div>
+                          <Button
+                            variant="danger"
+                            type="button"
+                            style={{ marginRight: "30px" }}
+                            onClick={handleDelete}
+                          >
+                            삭제하기
+                          </Button>
+                          <Button variant="dark" type="submit">
+                            수정하기
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </Form>
                 </Card.Body>

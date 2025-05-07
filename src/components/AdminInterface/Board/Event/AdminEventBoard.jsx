@@ -113,10 +113,16 @@ const AdminEventBoard = () => {
     <div className="EventContainerDiv">
       <NoticeNav />
       <div className="content-area">
-        {/* 세로 flex-container, 높이는 화면의 70vh */}
         <div className="page-wrapper d-flex flex-column">
-          {/* flex-grow-1: 검색창＋테이블 영역이 남는 공간을 채움 */}
-          <Container className="flex-grow-1">
+          <Container
+            className="mt-2 "
+            style={{
+              minHeight: "600px", // 이거 핵심!! 페이지 전체 높이 확보
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "start",
+            }}
+          >
             <Row className="my-4">
               <Col md={2}>
                 <Form.Select

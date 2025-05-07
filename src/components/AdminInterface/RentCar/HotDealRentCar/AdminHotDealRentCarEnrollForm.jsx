@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
   Container,
   Row,
@@ -36,36 +36,71 @@ const AdminHotDealRentCarEnrollForm = () => {
   const [dateTo, setDateTo] = useState(null);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [hotdealName, setHotdealName] = useState("");
-  const [criteria, setCriteria] = useState({
-    status: "",
-    category: "",
-    from: null,
-    to: null,
-    keyword: "",
-  });
   // 핫딜 설정
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
-  const [discountRate, setDiscountRate] = useState(0);
+  const [dealPercent, setDealPercent] = useState(0);
 
   // 모달용 state
   const [showModal, setShowModal] = useState(false);
   const [selectedCar, setSelectedCar] = useState(null);
 
+  const nameRef = useRef();
+  const dealPercentRef = useRef();
+
+  // YYYY-MM-DD HH:mm 포맷 헬퍼 (로컬 타임존 기준)
+  const formatLocalDateTime = (date) => {
+    const y = date.getFullYear();
+    const M = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    const h = String(date.getHours()).padStart(2, "0");
+    const m = String(date.getMinutes()).padStart(2, "0");
+    return `${y}-${M}-${d} ${h}:${m}`;
+  };
+
+  const validateForm = () => {
+    if (!hotdealName.trim()) {
+      alert("핫딜 이름을 입력하세요.");
+      nameRef.current.focus();
+      return false;
+    }
+    if (!dealPercent && dealPercent == 0) {
+      alert("할인율을 입력하세요.");
+      dealPercentRef.current.focus();
+      return false;
+    }
+    if (!startDate || !endDate) {
+      alert("이벤트 날짜를 선택하세요.");
+      return false;
+    }
+    if (startDate > endDate) {
+      alert("이벤트 시작일은 마감일보다 빨라야 합니다.");
+      return false;
+    }
+    return true;
+  };
+
   // 1) 데이터 로드
   useEffect(() => {
     axios
-      .get("http://localhost/admin-hotdeals/cars")
+      .get("http://localhost/admin-hotdeals/cars", {
+        params: {
+          useStatus: useStatus,
+          carCategory: carCategory,
+          searchCategory: searchCategory,
+          searchKeyword: searchKeyword,
+        },
+      })
       .then((res) => {
         console.log(res.data.rentCarList);
         setRentCarInfo(res.data.rentCarList);
       })
       .catch((err) => console.error(err));
-  }, []);
+  }, [useStatus, carCategory, dateFrom, dateTo]);
 
   // 2) 전체선택 토글
   const handleSelectAll = () => {
-    const ids = filteredRows.map((r) => r.rentCarNo);
+    const ids = rentCarInfo.map((r) => r.rentCarNo);
     const allSelected = ids.every((id) => selectedCars[id]);
     if (allSelected) {
       setSelectedCars((prev) => {
@@ -105,41 +140,43 @@ const AdminHotDealRentCarEnrollForm = () => {
       .catch((err) => console.error(err));
   };
 
-  // 6) 필터링
-  const filteredRows = useMemo(() => {
-    return rentCarInfo.filter((item) => {
-      if (criteria.status && item.statusName !== criteria.status) return false;
-      if (criteria.category && item.categoryName !== criteria.category)
-        return false;
-
-      const ed = new Date(item.enrollDate);
-      if (criteria.from && ed < criteria.from) return false;
-      if (criteria.to && ed > criteria.to) return false;
-
-      if (
-        criteria.keyword &&
-        !(
-          String(item.rentCarNo).includes(criteria.keyword) ||
-          item.carName?.includes(criteria.keyword)
-        )
-      ) {
-        return false;
-      }
-      return true;
-    });
-  }, [rentCarInfo, criteria]);
-
   // 7) 핫딜 등록
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!validateForm()) {
+      return; // 검증 실패 시 종료
+    }
+
     const payload = {
-      cars: Object.keys(selectedCars).filter((id) => selectedCars[id]),
-      startDate,
-      endDate,
-      discountRate,
+      hotdealName,
+      startDate: formatLocalDateTime(startDate),
+      endDate: formatLocalDateTime(endDate),
+      dealPercent,
+      carNos: Object.keys(selectedCars).filter((id) => selectedCars[id]),
     };
-    console.log("🔥 등록할 핫딜:", payload);
-    alert("핫딜이 등록되었어요!");
+
+    axios
+      .put("http://localhost/admin-hotdeals", payload, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      })
+      .then((res) => {
+        alert("핫딜이 등록되었습니다.");
+        navigate(-1);
+      })
+      .catch((error) => {
+        const code = error.response?.data?.code;
+        const msg = error.response?.data?.message;
+
+        if (code === "HOTDEAL_OVERLAP") {
+          alert(msg); // "중복된 차량이 있습니다"
+        } else {
+          console.error("등록 실패:", error);
+          alert("등록 중 오류가 발생했습니다.");
+        }
+      });
   };
 
   return (
@@ -192,6 +229,12 @@ const AdminHotDealRentCarEnrollForm = () => {
                 placeholder="검색어"
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault(); // 폼 submit 방지
+                    handleSearch(); // 검색 함수 호출
+                  }
+                }}
               />
             </Col>
             <Col md={1}>
@@ -224,8 +267,8 @@ const AdminHotDealRentCarEnrollForm = () => {
                           type="checkbox"
                           onChange={handleSelectAll}
                           checked={
-                            filteredRows.length > 0 &&
-                            filteredRows.every((r) => selectedCars[r.rentCarNo])
+                            rentCarInfo.length > 0 &&
+                            rentCarInfo.every((r) => selectedCars[r.rentCarNo])
                           }
                         />
                       </th>
@@ -241,14 +284,14 @@ const AdminHotDealRentCarEnrollForm = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredRows.length === 0 ? (
+                    {rentCarInfo.length === 0 ? (
                       <tr>
                         <td colSpan={10} className="text-center text-muted">
                           조회된 차량이 없습니다.
                         </td>
                       </tr>
                     ) : (
-                      filteredRows.map((r) => (
+                      rentCarInfo.map((r) => (
                         <tr
                           key={r.rentCarNo}
                           style={{ cursor: "pointer" }}
@@ -309,6 +352,7 @@ const AdminHotDealRentCarEnrollForm = () => {
                       value={hotdealName}
                       onChange={(e) => setHotdealName(e.target.value)}
                       className="w-75"
+                      ref={nameRef}
                     />
                   </Form.Group>
                   <Form onSubmit={handleSubmit}>
@@ -352,11 +396,10 @@ const AdminHotDealRentCarEnrollForm = () => {
                         type="number"
                         min={0}
                         max={100}
-                        value={discountRate}
-                        onChange={(e) =>
-                          setDiscountRate(Number(e.target.value))
-                        }
+                        value={dealPercent}
+                        onChange={(e) => setDealPercent(Number(e.target.value))}
                         className="w-25"
+                        ref={dealPercentRef}
                       />
                     </Form.Group>
 

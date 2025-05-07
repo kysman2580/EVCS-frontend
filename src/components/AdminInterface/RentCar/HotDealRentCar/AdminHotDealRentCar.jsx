@@ -27,8 +27,8 @@ const AdminHotDealRentCar = () => {
 
   const [ingCategory, setIngCategory] = useState("all"); // all | ing | noIng
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   const [hotdealList, setHotdealList] = useState([]);
   const [page, setPage] = useState(1);
@@ -40,19 +40,36 @@ const AdminHotDealRentCar = () => {
     count: 0,
   });
 
+  // 로컬 날짜를 "YYYY-MM-DD"로 포맷
+  const formatLocalDate = (date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  };
+
   useEffect(() => {
     setPage(1);
 
+    // 1) 기본 params 객체
+    const params = {
+      page: page,
+      ing: ingCategory,
+      searchKeyword: searchKeyword,
+    };
+
+    // 2) startDate가 있을 때만 추가
+    if (startDate) {
+      params.startDate = formatLocalDate(startDate);
+    }
+
+    // 3) endDate가 있을 때만 추가
+    if (endDate) {
+      params.endDate = formatLocalDate(endDate);
+    }
+
     axios
-      .get("http://localhost/admin-hotdeals", {
-        params: {
-          page: page,
-          ing: ingCategory,
-          startDate: startDate.toISOString().split("T")[0],
-          endDate: endDate.toISOString().split("T")[0],
-          searchKeyword: searchKeyword,
-        },
-      })
+      .get("http://localhost/admin-hotdeals", { params: params })
       .then((res) => {
         console.log(res.data);
         setHotdealList(res.data.hotdealList);
@@ -62,21 +79,24 @@ const AdminHotDealRentCar = () => {
         console.error(err);
         alert("알 수 없는 오류가 발생했어요.");
       });
-  }, [page]);
+  }, [page, ingCategory]);
 
   // 백엔드 호출 함수
   const fetchHotdeals = () => {
     setPage(1);
 
+    const params = {
+      page: page,
+      ing: ingCategory,
+      searchKeyword: searchKeyword,
+    };
+
+    if (startDate) params.startDate = formatLocalDate(startDate);
+    if (endDate) params.endDate = formatLocalDate(endDate);
+
     axios
       .get("http://localhost/admin-hotdeals", {
-        params: {
-          page: page,
-          ing: ingCategory,
-          startDate: startDate.toISOString().split("T")[0],
-          endDate: endDate.toISOString().split("T")[0],
-          searchKeyword: searchKeyword,
-        },
+        params,
       })
       .then((res) => {
         console.log("data 나와라 ", res.data);
@@ -90,7 +110,7 @@ const AdminHotDealRentCar = () => {
   };
 
   const handleSearch = () => {
-    setPage(0);
+    setPage(1);
     fetchHotdeals();
   };
 
@@ -210,6 +230,12 @@ const AdminHotDealRentCar = () => {
                     placeholder="조회할 핫딜 이름"
                     value={searchKeyword}
                     onChange={(e) => setSearchKeyword(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault(); // 폼 submit 방지
+                        handleSearch(); // 검색 함수 호출
+                      }
+                    }}
                   />
                 </Col>
                 <Col md={2}>
