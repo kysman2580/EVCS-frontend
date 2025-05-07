@@ -2,25 +2,26 @@ import styled from "styled-components";
 
 export const RentBodyDiv = styled.div`
   width: 90%;
-  height: 900px;
+  min-height: 900px;
   display: flex;
   align-items: center;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   margin-top: 30px;
 `;
 
 export const RentContainerDiv = styled.div`
   display: flex;
-  height: 1000px;
+  height: auto;
 `;
 
 export const RentCarListDiv = styled.div`
   width: 90%;
-  height: 90%;
   display: flex;
   flex-wrap: wrap;
-  margin: 20px;
+  justify-content: flex-start; // ✅ 왼쪽 정렬
+  gap: 30px 24px; // ✅ 줄 사이, 칼럼 사이 간격
+  margin: 20px auto;
 `;
 
 export const RentCarBtnDiv = styled.div`
