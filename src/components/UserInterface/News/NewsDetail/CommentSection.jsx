@@ -19,9 +19,9 @@ const CommentSection = ({ newsNo, backendUrl }) => {
   const fetchComments = async () => {
     try {
       const res = await axios.get(`${backendUrl}/api/news/comment/list`, {
-        params: { newsNo, memberNo }, // memberNo 같이 보내야 hasLiked/hasHated 받을 수 있다
+        params: { newsNo, memberNo },
       });
-      setComments(res.data); // 서버가 likes, dislikes, hasLiked, hasHated 모두 내려준다
+      setComments(res.data);
     } catch (error) {
       console.error("댓글 불러오기 실패", error);
     }
@@ -82,7 +82,7 @@ const CommentSection = ({ newsNo, backendUrl }) => {
           params: { newsCmtId: commentId, memberNo },
         });
       }
-      fetchComments(); // 상태를 다시 불러온다
+      fetchComments();
     } catch (error) {
       console.error("좋아요 토글 실패", error);
     }
@@ -111,7 +111,7 @@ const CommentSection = ({ newsNo, backendUrl }) => {
           params: { newsCmtId: commentId, memberNo },
         });
       }
-      fetchComments(); // 상태를 다시 불러온다
+      fetchComments();
     } catch (error) {
       console.error("싫어요 토글 실패", error);
     }
@@ -143,6 +143,21 @@ const CommentSection = ({ newsNo, backendUrl }) => {
       fetchComments();
     } catch (error) {
       console.error("댓글 삭제 실패", error);
+    }
+  };
+
+  const handleReportComment = async (commentId) => {
+    if (!window.confirm("해당 댓글을 신고하시겠습니까?")) return;
+    try {
+      await axios.post(`${backendUrl}/api/report/comment`, {
+        newsCmtId: commentId,
+        reporter: memberNo,
+        reportReason: "부적절한 내용", // 예시
+      });
+      alert("신고가 접수되었습니다.");
+    } catch (error) {
+      console.error("댓글 신고 실패", error);
+      alert("신고 처리 중 오류 발생");
     }
   };
 
@@ -233,6 +248,13 @@ const CommentSection = ({ newsNo, backendUrl }) => {
                         </Button>
                       </>
                     )}
+                    <Button
+                      size="sm"
+                      variant="outline-warning"
+                      onClick={() => handleReportComment(comment.id)}
+                    >
+                      🚨 신고
+                    </Button>
                   </S.CommentActions>
                   {replyTargetId === comment.id && (
                     <div style={{ marginTop: "10px" }}>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import {
   ListNewsItem,
   SearchBar,
@@ -11,15 +11,18 @@ import * as S from "../NewsMain/NewsMain.styles";
 
 const NewsList = ({ backendUrl = "http://localhost:80" }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
 
-  const [query, setQuery] = useState("전기차");
-  const [sort, setSort] = useState("sim");
-  const [page, setPage] = useState(1);
+  const [query, setQuery] = useState(queryParams.get("query") || "전기차");
+  const [sort, setSort] = useState(queryParams.get("sort") || "sim");
+  const [page, setPage] = useState(Number(queryParams.get("page")) || 1);
   const [size] = useState(10);
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [imageResults, setImageResults] = useState({});
+  const [keywords, setKeywords] = useState([]);
 
   const fetchNews = async (targetPage = 1) => {
     setLoading(true);
@@ -29,8 +32,6 @@ const NewsList = ({ backendUrl = "http://localhost:80" }) => {
       });
 
       const rawItems = res.data.items || [];
-
-      // 중복 제거: originallink 기준
       const uniqueItems = Array.from(
         new Map(rawItems.map((item) => [item.originallink, item])).values()
       );
@@ -45,6 +46,11 @@ const NewsList = ({ backendUrl = "http://localhost:80" }) => {
     }
   };
 
+  const getImageUrl = (item) => {
+    const key = removeHtmlTags(item.title);
+    return imageResults[key] || "/images/loading.png";
+  };
+
   const extractKeywords = (title) => {
     const clean = title
       .replace(/<[^>]+>/g, "")
@@ -54,11 +60,6 @@ const NewsList = ({ backendUrl = "http://localhost:80" }) => {
       .filter((w) => w.length >= 2)
       .slice(0, 2)
       .join(" ");
-  };
-
-  const getImageUrl = (item) => {
-    const key = removeHtmlTags(item.title);
-    return imageResults[key] || "/images/loading.png";
   };
 
   const handleChatClick = async (item) => {
@@ -91,69 +92,116 @@ const NewsList = ({ backendUrl = "http://localhost:80" }) => {
     });
   };
 
+  const fetchCategories = async () => {
+    try {
+      const res = await axios.get(`${backendUrl}/api/news/categories`);
+      const list = res.data
+        .map((item) => item.newsCategory)
+        .filter((name) => name && name !== "기타");
+      setKeywords(list);
+    } catch (err) {
+      console.error("카테고리 로딩 실패:", err);
+      setKeywords(["전기차"]);
+    }
+  };
+
   useEffect(() => {
-    fetchNews(1);
+    fetchNews(page);
   }, [query, sort]);
 
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
   const totalPages = Math.ceil(Math.min(total, 1000) / size);
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
-  const visiblePages = pages.slice(
-    Math.floor((page - 1) / 10) * 10,
-    Math.floor((page - 1) / 10) * 10 + 10
+  const currentBlock = Math.floor((page - 1) / 10);
+  const startPage = currentBlock * 10 + 1;
+  const endPage = Math.min(startPage + 9, totalPages);
+  const visiblePages = Array.from(
+    { length: endPage - startPage + 1 },
+    (_, i) => startPage + i
   );
 
+  const handlePageChange = (targetPage) => {
+    fetchNews(targetPage);
+  };
+
+  const handleBlockPrev = () => {
+    const prevBlockStart = startPage - 10;
+    if (prevBlockStart >= 1) handlePageChange(prevBlockStart);
+  };
+
+  const handleBlockNext = () => {
+    const nextBlockStart = startPage + 10;
+    if (nextBlockStart <= totalPages) handlePageChange(nextBlockStart);
+  };
+
   return (
-    <S.Container>
-      <SearchBar
-        query={query}
-        setQuery={setQuery}
-        handleSearch={() => fetchNews(1)}
-        keywords={["전기차", "에너지", "태양광", "풍력", "수소"]}
-      />
+    <S.FullWidthContainer>
+      <S.Container>
+        <S.PageHeader>뉴스 전체 보기</S.PageHeader>
 
-      <S.SortButtons>
-        <button onClick={() => setSort("sim")} disabled={sort === "sim"}>
-          유사도순
-        </button>
-        {" | "}
-        <button onClick={() => setSort("date")} disabled={sort === "date"}>
-          최신순
-        </button>
-      </S.SortButtons>
+        <SearchBar
+          query={query}
+          setQuery={setQuery}
+          handleSearch={() => fetchNews(1)}
+          keywords={keywords}
+        />
 
-      <div>총 {total.toLocaleString()}건</div>
-
-      <S.ListContainer>
-        {items.map((item) => (
-          <ListNewsItem
-            key={item.originallink}
-            item={item}
-            onChatClick={handleChatClick}
-            loading={loading}
-          />
-        ))}
-      </S.ListContainer>
-
-      <S.Pagination>
-        {page > 10 && (
-          <button onClick={() => fetchNews(page - 10)}>{`<<`}</button>
-        )}
-        {page > 1 && <button onClick={() => fetchNews(page - 1)}>{`<`}</button>}
-
-        {visiblePages.map((p) => (
-          <button key={p} onClick={() => fetchNews(p)} disabled={p === page}>
-            {p}
+        <S.SectionHeader>
+          <S.SectionIcon>|</S.SectionIcon> 정렬 기준
+        </S.SectionHeader>
+        <S.SortButtons>
+          <button onClick={() => setSort("sim")} disabled={sort === "sim"}>
+            유사도순
           </button>
-        ))}
+          <button onClick={() => setSort("date")} disabled={sort === "date"}>
+            최신순
+          </button>
+        </S.SortButtons>
 
-        {page < totalPages && (
-          <button onClick={() => fetchNews(page + 1)}>{`>`}</button>
-        )}
-        {page + 10 <= totalPages && (
-          <button onClick={() => fetchNews(page + 10)}>{`>>`}</button>
-        )}
-      </S.Pagination>
-    </S.Container>
+        <S.SectionHeader>
+          <S.SectionIcon>|</S.SectionIcon> 전체 뉴스 리스트
+        </S.SectionHeader>
+
+        <S.NewsList>
+          <S.NewsItems>
+            {items.map((item) => (
+              <ListNewsItem
+                key={item.originallink}
+                item={item}
+                onChatClick={handleChatClick}
+                loading={loading}
+              />
+            ))}
+          </S.NewsItems>
+        </S.NewsList>
+
+        <S.Pagination>
+          {page > 1 && (
+            <button onClick={() => handlePageChange(1)}>{"<<"}</button>
+          )}
+          {startPage > 1 && <button onClick={handleBlockPrev}>{"<"}</button>}
+
+          {visiblePages.map((p) => (
+            <button
+              key={p}
+              onClick={() => handlePageChange(p)}
+              disabled={p === page}
+            >
+              {p}
+            </button>
+          ))}
+
+          {endPage < totalPages && (
+            <button onClick={handleBlockNext}>{">"}</button>
+          )}
+          {page < totalPages && (
+            <button onClick={() => handlePageChange(totalPages)}>{">>"}</button>
+          )}
+        </S.Pagination>
+      </S.Container>
+    </S.FullWidthContainer>
   );
 };
 
