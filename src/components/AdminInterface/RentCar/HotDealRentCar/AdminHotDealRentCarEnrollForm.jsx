@@ -155,9 +155,6 @@ const AdminHotDealRentCarEnrollForm = () => {
       carNos: Object.keys(selectedCars).filter((id) => selectedCars[id]),
     };
 
-    console.log(payload.startDate);
-    console.log(payload.endDate);
-
     axios
       .post("http://localhost/admin-hotdeals", payload, {
         headers: {
@@ -257,7 +254,7 @@ const AdminHotDealRentCarEnrollForm = () => {
             <Col md={8}>
               <div
                 style={{
-                  maxHeight: "80vh",
+                  maxHeight: "50vh",
                   overflowY: "auto",
                   overflowX: "hidden",
                 }}

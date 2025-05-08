@@ -60,7 +60,7 @@ const AdminHotDealRentCarUpdate = () => {
     const d = String(date.getDate()).padStart(2, "0");
     const h = String(date.getHours()).padStart(2, "0");
     const m = String(date.getMinutes()).padStart(2, "0");
-    return `${y}-${M}-${d} ${h}:${m}`;
+    return `${y}-${M}-${d}T${h}:${m}`;
   };
 
   // 1) 데이터 로드

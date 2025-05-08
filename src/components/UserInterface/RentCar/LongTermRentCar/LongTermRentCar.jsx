@@ -19,11 +19,11 @@ import { useState, useEffect, useMemo } from "react";
 
 import axios from "axios";
 
-const BATCH = 6;
+const BATCH = 10;
 
 const LongTermRentCar = () => {
   const [rentCars, setRentCars] = useState([]); // 백엔드에서 받아온 전체 리스트
-  const [visibleCount, setVisibleCount] = useState(6); // 한 번에 보여줄 개수
+  const [visibleCount, setVisibleCount] = useState(10); // 한 번에 보여줄 개수
 
   // 필터 상태
   const [onlyHotdeal, setOnlyHotdeal] = useState(false);
@@ -81,7 +81,7 @@ const LongTermRentCar = () => {
 
   const handleSearch = () => {
     // 검색 시 보이는 개수를 다시 초기화
-    setVisibleCount(BATCH);
+    setVisibleCount(10000000);
   };
 
   return (
@@ -126,8 +126,7 @@ const LongTermRentCar = () => {
 
             <Button
               onClick={() => {
-                setSearchText(inputText);
-                setVisibleCount(BATCH);
+                handleSearch(inputText);
               }}
             >
               검색
