@@ -10,7 +10,7 @@ function NoticeDetail() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost/api/notices/${id}`)
+      .get(`http://localhost/notices/${id}`)
       .then((res) => setNotice(res.data))
       .catch(() => alert("공지사항을 불러올 수 없습니다."));
   }, [id]);
@@ -22,7 +22,11 @@ function NoticeDetail() {
 
   const handleUpdate = () => {
     axios
-      .put(`http://localhost/api/notices/${id}`, notice)
+      .put(`http://localhost/notices/${id}`, {
+        noticeTitle: notice.noticeTitle,
+        noticeWriter: notice.noticeWriter,
+        noticeContent: notice.noticeContent,
+      })
       .then(() => {
         setIsEditing(false);
         alert("수정되었습니다.");
@@ -33,7 +37,7 @@ function NoticeDetail() {
   const handleDelete = () => {
     if (window.confirm("정말 삭제하시겠습니까?")) {
       axios
-        .delete(`http://localhost/api/notices/${id}`)
+        .delete(`http://localhost/notices/${id}`)
         .then(() => navigate("/admin/notice"))
         .catch(() => alert("삭제 실패"));
     }
@@ -47,15 +51,19 @@ function NoticeDetail() {
         {isEditing ? (
           <>
             <h2>공지사항 수정</h2>
-            <input name="title" value={notice.title} onChange={handleChange} />
             <input
-              name="writer" // 'author' -> 'writer'
-              value={notice.writer} // 'author' -> 'writer'
+              name="noticeTitle"
+              value={notice.noticeTitle}
+              onChange={handleChange}
+            />
+            <input
+              name="noticeWriter"
+              value={notice.noticeWriter}
               onChange={handleChange}
             />
             <textarea
-              name="content"
-              value={notice.content}
+              name="noticeContent"
+              value={notice.noticeContent}
               onChange={handleChange}
             />
             <div className="notice-actions">
@@ -69,14 +77,15 @@ function NoticeDetail() {
           </>
         ) : (
           <>
-            <h1>{notice.title}</h1>
+            <h1>{notice.noticeTitle}</h1>
             <div className="notice-meta">
-              <span>🖊 작성자: {notice.writer}</span>{" "}
-              {/* 'author' -> 'writer' */}
-              <span>🗓 작성일: {notice.enrollDate}</span>{" "}
-              {/* 'date' -> 'enrollDate' */}
+              <span>🖊 작성자: {notice.noticeWriter}</span>
+              <span>🗓 작성일: {notice.enrollDate}</span>
             </div>
-            <p>{notice.content}</p>
+            <div
+              className="notice-content"
+              dangerouslySetInnerHTML={{ __html: notice.noticeContent }}
+            ></div>
             <div className="notice-actions">
               <button className="edit-btn" onClick={() => setIsEditing(true)}>
                 ✏ 수정하기

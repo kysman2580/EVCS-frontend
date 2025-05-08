@@ -9,20 +9,19 @@ function Notice() {
   const [notices, setNotices] = useState([]);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-
   const noticesPerPage = 5;
 
   useEffect(() => {
     axios
-      .get("http://localhost/api/notices")
+      .get("http://localhost/notices")
       .then((res) => setNotices(res.data))
       .catch((err) => console.error(err));
   }, []);
 
   const filtered = notices.filter(
     (n) =>
-      n.eventTitle.toLowerCase().includes(search.toLowerCase()) ||
-      n.writer.toLowerCase().includes(search.toLowerCase()) || // 'author' -> 'writer'
+      n.noticeTitle.toLowerCase().includes(search.toLowerCase()) ||
+      n.noticeWriter.toLowerCase().includes(search.toLowerCase()) ||
       n.enrollDate.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -43,28 +42,35 @@ function Notice() {
             onChange={(e) => setSearch(e.target.value)}
           />
 
-          <table>
-            <thead>
-              <tr>
-                <th>제목</th>
-                <th>작성일시</th>
-                <th>작성자</th> {/* 'author' -> 'writer' */}
-              </tr>
-            </thead>
-            <tbody>
-              {paginated.map((notice) => (
-                <tr
-                  key={notice.id}
-                  onClick={() => navigate(`/admin/notice/${notice.id}`)}
-                  style={{ cursor: "pointer" }}
-                >
-                  <td>{notice.title}</td>
-                  <td>{notice.enrollDate}</td> {/* 'date' -> 'enrollDate' */}
-                  <td>{notice.writer}</td> {/* 'author' -> 'writer' */}
+          <div className="Notice-container">
+            <table>
+              <thead>
+                <colgroup>
+                  <col style={{ width: "60%" }} />
+                  <col style={{ width: "20%" }} />
+                  <col style={{ width: "20%" }} />
+                </colgroup>
+                <tr>
+                  <th>제목</th>
+                  <th>작성일시</th>
+                  <th>작성자</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {paginated.map((notice) => (
+                  <tr
+                    key={notice.id}
+                    onClick={() => navigate(`/admin/notice/${notice.id}`)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <td>{notice.noticeTitle}</td>
+                    <td>{notice.enrollDate}</td>
+                    <td>{notice.noticeWriter}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           <div className="Notice-pagination">
             <button

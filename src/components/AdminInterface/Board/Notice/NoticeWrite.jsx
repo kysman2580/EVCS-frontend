@@ -4,17 +4,16 @@ import axios from "axios";
 
 function NoticeWrite() {
   const [title, setTitle] = useState("");
-  const [writer, setWriter] = useState(""); // 'author' -> 'writer'
+  const [writer, setWriter] = useState("");
   const [content, setContent] = useState("");
   const navigate = useNavigate();
 
   const handleSave = () => {
     axios
-      .post("http://localhost/notices", {
-        eventTitle: title,
-        eventContent: content,
-        writer: writer, // 'author' -> 'writer'
-        enrollDate: new Date().toISOString().split("T")[0].replace(/-/g, "."),
+      .post(`http://localhost/notices/${id}`, {
+        noticeTitle: title,
+        noticeContent: content,
+        noticeWriter: writer,
       })
       .then(() => navigate("/admin/notice"))
       .catch((err) => alert("저장 실패: " + err.message));
@@ -32,8 +31,8 @@ function NoticeWrite() {
         />
         <input
           type="text"
-          placeholder="작성자" // 'author' -> 'writer'
-          value={writer} // 'author' -> 'writer'
+          placeholder="작성자"
+          value={writer}
           onChange={(e) => setWriter(e.target.value)}
         />
         <textarea
@@ -57,5 +56,4 @@ function NoticeWrite() {
     </div>
   );
 }
-
 export default NoticeWrite;
