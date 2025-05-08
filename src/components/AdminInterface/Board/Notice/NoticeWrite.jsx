@@ -10,7 +10,7 @@ function NoticeWrite() {
 
   const handleSave = () => {
     axios
-      .post(`http://localhost/notices/${id}`, {
+      .post(`http://localhost/notices`, {
         noticeTitle: title,
         noticeContent: content,
         noticeWriter: writer,
