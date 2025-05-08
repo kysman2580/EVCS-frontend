@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+import "./NoticeDetail.css"; // CSS 파일을 import
 
 function NoticeDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const page = queryParams.get("page") || 1; // 현재 페이지
+
   const [notice, setNotice] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -23,6 +28,7 @@ function NoticeDetail() {
   const handleUpdate = () => {
     axios
       .put(`http://localhost/notices/${id}`, {
+        id: parseInt(id),
         noticeTitle: notice.noticeTitle,
         noticeWriter: notice.noticeWriter,
         noticeContent: notice.noticeContent,
@@ -38,7 +44,10 @@ function NoticeDetail() {
     if (window.confirm("정말 삭제하시겠습니까?")) {
       axios
         .delete(`http://localhost/notices/${id}`)
-        .then(() => navigate("/admin/notice"))
+        .then(() => {
+          alert("삭제되었습니다.");
+          navigate(`/admin/notice?page=${page}`); // 삭제 후 동일한 페이지로 돌아감
+        })
         .catch(() => alert("삭제 실패"));
     }
   };
@@ -55,16 +64,19 @@ function NoticeDetail() {
               name="noticeTitle"
               value={notice.noticeTitle}
               onChange={handleChange}
+              placeholder="제목"
             />
             <input
               name="noticeWriter"
               value={notice.noticeWriter}
               onChange={handleChange}
+              placeholder="작성자"
             />
             <textarea
               name="noticeContent"
               value={notice.noticeContent}
               onChange={handleChange}
+              placeholder="내용"
             />
             <div className="notice-actions">
               <button className="confirm-btn" onClick={handleUpdate}>
@@ -95,9 +107,9 @@ function NoticeDetail() {
               </button>
               <button
                 className="back-btn"
-                onClick={() => navigate("/admin/notice")}
+                onClick={() => navigate(`/admin/notice?page=${page}`)} // 페이지 유지하며 돌아감
               >
-                🏠 목록으로
+                🏠 목록으로 돌아가기
               </button>
             </div>
           </>
