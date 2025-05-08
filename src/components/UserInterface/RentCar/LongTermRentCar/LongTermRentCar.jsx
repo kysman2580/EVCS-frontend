@@ -33,7 +33,7 @@ const LongTermRentCar = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost/user-rentcars/1`)
+      .get(`http://localhost/user-rentcars/category/1`)
       .then((res) => {
         console.log(res.data);
         setRentCars(res.data);
@@ -83,6 +83,7 @@ const LongTermRentCar = () => {
     // 검색 시 보이는 개수를 다시 초기화
     setVisibleCount(BATCH);
   };
+
   return (
     <>
       <RentContainerDiv>
@@ -100,6 +101,7 @@ const LongTermRentCar = () => {
               onChange={(e) => {
                 setFilterType(e.target.value);
                 setInputText("");
+                setSearchText("");
               }}
             >
               <option value="">필터 선택</option>
@@ -113,6 +115,13 @@ const LongTermRentCar = () => {
               placeholder="검색어 입력"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault(); // 폼 submit 방지
+                  setSearchText(inputText);
+                  handleSearch(); // 검색 함수 호출
+                }
+              }}
             />
 
             <Button

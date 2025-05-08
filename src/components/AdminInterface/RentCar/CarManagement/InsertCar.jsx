@@ -136,8 +136,10 @@ const InsertCar = () => {
                         onChange={handleChange}
                       >
                         <option value="">선택</option>
-                        <option value="SUV">SUV</option>
-                        <option value="SEDAN">SEDAN</option>
+                        <option value="CompactCar">경차</option>
+                        <option value="SmallCar">소형차</option>
+                        <option value="MidSizeCar">중형차</option>
+                        <option value="BigCar">대형차</option>
                       </Form.Select>
                     </Form.Group>
                   </Col>
@@ -168,6 +170,7 @@ const InsertCar = () => {
                         <option value="HYUNDAI">HYUNDAI</option>
                         <option value="KIA">KIA</option>
                         <option value="VOLVO">VOLVO</option>
+                        <option value="TESLA">TESLA</option>
                       </Form.Select>
                     </Form.Group>
                   </Col>

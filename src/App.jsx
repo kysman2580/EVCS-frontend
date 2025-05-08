@@ -72,8 +72,6 @@ import GarageEnrollForm from "./components/AdminInterface/RentCar/Garage/GarageE
 import GarageDetails from "./components/AdminInterface/RentCar/Garage/GarageDetails";
 import GarageUpdateForm from "./components/AdminInterface/RentCar/Garage/GarageUpdateForm";
 
-import "./App.css";
-
 function App() {
   return (
     <>
