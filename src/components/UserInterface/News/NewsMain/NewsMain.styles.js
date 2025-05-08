@@ -16,7 +16,6 @@ export const Container = styled.div`
   max-width: 100%;
   margin: 0;
   padding: 0;
-  font-family: "Malgun Gothic", "맑은 고딕", sans-serif;
 `;
 
 // 페이지 헤더

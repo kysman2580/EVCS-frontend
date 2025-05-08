@@ -14,8 +14,20 @@ import {
 import { StyledDatePicker } from "../RentCarCommon/RentCar.styles";
 
 const RentalPage = () => {
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const now = new Date();
+
+  const currentTime = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    now.getHours() + 1,
+    0,
+    0,
+    0
+  );
+
+  const [startDate, setStartDate] = useState(currentTime);
+  const [endDate, setEndDate] = useState(currentTime);
 
   return (
     <>

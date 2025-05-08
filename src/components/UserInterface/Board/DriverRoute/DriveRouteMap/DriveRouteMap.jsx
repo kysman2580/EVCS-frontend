@@ -12,52 +12,60 @@ function DriveRouteMap({ mapUrl }) {
   useEffect(() => {
     if (mapRef.current) return; // => 지도가 생성되었으면 안만듦.....
 
-    const map = new window.Tmapv2.Map("map_div", {
-      center: new window.Tmapv2.LatLng(37.5652045, 126.98702028),
-      width: "100%",
-      height: "600px",
-      zoom: 17,
-      zoomControl: true,
-      scrollwheel: true,
-    });
+    // 현재 위치 조회
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function (position) {
+        const currentLat = position.coords.latitude;
+        const currentLon = position.coords.longitude;
 
-    mapRef.current = map;
-
-    map.addListener("click", (e) => {
-      const lat = e.latLng._lat;
-      const lng = e.latLng._lng;
-
-      const marker = new window.Tmapv2.Marker({
-        position: new window.Tmapv2.LatLng(lat, lng),
-        map: mapRef.current,
-      });
-      markerArrRef.current.push(marker);
-
-      axios
-        .get(
-          "https://apis.openapi.sk.com/tmap/geo/coordconvert?version=1&format=json",
-          {
-            headers: {
-              appKey: "j9dvm8U8CF6BqckQanXn090Mb30d9b4b8aeOXvaO",
-            },
-            params: {
-              lat: lat,
-              lon: lng,
-            },
-          }
-        )
-        .then((result) => {
-          const position = result.data.coordinate;
-          console.log(position);
-          setPositions((prev) => [
-            ...prev,
-            { lat: position.lat, lon: position.lon },
-          ]);
-        })
-        .catch((error) => {
-          console.error("좌표 변환 실패:", error);
+        const map = new window.Tmapv2.Map("map_div", {
+          center: new window.Tmapv2.LatLng(currentLat, currentLon),
+          width: "100%",
+          height: "600px",
+          zoom: 17,
+          zoomControl: true,
+          scrollwheel: true,
         });
-    });
+
+        mapRef.current = map;
+
+        map.addListener("click", (e) => {
+          const lat = e.latLng._lat;
+          const lng = e.latLng._lng;
+
+          const marker = new window.Tmapv2.Marker({
+            position: new window.Tmapv2.LatLng(lat, lng),
+            map: mapRef.current,
+          });
+          markerArrRef.current.push(marker);
+
+          axios
+            .get(
+              "https://apis.openapi.sk.com/tmap/geo/coordconvert?version=1&format=json",
+              {
+                headers: {
+                  appKey: "j9dvm8U8CF6BqckQanXn090Mb30d9b4b8aeOXvaO",
+                },
+                params: {
+                  lat: lat,
+                  lon: lng,
+                },
+              }
+            )
+            .then((result) => {
+              const position = result.data.coordinate;
+              console.log(position);
+              setPositions((prev) => [
+                ...prev,
+                { lat: position.lat, lon: position.lon },
+              ]);
+            })
+            .catch((error) => {
+              console.error("좌표 변환 실패:", error);
+            });
+        });
+      });
+    }
   }, []);
 
   console.log(positions);

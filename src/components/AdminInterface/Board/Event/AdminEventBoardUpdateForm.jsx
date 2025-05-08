@@ -2,26 +2,26 @@ import NoticeNav from "../../AdminCommon/AdminNav/AdminNoitceNav";
 import { Container, Row, Col, Card, Button, Form } from "react-bootstrap";
 import { BoardContainerDiv } from "../../../UserInterface/Board/Board.styles";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 // import { StyledDatePicker } from "../../../UserInterface/RentCar/RentCarCommon/RentCar.styles";
 import { StyledDatePicker } from "./AdminEventBoard.styled";
 
 import DatePicker from "react-datepicker";
-import { Wrapper } from "../../RentCar/CarManagement/InsertCar.styles";
+import axios from "axios";
 
 const AdminEventBoardUpdateForm = () => {
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
   const location = useLocation();
-  const post = location.state?.post;
+  const event = location.state?.event;
   const navigate = useNavigate();
+  const [startDate, setStartDate] = useState(new Date(event.startDate));
+  const [endDate, setEndDate] = useState(new Date(event.endDate));
 
   // 로컬 상태로 바꿔주기
-  const [title, setTitle] = useState(post?.title || "");
-  const [content, setContent] = useState(post?.content || "");
+  const [title, setTitle] = useState(event?.eventName || "");
+  const [content, setContent] = useState(event?.eventContent || "");
   const [imageFile, setImageFile] = useState(null);
-  const [preview, setPreview] = useState(post?.image || "");
+  const [preview, setPreview] = useState(event?.filePath || "");
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -29,13 +29,86 @@ const AdminEventBoardUpdateForm = () => {
     setPreview(URL.createObjectURL(file));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // TODO: axios로 수정 API 호출
-    console.log({ title, content, imageFile });
-    navigate(-1); // 완료 후 뒤로
+  const titleRef = useRef();
+  const contentRef = useRef();
+  const fileRef = useRef();
+
+  const validateForm = () => {
+    if (!title.trim()) {
+      alert("이벤트 제목을 입력하세요.");
+      titleRef.current.focus();
+      return false;
+    }
+    if (!content.trim()) {
+      alert("이벤트 내용을 입력하세요.");
+      contentRef.current.focus();
+      return false;
+    }
+    if (!startDate || !endDate) {
+      alert("이벤트 날짜를 선택하세요.");
+      return false;
+    }
+    if (!imageFile && !preview) {
+      alert("이벤트 이미지를 업로드하세요.");
+      fileRef.current.focus();
+      return false;
+    }
+    if (startDate > endDate) {
+      alert("이벤트 시작일은 마감일보다 빨라야 합니다.");
+      return false;
+    }
+    return true;
   };
 
+  const insertEvent = (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return; // 검증 실패 시 종료
+    }
+
+    const formData = new FormData();
+    formData.append("eventName", title);
+    formData.append("eventContent", content);
+    formData.append("startDate", startDate.toISOString().split("T")[0]); // yyyy-MM-dd
+    formData.append("endDate", endDate.toISOString().split("T")[0]);
+    formData.append("eventNo", event.eventNo);
+
+    if (imageFile) {
+      formData.append("file", imageFile); // key 이름이 백엔드와 일치해야 함
+    }
+
+    axios
+      .put(`http://localhost/admin-events/${event.eventNo}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      })
+      .then((res) => {
+        alert("이벤트가 수정되었습니다.");
+        navigate("/admin/adminEventBoard", { replace: true });
+      })
+      .catch((error) => {
+        console.error("수정 실패:", error);
+        alert("수정 중 오류가 발생했습니다.");
+      });
+  };
+
+  const deleteEvent = () => {
+    if (!window.confirm("정말 삭제하시겠습니까?")) return;
+
+    axios
+      .delete(`http://localhost/admin-events/${event.eventNo}`)
+      .then(() => {
+        alert("이벤트가 삭제되었습니다.");
+        navigate("/admin/adminEventBoard", { replace: true });
+      })
+      .catch((error) => {
+        console.error("삭제 실패:", error);
+        alert("삭제 중 오류가 발생했습니다.");
+      });
+  };
   return (
     <>
       <BoardContainerDiv style={{ height: "auto", paddingBottom: "60px" }}>
@@ -44,7 +117,7 @@ const AdminEventBoardUpdateForm = () => {
           <Row className="justify-content-center">
             <Col md={8}>
               <Card className="p-4">
-                <Form onSubmit={handleSubmit}>
+                <Form onSubmit={insertEvent}>
                   {/* 이미지 업로드 */}
                   <Form.Group className="mb-4 text-center">
                     {preview && (
@@ -59,6 +132,7 @@ const AdminEventBoardUpdateForm = () => {
                       이벤트 이미지
                       <Form.Control
                         type="file"
+                        ref={fileRef}
                         accept="image/*"
                         onChange={handleImageChange}
                         className="mt-2"
@@ -71,6 +145,7 @@ const AdminEventBoardUpdateForm = () => {
                     <Form.Label className="fw-bold ">이벤트 제목</Form.Label>
                     <Form.Control
                       type="text"
+                      ref={titleRef}
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       placeholder="제목을 입력하세요"
@@ -125,6 +200,7 @@ const AdminEventBoardUpdateForm = () => {
                     <Form.Label className="fw-bold ">이벤트 내용</Form.Label>
                     <Form.Control
                       as="textarea"
+                      ref={contentRef}
                       rows={6}
                       value={content}
                       onChange={(e) => setContent(e.target.value)}
@@ -137,9 +213,22 @@ const AdminEventBoardUpdateForm = () => {
                     <Button variant="secondary" onClick={() => navigate(-1)}>
                       취소
                     </Button>
-                    <Button variant="primary" type="submit">
-                      저장하기
-                    </Button>
+                    <div>
+                      <Button
+                        variant="danger"
+                        type="button"
+                        onClick={deleteEvent}
+                      >
+                        삭제하기
+                      </Button>
+                      <Button
+                        variant="dark"
+                        type="submit"
+                        style={{ marginLeft: "10px" }}
+                      >
+                        수정하기
+                      </Button>
+                    </div>
                   </div>
                 </Form>
               </Card>
