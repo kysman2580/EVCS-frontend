@@ -69,17 +69,21 @@ const RentCarManagement = () => {
       .catch((error) => {
         console.log(error);
       });
-  }, [category, useStatus]);
+  }, [category, useStatus, currentPage]);
 
   const handleSearch = () => {
     axios
-      .get(`http://localhost/rentCar/${currentPage}`, {
-        params: {
-          useStatus, // 사용중인지 아닌지
-          category, // 카테고리
-          searchKeyword, // 검색어
+      .get(
+        `http://localhost/rentCar/${currentPage}`,
+        {
+          params: {
+            useStatus, // 사용중인지 아닌지
+            category, // 카테고리
+            searchKeyword, // 검색어
+          },
         },
-      })
+        [currentPage]
+      )
       .then((result) => {
         console.log(result.data);
         const res = result.data;
