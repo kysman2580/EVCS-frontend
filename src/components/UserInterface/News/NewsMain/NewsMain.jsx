@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -24,8 +22,7 @@ const NewsMain = ({ backendUrl = "http://localhost:80" }) => {
   const [topNews, setTopNews] = useState([]);
   const [mainNews, setMainNews] = useState([]);
   const [listNews, setListNews] = useState([]);
-
-  const keywords = ["전기차", "에너지", "태양광", "풍력", "수소"];
+  const [keywords, setKeywords] = useState([]); // ✅ 카테고리 상태 추가
 
   const handleSearch = (searchQuery = query) => {
     if (!searchQuery.trim()) return;
@@ -39,7 +36,7 @@ const NewsMain = ({ backendUrl = "http://localhost:80" }) => {
 
     axios
       .get(`${backendUrl}/api/naver-news`, {
-        params: { query: searchQuery, display: 100, start: 1 },
+        params: { query: searchQuery, display: 20, start: 1 },
       })
       .then((res) => {
         clearTimeout(timeoutId);
@@ -158,6 +155,21 @@ const NewsMain = ({ backendUrl = "http://localhost:80" }) => {
 
   useEffect(() => {
     setLoading(true);
+
+    axios
+      .get(`${backendUrl}/api/news/categories`)
+      .then((res) => {
+        const list = res.data
+          .map((item) => item.newsCategory)
+          .filter((name) => name && name !== "기타");
+
+        setKeywords(list);
+      })
+
+      .catch((err) => {
+        setKeywords(["전기차"]); // fallback
+      });
+
     handleSearch();
     window.scrollTo(0, 0);
   }, []);

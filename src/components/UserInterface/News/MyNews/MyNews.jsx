@@ -1,17 +1,14 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { useAuth } from "../../Context/AuthContext/AuthContext";
 import axios from "axios";
 import { removeHtmlTags, formatDate } from "../NewsMain/NewsItemComponents";
 import MyPageNav from "../../Common/Nav/MyPageNav";
 import { MyPageDiv } from "../../Member/Mypage/MyPage.styles";
+import * as S from "../../News/NewsMain/NewsMain.styles";
 
 const backendUrl = "http://localhost:80";
 
 const MyNews = () => {
-  const { auth } = useAuth();
-  const memberNo = auth?.user?.memberNo;
-
   const [searchParams, setSearchParams] = useSearchParams();
   const [fullList, setFullList] = useState([]);
   const [imageResults, setImageResults] = useState({});
@@ -21,24 +18,24 @@ const MyNews = () => {
   const size = 3;
   const navigate = useNavigate();
 
+  const token = localStorage.getItem("accessToken");
+  const authHeader = {
+    headers: { Authorization: `Bearer ${token}` },
+  };
+
   useEffect(() => {
-    if (!memberNo) return;
+    if (!token) return;
 
     const fetchData = async () => {
       try {
         const res = await axios.get(
           `${backendUrl}/api/news/mypage/${activeTab}`,
-          {
-            params: { memberNo },
-          }
+          authHeader
         );
         setFullList(res.data || []);
-
         const updatedImages = {};
         for (const news of res.data || []) {
-          if (news.imageUrl) {
-            updatedImages[news.title] = news.imageUrl;
-          }
+          if (news.imageUrl) updatedImages[news.title] = news.imageUrl;
         }
         setImageResults(updatedImages);
       } catch (err) {
@@ -48,33 +45,21 @@ const MyNews = () => {
 
     fetchData();
     setSearchParams({ page: 1 });
-  }, [activeTab, memberNo]);
-
-  const handleTabClick = (tab) => {
-    setActiveTab(tab);
-  };
-
-  const handlePageChange = (newPage) => {
-    setSearchParams({ page: newPage });
-  };
-
-  const getImageUrl = (item) => {
-    return imageResults[item.title] || "/images/loading.png";
-  };
+  }, [activeTab, token]);
 
   const handleChatClick = async (item) => {
-    const titleKey = removeHtmlTags(item.title);
-    let imageUrl = getImageUrl(item);
+    const key = removeHtmlTags(item.title);
+    let imageUrl = imageResults[key] || "/images/loading.png";
 
     if (imageUrl === "/images/loading.png") {
       try {
         const res = await axios.get(`${backendUrl}/api/naver-image`, {
-          params: { query: titleKey },
+          params: { query: key },
         });
         const hits = res.data.items || [];
         const fetched =
           hits[0]?.thumbnail || hits[0]?.link || "/images/loading.png";
-        setImageResults((prev) => ({ ...prev, [titleKey]: fetched }));
+        setImageResults((prev) => ({ ...prev, [key]: fetched }));
         imageUrl = fetched;
       } catch (e) {
         console.error("이미지 재조회 실패", e);
@@ -95,35 +80,48 @@ const MyNews = () => {
 
   const pagedList = fullList.slice((page - 1) * size, page * size);
   const totalPages = Math.ceil(fullList.length / size);
+  const currentBlock = Math.floor((page - 1) / 10);
+  const startPage = currentBlock * 10 + 1;
+  const endPage = Math.min(startPage + 9, totalPages);
+  const visiblePages = Array.from(
+    { length: endPage - startPage + 1 },
+    (_, i) => startPage + i
+  );
+
+  const handlePageChange = (targetPage) => {
+    setSearchParams({ page: targetPage });
+  };
+
+  const handleBlockPrev = () => {
+    const prevBlockStart = startPage - 10;
+    if (prevBlockStart >= 1) handlePageChange(prevBlockStart);
+  };
+
+  const handleBlockNext = () => {
+    const nextBlockStart = startPage + 10;
+    if (nextBlockStart <= totalPages) handlePageChange(nextBlockStart);
+  };
 
   return (
     <MyPageDiv>
       <MyPageNav />
-
-      {/* 오른쪽 콘텐츠 */}
       <div style={{ flex: 1, padding: "2rem" }}>
         <h2>내 뉴스</h2>
-
-        {/* 탭 */}
         <div style={{ marginBottom: "1rem" }}>
-          <button
-            onClick={() => handleTabClick("likes")}
-            style={{ fontWeight: activeTab === "likes" ? "bold" : "normal" }}
+          <S.KeywordButton
+            onClick={() => setActiveTab("likes")}
+            active={activeTab === "likes"}
           >
             좋아요한 뉴스
-          </button>
+          </S.KeywordButton>
           {" | "}
-          <button
-            onClick={() => handleTabClick("bookmarks")}
-            style={{
-              fontWeight: activeTab === "bookmarks" ? "bold" : "normal",
-            }}
+          <S.KeywordButton
+            onClick={() => setActiveTab("bookmarks")}
+            active={activeTab === "bookmarks"}
           >
             북마크한 뉴스
-          </button>
+          </S.KeywordButton>
         </div>
-
-        {/* 뉴스 리스트 */}
         <ul>
           {pagedList.map((item) => (
             <li key={item.newsNo} style={{ marginBottom: "1rem" }}>
@@ -138,32 +136,35 @@ const MyNews = () => {
                 {removeHtmlTags(item.title)}
               </strong>
               <p>{removeHtmlTags(item.description)}</p>
-              {getImageUrl(item) !== "/images/loading.png" && (
-                <img src={getImageUrl(item)} alt="" width={100} />
+              {imageResults[item.title] && (
+                <img src={imageResults[item.title]} alt="" width={100} />
               )}
             </li>
           ))}
         </ul>
+        <S.Pagination>
+          {page > 1 && (
+            <button onClick={() => handlePageChange(1)}>{"<<"}</button>
+          )}
+          {startPage > 1 && <button onClick={handleBlockPrev}>{"<"}</button>}
 
-        {/* 페이지네이션 */}
-        <div
-          style={{
-            marginTop: "1rem",
-            display: "flex",
-            justifyContent: "center",
-            gap: "0.5rem",
-          }}
-        >
-          {Array.from({ length: totalPages }, (_, i) => (
+          {visiblePages.map((p) => (
             <button
-              key={i}
-              onClick={() => handlePageChange(i + 1)}
-              disabled={i + 1 === page}
+              key={p}
+              onClick={() => handlePageChange(p)}
+              disabled={p === page}
             >
-              {i + 1}
+              {p}
             </button>
           ))}
-        </div>
+
+          {endPage < totalPages && (
+            <button onClick={handleBlockNext}>{">"}</button>
+          )}
+          {page < totalPages && (
+            <button onClick={() => handlePageChange(totalPages)}>{">>"}</button>
+          )}
+        </S.Pagination>
       </div>
     </MyPageDiv>
   );

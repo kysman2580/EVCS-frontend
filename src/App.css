@@ -1,0 +1,7 @@
+/* 화면 클릭시 input 태그애들 자꾸 커서 생겨서 커서 없애는 기능 */
+input,
+textarea,
+[contenteditable] {
+  caret-color: transparent !important;
+  outline: none !important;
+}
