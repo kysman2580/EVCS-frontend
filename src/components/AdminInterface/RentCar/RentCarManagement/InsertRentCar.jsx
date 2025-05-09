@@ -170,14 +170,6 @@ const InsertRentCar = () => {
     });
   };
 
-  // 사용 안하는 메서드라 주석
-  // const handleImageUpload = (e) => {
-  //   const file = e.target.files[0];
-  //   if (file) {
-  //     setImagePreview(URL.createObjectURL(file));
-  //   }
-  // };
-
   //  필드별 ref 선언
   const carCompanyRef = useRef();
   const carTypeRef = useRef();

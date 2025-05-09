@@ -72,6 +72,7 @@ import Garage from "./components/AdminInterface/RentCar/Garage/Garage";
 import GarageEnrollForm from "./components/AdminInterface/RentCar/Garage/GarageEnrollForm";
 import GarageDetails from "./components/AdminInterface/RentCar/Garage/GarageDetails";
 import GarageUpdateForm from "./components/AdminInterface/RentCar/Garage/GarageUpdateForm";
+import CarMap from "./components/UserInterface/RentCar/TimeRentCar/CarMap";
 
 import "./App.css";
 
@@ -98,6 +99,7 @@ function App() {
             <Route path="/eventBoard" element={<EventBoard />} />
             <Route path="/goEventDetailPage/*" element={<EventBoardDetail />} />
             <Route path="/timerentalPage" element={<RentalPage />}></Route>
+            <Route path="/rentCarMap" element={<CarMap />}></Route>
 
             {/* 회원관련 */}
             <Route path="/loginPage" element={<LoginPage />} />
