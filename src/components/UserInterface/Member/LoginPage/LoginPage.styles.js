@@ -186,6 +186,10 @@ export const StyledSocialImg = styled.img`
     height: 45px;
     cursor: pointer;
     margin-top: 30px;
+
+    &:hover {
+    transform: scale(1.05);
+  }
 `;
 
 
@@ -202,6 +206,10 @@ export const StyledNaverButton = styled.button`
     display :flex;
     justify-content: center;
     align-items: center;
+
+    &:hover {
+    transform: scale(1.05);
+  }
     
 `;
 

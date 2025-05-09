@@ -20,12 +20,13 @@ import { useState } from 'react';
 import axios from "axios";
 import { useAuth } from "../../Context/AuthContext/AuthContext";
 import { toast } from 'react-toastify';
+import { useEffect } from "react";
 
 
 
 
 function LoginPage() {
-    const navi = useNavigate();
+    const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { login } = useAuth();
@@ -41,8 +42,6 @@ function LoginPage() {
 
     const handleLogin = (e) => {
         e.preventDefault();
-
-
 
         const loginData = {
             email: email,
@@ -62,14 +61,16 @@ function LoginPage() {
                 console.error('로그인 실패 : ', error);
                 if (error.response) {
                     toast.error(error.response.data.message);
-                  } else {
+                } else {
                     toast.error('알 수 없는 오류가 발생했습니다.');
-                  }
+                }
             });
     };
 
 
-
+    const handleKakaoLogin = () => {
+        window.location.href = "http://localhost:80/auth/login/kakao";
+    }
 
 
 
@@ -77,7 +78,7 @@ function LoginPage() {
         <StyledForm className="forms" onSubmit={handleLogin}>
             <StyledLoginForm>
                 <StyledLogoDiv >
-                    <StyledImg src="/images/Logo.png" alt="전기충만 로고" onClick={() => navi("/")} />
+                    <StyledImg src="/images/Logo.png" alt="전기충만 로고" onClick={() => navigate("/")} />
                 </StyledLogoDiv>
 
                 <StyledInputContainer>
@@ -100,9 +101,9 @@ function LoginPage() {
                 </StyledInputContainer>
 
                 <StyledFindDiv>
-                    <Styled_a onClick={() => navi("/findByPwPage")}>비밀번호 찾기</Styled_a>
+                    <Styled_a onClick={() => navigate("/findByPwPage")}>비밀번호 찾기</Styled_a>
                     <a className="stick">|</a>
-                    <Styled_a onClick={() => navi("/signUpPage")}>회원가입</Styled_a>
+                    <Styled_a onClick={() => navigate("/signUpPage")}>회원가입</Styled_a>
                 </StyledFindDiv>
 
                 <StyledButtonDiv>
@@ -112,9 +113,10 @@ function LoginPage() {
                 </StyledButtonDiv>
 
                 <StyledSocialDiv>
-                    <StyledSocialImg src="/images/kakao_login_button.png" />
+                    <StyledSocialImg onClick={handleKakaoLogin} src="/images/kakao_login_button.png" />
                     <StyledNaverButton>
-                        <Styled_N id="Big_N">N</Styled_N> 네이버 로그인</StyledNaverButton>
+                        <Styled_N id="Big_N">N</Styled_N> 네이버 로그인
+                    </StyledNaverButton>
                 </StyledSocialDiv>
 
 

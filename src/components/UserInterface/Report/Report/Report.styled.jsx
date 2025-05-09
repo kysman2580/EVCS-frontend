@@ -111,3 +111,7 @@ export const Report2 = styled.div`
     color: #666;
   }
 `;
+
+export const Report3 = styled.div`
+  margin: 0 auto;
+`;
