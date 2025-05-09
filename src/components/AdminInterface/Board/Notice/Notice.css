@@ -11,7 +11,7 @@
   font-weight: 700;
   color: #2c3e50;
   margin-bottom: 25px;
-  border-left: 5px solid #3498db;
+  border-left: 5px solid gray;
   padding-left: 12px;
 }
 
@@ -29,7 +29,7 @@
 }
 
 .Notice-container th {
-  background-color: #3498db;
+  background-color: gray;
   color: #fff;
   padding: 14px;
   font-weight: 400;
@@ -55,7 +55,7 @@
 .Notice-write-button button {
   padding: 8px 16px;
   font-size: 15px;
-  background-color: #007bff;
+  background-color: gray;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -89,7 +89,7 @@
 
 .Notice-form input:focus,
 .Notice-form textarea:focus {
-  border-color: #1976d2;
+  border-color: gray;
   outline: none;
 }
 
@@ -117,4 +117,147 @@
   margin: 0 3px;
   padding: 5px 10px;
   cursor: pointer;
+} /* 전체 레이아웃 설정 */
+.notice-detail-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: #f4f6f8;
+  min-height: 100vh;
+  padding: 50px 20px;
+}
+
+/* 공지사항 카드 스타일 */
+.notice-detail-card {
+  background-color: white;
+  border-radius: 10px;
+  padding: 30px;
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* 제목 스타일 */
+.notice-title {
+  font-size: 40px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* 작성자 및 날짜 영역 스타일 */
+.notice-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 26px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* 공지사항 내용 스타일 */
+.notice-content {
+  font-size: 20px;
+  color: #444;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  margin-bottom: 30px;
+}
+
+/* 수정 및 뒤로가기 버튼 공통 스타일 */
+.notice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* 공통 버튼 스타일 */
+.back-btn,
+.confirm-btn,
+.edit-btn,
+.delete-btn {
+  /* 추가된 삭제 버튼 스타일 */
+  padding: 10px 20px;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 20px; /* 버튼 글자 크기 */
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* 뒤로가기 버튼 색상 */
+.back-btn {
+  background-color: #2e7d32;
+}
+.back-btn:hover {
+  background-color: #1b5e20;
+}
+
+/* 수정 완료 버튼 색상 */
+.confirm-btn {
+  background-color: #1565c0;
+}
+.confirm-btn:hover {
+  background-color: #0d47a1;
+}
+
+/* 수정 버튼 색상 */
+.edit-btn {
+  background-color: #f9a825;
+}
+.edit-btn:hover {
+  background-color: #f57f17;
+}
+
+/* 삭제 버튼 색상 (추가된 부분) */
+.delete-btn {
+  background-color: #e53935; /* 삭제 버튼 색상 */
+  font-size: 24px; /* 삭제 버튼 글자 크기 크게 설정 */
+}
+.delete-btn:hover {
+  background-color: #c62828; /* 삭제 버튼 hover 색상 */
+}
+
+/* 수정 모드에서 입력창 스타일 */
+.notice-detail-card input,
+.notice-detail-card textarea {
+  width: 100%;
+  font-size: 18px;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+.notice-detail-card textarea {
+  min-height: 150px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 600px) {
+  .notice-title {
+    font-size: 28px;
+  }
+
+  .notice-meta {
+    flex-direction: column;
+    font-size: 18px;
+  }
+
+  .notice-content {
+    font-size: 16px;
+  }
+
+  .back-btn,
+  .confirm-btn,
+  .edit-btn,
+  .delete-btn {
+    font-size: 18px;
+    width: 100%;
+  }
+
+  .notice-actions {
+    flex-direction: column;
+  }
 }

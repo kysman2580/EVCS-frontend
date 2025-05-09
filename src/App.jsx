@@ -9,11 +9,12 @@ import "react-toastify/dist/ReactToastify.css";
 
 /* 드라이빙 루뜨 관련 */
 import DRBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteBoard/DRBoard";
-/* 누스 관련 */
+/* 뉴스 관련 */
 import NewsMain from "./components/UserInterface/News/NewsMain/NewsMain";
 import NewsDetail from "./components/UserInterface/News/NewsDetail/NewsDetail";
 import NewsList from "./components/UserInterface/News/NewsList/NewsList";
 import MyNews from "./components/UserInterface/News/MyNews/MyNews";
+import AdminNews from "./components/AdminInterface/News/NewsAdminPage";
 
 /* 충전소 위치 관련 */
 import ChargingMap from "./components/UserInterface/ChargingMap/ChargingMap";
@@ -27,7 +28,7 @@ import ReportDetail from "./components/UserInterface/Report/ReportDetail/ReportD
 /* 게시판 페이지 관련 */
 import UserNotice from "./components/UserInterface/Board/Notice/UserNotice";
 import UserNoticeDetail from "./components/UserInterface/Board/Notice/UserNoticeDetail";
-import AdminNotice from "./components/AdminInterface/Board/Notice/Notice";
+import Notice from "./components/AdminInterface/Board/Notice/Notice";
 import NoticeDetail from "./components/AdminInterface/Board/Notice/NoticeDetail";
 import NoticeWrite from "./components/AdminInterface/Board/Notice/NoticeWrite";
 import EventBoard from "./components/UserInterface/Board/Event/EventBoard";
@@ -75,6 +76,8 @@ import GarageEnrollForm from "./components/AdminInterface/RentCar/Garage/GarageE
 import GarageDetails from "./components/AdminInterface/RentCar/Garage/GarageDetails";
 import GarageUpdateForm from "./components/AdminInterface/RentCar/Garage/GarageUpdateForm";
 
+import "./App.css";
+
 function App() {
   return (
     <>
@@ -119,7 +122,6 @@ function App() {
 
             {/* 소셜 관련 */}
             <Route path="/auth/kakao/callback" element={<KakaoRedirectHandler />} />
-
 
             {/* 신고 관련 */}
             <Route path="/report/*" element={<Report useDummyData={true} />} />
@@ -183,7 +185,7 @@ function App() {
               />
 
               {/* 게시판 페이지 관련 */}
-              <Route path="/admin/notice" element={<AdminNotice />} />
+              <Route path="/admin/notice" element={<Notice />} />
               <Route path="/admin/notice/:id" element={<NoticeDetail />} />
               <Route path="/admin/notice/write" element={<NoticeWrite />} />
 
@@ -215,6 +217,9 @@ function App() {
                 path="/admin/reports/:boardNo"
                 element={<ReportDetail useDummyData={true} />}
               />
+
+              {/* 뉴스 관련 */}
+              <Route path="/admin/adminNews" element={<AdminNews />} />
             </Route>
           </Route>
         </Routes>
