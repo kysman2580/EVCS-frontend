@@ -149,10 +149,6 @@ const InsertRentCar = () => {
       });
   }, []);
 
-  const handleAdress = () => {
-    setAddressModal(true);
-  };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
@@ -513,7 +509,7 @@ const InsertRentCar = () => {
             <Row className="mb-3">
               {/* 상태(전체/사용중/사용중지) */}
               {/* 시/도 */}
-              <Col md={2}>
+              <Col md={4}>
                 <Form.Select
                   value={regionSido}
                   onChange={(e) => {
@@ -532,7 +528,7 @@ const InsertRentCar = () => {
                 </Form.Select>
               </Col>
               {/* 시군구 */}
-              <Col md={2}>
+              <Col md={4}>
                 <Form.Select
                   value={regionSigungu}
                   disabled={!regionSido}
@@ -551,7 +547,7 @@ const InsertRentCar = () => {
                 </Form.Select>
               </Col>
               {/* 동 */}
-              <Col md={2}>
+              <Col md={4}>
                 <Form.Select
                   value={regionDong}
                   disabled={!regionSigungu}
@@ -567,29 +563,6 @@ const InsertRentCar = () => {
                     </option>
                   ))}
                 </Form.Select>
-              </Col>
-              {/* 검색어 */}
-              <Col md={4}>
-                <Form.Control
-                  value={searchKeyword}
-                  placeholder="검색어"
-                  onChange={(e) => setSearchKeyword(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleRegionSearch();
-                    }
-                  }}
-                />
-              </Col>
-              <Col md={2}>
-                <Button
-                  className="w-100"
-                  variant="secondary"
-                  onClick={handleRegionSearch}
-                >
-                  검색
-                </Button>
               </Col>
             </Row>
 
