@@ -163,12 +163,10 @@ const NewsMain = ({ backendUrl = "http://localhost:80" }) => {
           .map((item) => item.newsCategory)
           .filter((name) => name && name !== "기타");
 
-        console.log("✅ 최종 카테고리 목록:", list);
         setKeywords(list);
       })
 
       .catch((err) => {
-        console.error("❌ 카테고리 로딩 실패", err);
         setKeywords(["전기차"]); // fallback
       });
 

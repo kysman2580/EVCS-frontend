@@ -3,20 +3,17 @@ import { useNavigate } from "react-router-dom";
 
 // prettier-ignore
 const MyPageNav = () => {
-    const navi = useNavigate();
+  const navi = useNavigate();
 
-    return (
-        <>
-            <NavDiv>
-                <NavRentContentDiv>
-                    <StyledHeaderBtn onClick={() => navi("/myPage")}>
-                        내 정보
-                    </StyledHeaderBtn>
+  return (
+    <>
+      <NavDiv>
+        <NavRentContentDiv>
+          <StyledHeaderBtn onClick={() => navi("/myPage")}>
+            내 정보
+          </StyledHeaderBtn>
 
-                    <StyledHeaderBtn onClick={() => navi("/#")}>
-                        내 리뷰
-                    </StyledHeaderBtn>
-
+          <StyledHeaderBtn onClick={() => navi("/#")}>내 리뷰</StyledHeaderBtn>
                     <StyledHeaderBtn onClick={() => navi("/newsMyPage")}>
                         내 뉴스
                     </StyledHeaderBtn>
@@ -26,16 +23,17 @@ const MyPageNav = () => {
                     </StyledHeaderBtn>
 
                     <StyledHeaderBtn onClick={() => navi("/report")}>
-                        신고 내역
+                        게시글 신고 내역
                     </StyledHeaderBtn>
-
-                    <StyledHeaderBtn onClick={() => navi("/#")}>
-                        구매 내역
+                    <StyledHeaderBtn onClick={() => navi("/report")}>
+                        댓글 신고 내역
                     </StyledHeaderBtn>
-                </NavRentContentDiv>
-            </NavDiv>
-        </>
-
-    );
+          <StyledHeaderBtn onClick={() => navi("/#")}>
+            구매 내역
+          </StyledHeaderBtn>
+        </NavRentContentDiv>
+      </NavDiv>
+    </>
+  );
 };
 export default MyPageNav;

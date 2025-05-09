@@ -18,27 +18,36 @@ export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 90%;
-  margin: 30px auto;
+  margin: 50px auto;
 `;
 export const ContentBox = styled.div`
+  position: relative;
   width: 500px;
-  height: auto;
+  background: #fff;
+  border: 1px solid #dbdbdb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 40px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  border-top: 1px solid grey;
-  border-bottom: 1px solid grey;
+  overflow: hidden;
 `;
 
 export const NickName = styled.div`
-  margin-top: 30px;
+  padding: 15px;
+  font-weight: bold;
+  font-size: 15px;
 `;
 
 export const Images = styled.div`
   width: 100%;
-  height: 70%;
-  margin: 10px auto;
+  height: auto;
+  .slider-container img {
+    border-radius: 0;
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+  }
 `;
 
 export const Img = styled.img`
@@ -48,13 +57,27 @@ export const Img = styled.img`
 `;
 
 export const Content = styled.div`
-  margin: 10px 20px;
-  display: flex;
-  justify-content: space-between;
+  margin: 0 15px 15px 15px;
+  font-size: 14px;
+  line-height: 1.6;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: ${({ expanded }) => (expanded ? "unset" : 2)};
+  -webkit-box-orient: vertical;
+  position: relative;
 `;
 
 export const PostIcon = styled.div`
-  margin: 10px;
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  gap: 12px;
+  font-size: 22px;
+`;
+export const DriveRouteIcon = styled.div`
+  margin-left: 253px;
+  gap: 12px;
+  font-size: 22px;
 `;
 
 export const RentBodyDiv = styled.div`
@@ -159,12 +182,30 @@ export const LeftComment = styled.div`
   width: 60%;
   height: 100%;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: bold;
-  border-right: 1px solid black;
+  flex-direction: column;
+  border-right: 1px solid #ddd;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #fafafa;
 `;
 
+export const BoardImage = styled.div`
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+`;
+
+export const BoardContent = styled.div`
+  margin-top: 20px;
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 8px;
+  font-size: 16px;
+  line-height: 1.6;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  white-space: pre-wrap;
+`;
 export const DriveRoute = styled.div`
   height: 100%;
   width: 100%;
@@ -221,36 +262,197 @@ export const CommentModalLabel = styled.div`
   transform: translate(-50%, -50%);
   background-color: white;
   z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* 바깥 스크롤 제거 */
+  border-radius: 1rem;
 `;
-
 export const SeeDriveRoute = styled.div`
-  height: 5%;
+  height: 3%;
+  text-align: center;
+  align-items: center;
+  font-weight: bold;
+  border-bottom: 1px solid black;
+  font-size: 20px;
 `;
 export const Comments = styled.div`
-  height: 80%;
+  height: 90%;
+  overflow-y: auto;
+  padding: 10px 15px;
+  background-color: transparent;
+
+  /* 스크롤바 투명하게 */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.1); /* 연한 회색 */
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
 `;
 
 export const InsertComment = styled.div`
-  height: 15%;
+  height: 10%;
   display: flex;
-  border-top: 1px solid black;
+  border-top: 1px solid #ddd;
+  padding: 10px;
+  background-color: #f9f9f9;
 `;
 
 export const Commentarea = styled.textarea`
   width: 80%;
   border: none;
-  overflow: hidden;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 8px;
+  background-color: #f1f3f5;
+  resize: none;
+
   &:focus {
     outline: none;
-    border: none;
-    box-shadow: none;
   }
 `;
 
 export const CommentSubmit = styled.div`
-  height: 20%;
-  border: none;
+  padding: 10px 15px;
   color: #2962ff;
   font-weight: bold;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+export const ModalDriveRoute = styled.div`
+  margin: 10px;
+`;
+export const ModalDriveRouteImg = styled.img`
+  width: 80%;
+  height: 100%;
+`;
+
+export const MoreButtonWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+`;
+
+export const MoreText = styled.div`
+  color: #999;
+  cursor: pointer;
+  font-size: 13px;
+  margin: 0 15px 10px;
+  align-self: flex-start;
+`;
+
+export const StyledMoreButton = styled.button`
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+export const CommentItem = styled.div`
+  padding: 10px 15px;
+  margin-bottom: 8px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+`;
+
+export const CommentAuthor = styled.div`
+  font-weight: 600;
+  color: #2962ff;
+  margin-bottom: 4px;
+`;
+
+export const CommentText = styled.div`
+  font-size: 14px;
+  color: #333;
+  line-height: 1.4;
+  white-space: pre-wrap;
+`;
+
+export const DeleteButton = styled.button`
+  top: 10px;
+  right: 10px;
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 10;
+
+  &:hover {
+    background-color: #fa5252;
+  }
+`;
+
+export const UpdateButton = styled.button`
+  background-color: black;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #333;
+  }
+`;
+
+export const TopBar = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+`;
+
+export const ButtonGroup = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+
+export const CommentTop = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const CommentButtonGroup = styled.div`
+  display: flex;
+  gap: 8px;
+
+  .edit {
+    color: black;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+  }
+
+  .delete {
+    color: #ff4d4f;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+  }
 `;
