@@ -313,8 +313,8 @@ const AdminHotDealRentCarEnrollForm = () => {
                           <td>{r.categoryName}</td>
                           <td>{r.rentCarNo}</td>
                           <td>{r.carName}</td>
-                          <td>{r.carType}</td>
-                          <td>{r.carCompany}</td>
+                          <td>{r.carTypeName}</td>
+                          <td>{r.companyName}</td>
                           <td>{r.enrollPlace}</td>
                           <td>{r.postAdd}</td>
                           <td>{r.status}</td>

@@ -51,6 +51,19 @@ const InsertRentCar = () => {
   const [status, setStatus] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
 
+  const [options, setOptions] = useState([]); // 전체 옵션 목록
+  const [selectedOptions, setSelectedOptions] = useState([]); // 선택된 옵션번호 배열
+
+  useEffect(() => {
+    axios
+      .get("http://localhost/rentCar/options") // 옵션 목록 불러오기
+      .then((res) => {
+        console.log("옵션들 : ", res.data);
+        setOptions(res.data); // [{ optionNo: 1, optionName: '네비' }, ...]
+      })
+      .catch(console.error);
+  }, []);
+
   // 중복 제거 함수
   const getUniqueList = (arr, key) => {
     const seen = new Set();
@@ -207,6 +220,7 @@ const InsertRentCar = () => {
         carNo: form.carNo,
         rentCarPrice: form.rentCarPrice,
         garageNo: form.garageNo,
+        optionNos: selectedOptions,
       })
       .then((result) => {
         alert("차량이 등록되었습니다!");
@@ -431,6 +445,36 @@ const InsertRentCar = () => {
                     </Form.Group>
                   </Col>
                 </Row>
+                <Form.Group className="mb-3" controlId="carOptions">
+                  <Form.Label className="fw-bold">차량 옵션 :</Form.Label>
+                  <Row>
+                    {options.map((opt) => {
+                      const inputId = `option-${opt.optionNo}`; // 고유 id 생성
+                      return (
+                        <Col xs={6} key={opt.optionNo}>
+                          <Form.Check
+                            id={inputId} // 🔑 고유 ID
+                            type="checkbox"
+                            label={opt.optionName}
+                            checked={selectedOptions.includes(opt.optionNo)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedOptions((prev) => [
+                                  ...prev,
+                                  opt.optionNo,
+                                ]);
+                              } else {
+                                setSelectedOptions((prev) =>
+                                  prev.filter((no) => no !== opt.optionNo)
+                                );
+                              }
+                            }}
+                          />
+                        </Col>
+                      );
+                    })}
+                  </Row>
+                </Form.Group>
 
                 {/* 변경된 부분: enrollPlace + postAdd를 한 줄에 */}
                 <Row className="mb-4" style={{ alignItems: "flex-end" }}>
