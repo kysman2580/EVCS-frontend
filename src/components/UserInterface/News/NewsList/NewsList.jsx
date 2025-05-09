@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import {
   ListNewsItem,
   SearchBar,
@@ -11,16 +11,22 @@ import * as S from "../NewsMain/NewsMain.styles";
 
 const NewsList = ({ backendUrl = "http://localhost:80" }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
 
-  const [query, setQuery] = useState("전기차");
-  const [sort, setSort] = useState("sim");
-  const [page, setPage] = useState(1);
-  const [size] = useState(10);
+  // URL 쿼리 파라미터나 기본값("전기차")으로 초기화
+  const [query, setQuery] = useState(queryParams.get("query") || "전기차");
+  const [sort, setSort] = useState(queryParams.get("sort") || "sim");
+  const [page, setPage] = useState(Number(queryParams.get("page")) || 1);
+  const size = 10;
+
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [imageResults, setImageResults] = useState({});
+  const [keywords, setKeywords] = useState([]);
 
+  // 실제 뉴스 API 호출
   const fetchNews = async (targetPage = 1) => {
     setLoading(true);
     try {
@@ -29,8 +35,7 @@ const NewsList = ({ backendUrl = "http://localhost:80" }) => {
       });
 
       const rawItems = res.data.items || [];
-
-      // 중복 제거: originallink 기준
+      // 중복 제거
       const uniqueItems = Array.from(
         new Map(rawItems.map((item) => [item.originallink, item])).values()
       );
@@ -45,114 +50,144 @@ const NewsList = ({ backendUrl = "http://localhost:80" }) => {
     }
   };
 
-  const extractKeywords = (title) => {
-    const clean = title
-      .replace(/<[^>]+>/g, "")
-      .replace(/[^가-힣a-zA-Z0-9 ]/g, "");
-    return clean
-      .split(" ")
-      .filter((w) => w.length >= 2)
-      .slice(0, 2)
-      .join(" ");
+  // 검색 버튼 클릭 또는 키워드 버튼 클릭 핸들러
+  // searchQuery 파라미터가 있으면 그걸, 없으면 현재 query state를 사용
+  const handleSearch = (searchQuery) => {
+    const q = (searchQuery ?? query).trim() || "전기차";
+    setQuery(q);
+    fetchNews(1);
   };
 
-  const getImageUrl = (item) => {
-    const key = removeHtmlTags(item.title);
-    return imageResults[key] || "/images/loading.png";
-  };
-
-  const handleChatClick = async (item) => {
-    const key = removeHtmlTags(item.title);
-    let imageUrl = getImageUrl(item);
-
-    if (imageUrl === "/images/loading.png") {
-      try {
-        const kws = extractKeywords(key);
-        const res = await axios.get(`${backendUrl}/api/naver-image`, {
-          params: { query: kws },
-        });
-        const hits = res.data.items || [];
-        imageUrl = hits[0]?.thumbnail || hits[0]?.link || "/images/loading.png";
-        setImageResults((prev) => ({ ...prev, [key]: imageUrl }));
-      } catch (e) {
-        console.error("ChatIcon 클릭 시 이미지 재요청 실패:", e);
-      }
+  // 카테고리(키워드) 불러오기
+  const fetchCategories = async () => {
+    try {
+      const res = await axios.get(`${backendUrl}/api/news/categories`);
+      const list = res.data
+        .map((item) => item.newsCategory)
+        .filter((name) => name && name !== "기타");
+      setKeywords(list);
+    } catch (err) {
+      console.error("카테고리 로딩 실패:", err);
+      setKeywords(["전기차"]);
     }
+  };
 
+  // 컴포넌트 처음 마운트 시
+  useEffect(() => {
+    fetchNews(1);
+    fetchCategories();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // 페이지네이션 계산
+  const totalPages = Math.ceil(Math.min(total, 1000) / size);
+  const currentBlock = Math.floor((page - 1) / 10);
+  const startPage = currentBlock * 10 + 1;
+  const endPage = Math.min(startPage + 9, totalPages);
+  const visiblePages = Array.from(
+    { length: endPage - startPage + 1 },
+    (_, i) => startPage + i
+  );
+
+  // 페이지 변경 핸들러
+  const handlePageChange = (targetPage) => fetchNews(targetPage);
+  const handleBlockPrev = () => {
+    const prev = startPage - 10;
+    if (prev >= 1) handlePageChange(prev);
+  };
+  const handleBlockNext = () => {
+    const next = startPage + 10;
+    if (next <= totalPages) handlePageChange(next);
+  };
+
+  // 아이템 클릭 → 상세 페이지로 이동
+  const handleChatClick = (item) => {
     navigate("/newsDetail", {
       state: {
         title: removeHtmlTags(item.title),
         description: removeHtmlTags(item.description),
         pubDate: formatDate(item.pubDate),
-        imageUrl,
+        imageUrl: item.imageUrl,
         originallink: item.originallink,
         query,
       },
     });
   };
 
-  useEffect(() => {
-    fetchNews(1);
-  }, [query, sort]);
-
-  const totalPages = Math.ceil(Math.min(total, 1000) / size);
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
-  const visiblePages = pages.slice(
-    Math.floor((page - 1) / 10) * 10,
-    Math.floor((page - 1) / 10) * 10 + 10
-  );
-
   return (
-    <S.Container>
-      <SearchBar
-        query={query}
-        setQuery={setQuery}
-        handleSearch={() => fetchNews(1)}
-        keywords={["전기차", "에너지", "태양광", "풍력", "수소"]}
-      />
+    <S.FullWidthContainer>
+      <S.Container>
+        <S.PageHeader>뉴스 전체 보기</S.PageHeader>
 
-      <S.SortButtons>
-        <button onClick={() => setSort("sim")} disabled={sort === "sim"}>
-          유사도순
-        </button>
-        <button onClick={() => setSort("date")} disabled={sort === "date"}>
-          최신순
-        </button>
-      </S.SortButtons>
+        {/* 수정된 SearchBar */}
+        <SearchBar
+          query={query}
+          setQuery={setQuery}
+          handleSearch={handleSearch}
+          keywords={keywords}
+        />
 
-      <div>총 {total.toLocaleString()}건</div>
+        <S.SectionHeader>
+          <S.SectionIcon>|</S.SectionIcon> 전체 뉴스 리스트
+        </S.SectionHeader>
+        <S.SortButtons>
+          <S.KeywordButton
+            onClick={() => {
+              setSort("date");
+              fetchNews(1);
+            }}
+            active={sort === "date"}
+          >
+            최신순
+          </S.KeywordButton>
+          <S.KeywordButton
+            onClick={() => {
+              setSort("sim");
+              fetchNews(1);
+            }}
+            active={sort === "sim"}
+          >
+            유사도순
+          </S.KeywordButton>
+        </S.SortButtons>
 
-      <S.ListContainer>
-        {items.map((item) => (
-          <ListNewsItem
-            key={item.originallink}
-            item={item}
-            onChatClick={handleChatClick}
-            loading={loading}
-          />
-        ))}
-      </S.ListContainer>
+        <S.NewsList>
+          <S.NewsItems>
+            {items.map((item) => (
+              <ListNewsItem
+                key={item.originallink}
+                item={item}
+                onChatClick={handleChatClick}
+                loading={loading}
+              />
+            ))}
+          </S.NewsItems>
+        </S.NewsList>
 
-      <S.Pagination>
-        {page > 10 && (
-          <button onClick={() => fetchNews(page - 10)}>{`<<`}</button>
-        )}
-        {page > 1 && <button onClick={() => fetchNews(page - 1)}>{`<`}</button>}
-
-        {visiblePages.map((p) => (
-          <button key={p} onClick={() => fetchNews(p)} disabled={p === page}>
-            {p}
-          </button>
-        ))}
-
-        {page < totalPages && (
-          <button onClick={() => fetchNews(page + 1)}>{`>`}</button>
-        )}
-        {page + 10 <= totalPages && (
-          <button onClick={() => fetchNews(page + 10)}>{`>>`}</button>
-        )}
-      </S.Pagination>
-    </S.Container>
+        {/* 페이지네이션 */}
+        <S.Pagination>
+          {page > 1 && (
+            <button onClick={() => handlePageChange(1)}>{"<<"}</button>
+          )}
+          {startPage > 1 && <button onClick={handleBlockPrev}>{"<"}</button>}
+          {visiblePages.map((p) => (
+            <button
+              key={p}
+              onClick={() => handlePageChange(p)}
+              disabled={p === page}
+            >
+              {p}
+            </button>
+          ))}
+          {endPage < totalPages && (
+            <button onClick={handleBlockNext}>{">"}</button>
+          )}
+          {page < totalPages && (
+            <button onClick={() => handlePageChange(totalPages)}>{">>"}</button>
+          )}
+        </S.Pagination>
+      </S.Container>
+    </S.FullWidthContainer>
   );
 };
 

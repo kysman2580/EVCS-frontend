@@ -9,10 +9,12 @@ import "react-toastify/dist/ReactToastify.css";
 
 /* 드라이빙 루뜨 관련 */
 import DRBoard from "./components/UserInterface/Board/DriverRoute/DriveRouteBoard/DRBoard";
-/* 누스 관련 */
+/* 뉴스 관련 */
 import NewsMain from "./components/UserInterface/News/NewsMain/NewsMain";
 import NewsDetail from "./components/UserInterface/News/NewsDetail/NewsDetail";
 import NewsList from "./components/UserInterface/News/NewsList/NewsList";
+import MyNews from "./components/UserInterface/News/MyNews/MyNews";
+import AdminNews from "./components/AdminInterface/News/NewsAdminPage";
 
 /* 충전소 위치 관련 */
 import ChargingMap from "./components/UserInterface/ChargingMap/ChargingMap";
@@ -27,7 +29,7 @@ import AdminReportDetail from "./components/AdminInterface/Report/AdminReportDet
 /* 게시판 페이지 관련 */
 import UserNotice from "./components/UserInterface/Board/Notice/UserNotice";
 import UserNoticeDetail from "./components/UserInterface/Board/Notice/UserNoticeDetail";
-import AdminNotice from "./components/AdminInterface/Board/Notice/Notice";
+import Notice from "./components/AdminInterface/Board/Notice/Notice";
 import NoticeDetail from "./components/AdminInterface/Board/Notice/NoticeDetail";
 import NoticeWrite from "./components/AdminInterface/Board/Notice/NoticeWrite";
 import EventBoard from "./components/UserInterface/Board/Event/EventBoard";
@@ -41,6 +43,7 @@ import AdminEventBoardEnrollForm from "./components/AdminInterface/Board/Event/A
 import LoginPage from "./components/UserInterface/Member/LoginPage/LoginPage";
 import MemberRating from "./components/UserInterface/Member/Mypage/MemberRating";
 import ChangePasswordPage from "./components/UserInterface/Member/Mypage/ChangePassword";
+import FindByPwPage from "./components/UserInterface/Member/FindByPasswordPage/FindPwPage";
 
 /* 렌트카 관련 */
 import LongTermRentCarDetail from "./components/UserInterface/RentCar/LongTermRentCar/LongTermRentCarDetail";
@@ -65,6 +68,14 @@ import MyPage from "./components/UserInterface/Member/Mypage/Mypage";
 import InsertRentCar from "./components/AdminInterface/RentCar/RentCarManagement/InsertRentCar";
 import RentCarManagement from "./components/AdminInterface/RentCar/RentCarManagement/RentCarManagement";
 import RentCarDetails from "./components/AdminInterface/RentCar/RentCarManagement/RenCarDetails";
+import UpdatePwPage from "./components/UserInterface/Member/UpdatePasswordPage/UpdatePwPage";
+import Garage from "./components/AdminInterface/RentCar/Garage/Garage";
+import GarageEnrollForm from "./components/AdminInterface/RentCar/Garage/GarageEnrollForm";
+import GarageDetails from "./components/AdminInterface/RentCar/Garage/GarageDetails";
+import GarageUpdateForm from "./components/AdminInterface/RentCar/Garage/GarageUpdateForm";
+import CarMap from "./components/UserInterface/RentCar/TimeRentCar/CarMap";
+
+import "./App.css";
 
 function App() {
   return (
@@ -89,6 +100,7 @@ function App() {
             <Route path="/eventBoard" element={<EventBoard />} />
             <Route path="/goEventDetailPage/*" element={<EventBoardDetail />} />
             <Route path="/timerentalPage" element={<RentalPage />}></Route>
+            <Route path="/rentCarMap" element={<CarMap />}></Route>
 
             {/* 회원관련 */}
             <Route path="/loginPage" element={<LoginPage />} />
@@ -103,6 +115,10 @@ function App() {
               path="/changePasswordPage"
               element={<ChangePasswordPage />}
             />
+
+            <Route path="/findByPwPage" element={<FindByPwPage />} />
+
+            <Route path="/updatePwPage" element={<UpdatePwPage />} />
 
             {/* 신고 관련 */}
             <Route path="/report/*" element={<Report useDummyData={true} />} />
@@ -119,6 +135,7 @@ function App() {
             <Route path="/newsMain" element={<NewsMain />} />
             <Route path="/newsDetail" element={<NewsDetail />} />
             <Route path="/news-list" element={<NewsList />} />
+            <Route path="/newsMyPage" element={<MyNews />} />
 
             {/* 렌트카 관련 */}
             <Route path="/hotRentCar" element={<HotdealRentCar />} />
@@ -150,9 +167,22 @@ function App() {
                 path="/admin/goHotdealUpdate/*"
                 element={<AdminHotDealRentCarUpdate />}
               />
+              <Route path="garagePage" element={<Garage />} />
+              <Route
+                path="/admin/goGarageEnrollForm/*"
+                element={<GarageEnrollForm />}
+              />
+              <Route
+                path="/admin/goGarageDetail*"
+                element={<GarageDetails />}
+              />
+              <Route
+                path="/admin/goGarageUpdateForm"
+                element={<GarageUpdateForm />}
+              />
 
               {/* 게시판 페이지 관련 */}
-              <Route path="/admin/notice" element={<AdminNotice />} />
+              <Route path="/admin/notice" element={<Notice />} />
               <Route path="/admin/notice/:id" element={<NoticeDetail />} />
               <Route path="/admin/notice/write" element={<NoticeWrite />} />
 
@@ -184,6 +214,9 @@ function App() {
                 path="/admin/adminReports/:rpNo"
                 element={<AdminReportDetail useDummyData={true} />}
               />
+
+              {/* 뉴스 관련 */}
+              <Route path="/admin/adminNews" element={<AdminNews />} />
             </Route>
           </Route>
         </Routes>

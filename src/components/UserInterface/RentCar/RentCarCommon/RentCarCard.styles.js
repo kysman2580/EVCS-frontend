@@ -1,8 +1,9 @@
 import styled from "styled-components";
 
 export const RentCarCardContainer = styled.div`
-  width: 22%;
-  height: 25%;
+  position: relative;
+  width: 300px;
+  height: 200px;
   display: flex;
   flex-direction: column;
   border-radius: 5%;
@@ -20,7 +21,7 @@ export const RentCarCardContainer = styled.div`
 
 export const RentCarCardImgDiv = styled.div`
   width: 100%;
-  height: 50%;
+  height: 160px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -40,6 +41,8 @@ export const RentCarCardImg = styled.img`
   width: 60%;
   height: 100%;
   border-radius: 5%;
+  object-fit: cover;
+  background-color: #f0f0f0;
 `;
 
 export const RentCarNameDiv = styled.div`
@@ -47,6 +50,10 @@ export const RentCarNameDiv = styled.div`
   width: 100%;
   height: 33%;
   text-align: center;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const RentCarMiddleDiv = styled.div`
@@ -69,4 +76,13 @@ export const RentCarPlaceSpan = styled.span`
   width: 50%;
   height: 100%;
   margin-left: 7px;
+`;
+
+export const InlineBadge = styled.span`
+  background: #ff5722;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  margin-left: 8px;
 `;

@@ -1,37 +1,22 @@
-// NoticeWrite.js
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function NoticeWrite() {
   const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
+  const [writer, setWriter] = useState("");
   const [content, setContent] = useState("");
   const navigate = useNavigate();
 
   const handleSave = () => {
-    if (!title || !author || !content) {
-      alert("모든 필드를 작성해 주세요.");
-      return;
-    }
-
-    const newNotice = {
-      title,
-      author,
-      content,
-      date: getToday(),
-    };
-
-    // 기존 공지사항 목록 불러오기
-    const notices = JSON.parse(localStorage.getItem("notices") || "[]");
-    notices.push(newNotice);
-    localStorage.setItem("notices", JSON.stringify(notices));
-
-    navigate("/admin/notice"); // 공지사항 목록 페이지로 돌아가기
-  };
-
-  const getToday = () => {
-    const today = new Date();
-    return today.toISOString().split("T")[0].replace(/-/g, ".");
+    axios
+      .post(`http://localhost/notices`, {
+        noticeTitle: title,
+        noticeContent: content,
+        noticeWriter: writer,
+      })
+      .then(() => navigate("/admin/notice"))
+      .catch((err) => alert("저장 실패: " + err.message));
   };
 
   return (
@@ -47,8 +32,8 @@ function NoticeWrite() {
         <input
           type="text"
           placeholder="작성자"
-          value={author}
-          onChange={(e) => setAuthor(e.target.value)}
+          value={writer}
+          onChange={(e) => setWriter(e.target.value)}
         />
         <textarea
           placeholder="내용"
@@ -71,5 +56,4 @@ function NoticeWrite() {
     </div>
   );
 }
-
 export default NoticeWrite;

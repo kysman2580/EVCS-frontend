@@ -184,7 +184,7 @@ export const Container = styled.div`
   width: 460px;
   height: 500px;
   padding: 40px;
-  margin-left: 540px;
+  margin-left: 400px;
   margin-top: 150px;
   border: 1px solid #ccc;
   background-color: white;
