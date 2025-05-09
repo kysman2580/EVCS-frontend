@@ -28,7 +28,6 @@ const CommentSection = ({ newsNo, backendUrl }) => {
         params: { newsNo },
         ...authHeader,
       });
-      console.log("raw comments from server:", res.data);
       setComments(res.data);
     } catch (error) {
       console.error("댓글 불러오기 실패", error);

@@ -78,8 +78,6 @@ import GarageDetails from "./components/AdminInterface/RentCar/Garage/GarageDeta
 import GarageUpdateForm from "./components/AdminInterface/RentCar/Garage/GarageUpdateForm";
 import CarMap from "./components/UserInterface/RentCar/TimeRentCar/CarMap";
 
-import "./App.css";
-
 function App() {
   return (
     <>

@@ -13,68 +13,52 @@ import {
 const CarManagement = () => {
   const navigate = useNavigate();
 
-  const [category, setCategory] = useState("");
-  const [manufacturer, setManufacturer] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState();
-  const [totalPages, setTotalPages] = useState();
-  const [startPage, setStartPage] = useState(1);
+  const [carType, setCarType] = useState([]);
+  const [carTypeNo, setCarTypeNo] = useState("");
+  const [carCompany, setCarCompany] = useState([]);
+  const [carCompanyNo, setCarCompanyNo] = useState("");
   const [carInfo, setCarInfo] = useState([]);
 
   useEffect(() => {
-    console.log(currentPage);
     axios
-      .get(`http://localhost/car/${currentPage}`)
+      .get(`http://localhost/car`, {
+        params: {
+          carCompanyNo: carCompanyNo,
+          carTypeNo: carTypeNo,
+          searchKeyword: searchKeyword,
+        },
+      })
       .then((result) => {
         console.log(result.data);
-        const res = result.data;
-        setCarInfo(res.carInfo);
-        setStartPage(res.pageInfo.startPage);
-        setPageSize(res.pageInfo.pageSize);
-        setTotalPages(res.pageInfo.totalPages);
+        setCarInfo(result.data.carInfo);
+        setCarCompany(result.data.carCompanyInfo);
+        setCarType(result.data.carTypeInfo);
       })
       .catch((error) => {
         console.log(error);
       });
-  }, [currentPage]);
-  // 예시용 차량 리스트
-  const carList = carInfo.map((carinformation) => ({
-    no: carinformation.carNo,
-    name: carinformation.carName,
-    type: carinformation.carType,
-    year: carinformation.carYear,
-    company: carinformation.carCompany,
-    battery: carinformation.carBattery,
-    enrollDate: carinformation.enrollDate,
-  }));
+  }, [carCompanyNo, carTypeNo]);
 
   const handleSearch = () => {
-    // 여기서 검색 기능 추가할 수 있음
-    alert(
-      `검색어: ${searchKeyword}, 제조사: ${manufacturer}, 카테고리: ${category}`
-    );
+    axios
+      .get(`http://localhost/car`, {
+        params: {
+          carCompanyNo: carCompanyNo,
+          carTypeNo: carTypeNo,
+          searchKeyword: searchKeyword,
+        },
+      })
+      .then((result) => {
+        console.log(result.data);
+        setCarInfo(result.data.carInfo);
+        setCarCompany(result.data.carCompanyInfo);
+        setCarType(result.data.carTypeInfo);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
-
-  const Previous = () => {
-    if (startPage > 5) {
-      setStartPage(startPage - pageSize);
-      setCurrentPage(startPage - pageSize);
-    }
-  };
-
-  const Next = () => {
-    if (startPage + 5 <= totalPages) {
-      setStartPage(startPage + 5);
-      setPage(startPage + 5);
-    }
-  };
-  const pageNumbers = [];
-  for (let i = 0; i < pageSize; i++) {
-    if (startPage + i <= totalPages) {
-      pageNumbers.push(startPage + i);
-    }
-  }
 
   return (
     <>
@@ -95,24 +79,28 @@ const CarManagement = () => {
               <Row className="mb-3">
                 <Col md={2}>
                   <Form.Select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
+                    value={carCompanyNo}
+                    onChange={(e) => setCarCompanyNo(e.target.value)}
                   >
-                    <option value="">카테고리</option>
-                    <option value="SUV">SUV</option>
-                    <option value="SEDAN">SEDAN</option>
-                    <option value="전기차">전기차</option>
+                    <option value="">제조사</option>
+                    {carCompany.map((item) => (
+                      <option key={item.companyNo} value={item.companyNo}>
+                        {item.companyName}
+                      </option>
+                    ))}
                   </Form.Select>
                 </Col>
                 <Col md={3}>
                   <Form.Select
-                    value={manufacturer}
-                    onChange={(e) => setManufacturer(e.target.value)}
+                    value={carTypeNo}
+                    onChange={(e) => setCarTypeNo(e.target.value)}
                   >
-                    <option value="">차/제조사 검색</option>
-                    <option value="현대">현대</option>
-                    <option value="기아">기아</option>
-                    <option value="테슬라">테슬라</option>
+                    <option value="">차종</option>
+                    {carType.map((item) => (
+                      <option key={item.carTypeNo} value={item.carTypeNo}>
+                        {item.carTypeName}
+                      </option>
+                    ))}
                   </Form.Select>
                 </Col>
                 <Col md={4}>
@@ -121,6 +109,12 @@ const CarManagement = () => {
                     placeholder="검색 내용"
                     value={searchKeyword}
                     onChange={(e) => setSearchKeyword(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault(); // 폼 submit 방지
+                        handleSearch(); // 검색 함수 호출
+                      }
+                    }}
                   />
                 </Col>
                 <Col md={2}>
@@ -131,7 +125,14 @@ const CarManagement = () => {
                 <Col md={1}>
                   <Button
                     variant="dark"
-                    onClick={() => navigate("/admin/insertCar")} // 등록 페이지로 이동
+                    onClick={() =>
+                      navigate("/admin/insertCar", {
+                        state: {
+                          carType: carType,
+                          carCompany: carCompany,
+                        },
+                      })
+                    } // 등록 페이지로 이동
                   >
                     등록하기
                   </Button>
@@ -154,63 +155,39 @@ const CarManagement = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {carList.length === 0 ? (
+                  {carInfo.length === 0 ? (
                     <tr>
                       <td colSpan="7" className="text-center">
                         등록된 차량이 없습니다.
                       </td>
                     </tr>
                   ) : (
-                    carList.map((car, index) => (
+                    carInfo.map((car, index) => (
                       <tr
                         key={index}
                         onClick={() =>
                           navigate("/admin/carDetails", {
                             state: {
-                              no: car.no,
-                              name: car.name,
-                              type: car.type,
-                              year: car.year,
-                              company: car.company,
-                              battery: car.battery,
-                              enrollDate: car.enrollDate,
+                              car: car,
+                              carType: carType,
+                              carCompany: carCompany,
                             },
                           })
                         }
                         style={{ cursor: "pointer" }}
                       >
-                        <td>{car.name}</td>
-                        <td>{car.type}</td>
-                        <td>{car.year}</td>
-                        <td>{car.company}</td>
-                        <td>{car.battery}</td>
-                        <td>{car.enrollDate}</td>
+                        <td>{car.carName}</td>
+                        <td>{car.carTypeName}</td>
+                        <td>{car.carYear}</td>
+                        <td>{car.companyName}</td>
+                        <td>{car.carBattery}</td>
+                        <td>{car.returnEnrollDate}</td>
                       </tr>
                     ))
                   )}
                 </tbody>
               </Table>
             </Container>
-            {/* 페이징 처리 (간단히만 보여줌) */}
-
-            <div style={{ textAlign: "center", marginTop: "30px" }}>
-              <button onClick={Previous}>이전</button>
-
-              {pageNumbers.map((num) => (
-                <button
-                  key={num}
-                  onClick={() => setCurrentPage(num)}
-                  style={{
-                    margin: "0 5px",
-                    fontWeight: currentPage === num ? "bold" : "normal",
-                  }}
-                >
-                  {num}
-                </button>
-              ))}
-
-              <button onClick={Next}>다음</button>
-            </div>
           </RentBodyDiv>
         </div>
       </RentContainerDiv>

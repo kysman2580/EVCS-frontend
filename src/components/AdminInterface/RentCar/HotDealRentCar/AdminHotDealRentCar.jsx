@@ -31,14 +31,6 @@ const AdminHotDealRentCar = () => {
   const [endDate, setEndDate] = useState(null);
 
   const [hotdealList, setHotdealList] = useState([]);
-  const [page, setPage] = useState(1);
-  const [pageInfo, setPageInfo] = useState({
-    startPage: 1,
-    endPage: 1,
-    currentPage: 1,
-    maxPage: 1,
-    count: 0,
-  });
 
   // 로컬 날짜를 "YYYY-MM-DD"로 포맷
   const formatLocalDate = (date) => {
@@ -49,11 +41,8 @@ const AdminHotDealRentCar = () => {
   };
 
   useEffect(() => {
-    setPage(1);
-
     // 1) 기본 params 객체
     const params = {
-      page: page,
       ing: ingCategory,
       searchKeyword: searchKeyword,
     };
@@ -73,20 +62,16 @@ const AdminHotDealRentCar = () => {
       .then((res) => {
         console.log(res.data);
         setHotdealList(res.data.hotdealList);
-        setPageInfo(res.data.pageInfo);
       })
       .catch((err) => {
         console.error(err);
         alert("알 수 없는 오류가 발생했어요.");
       });
-  }, [page, ingCategory]);
+  }, [ingCategory]);
 
   // 백엔드 호출 함수
   const fetchHotdeals = () => {
-    setPage(1);
-
     const params = {
-      page: page,
       ing: ingCategory,
       searchKeyword: searchKeyword,
     };
@@ -101,7 +86,6 @@ const AdminHotDealRentCar = () => {
       .then((res) => {
         console.log("data 나와라 ", res.data);
         setHotdealList(res.data.hotdealList);
-        setPageInfo(res.data.pageInfo);
       })
       .catch((err) => {
         console.error(err);
@@ -110,61 +94,7 @@ const AdminHotDealRentCar = () => {
   };
 
   const handleSearch = () => {
-    setPage(1);
     fetchHotdeals();
-  };
-
-  const renderPagination = () => {
-    const items = [];
-    const { startPage, endPage, currentPage, maxPage, count } = pageInfo;
-
-    items.push(
-      <Pagination.First
-        key="first"
-        disabled={currentPage === 1}
-        onClick={() => setPage(1)}
-      >
-        맨앞
-      </Pagination.First>,
-      <Pagination.Prev
-        key="prev"
-        disabled={currentPage === 1}
-        onClick={() => setPage(currentPage - 1)}
-      >
-        이전
-      </Pagination.Prev>
-    );
-
-    for (let num = startPage; num <= endPage && num <= maxPage; num++) {
-      items.push(
-        <Pagination.Item
-          key={num}
-          active={num === currentPage}
-          onClick={() => setPage(num)}
-        >
-          {num}
-        </Pagination.Item>
-      );
-    }
-
-    items.push(
-      <Pagination.Next
-        key="next"
-        disabled={currentPage === maxPage || count === 0}
-        onClick={() => setPage(currentPage + 1)}
-      >
-        다음
-      </Pagination.Next>,
-      <Pagination.Last
-        key="last"
-        disabled={currentPage === maxPage || count === 0}
-        onClick={() => setPage(maxPage)}
-      >
-        마지막
-      </Pagination.Last>
-    );
-
-    return items;
   };
 
   return (
@@ -305,12 +235,6 @@ const AdminHotDealRentCar = () => {
                 </tbody>
               </Table>
             </Container>
-            {/* 항상 아래에 붙는 페이징 */}
-            <footer className="footer-pagination">
-              <Pagination className="justify-content-center mb-0">
-                {renderPagination()}
-              </Pagination>
-            </footer>
           </RentBodyDiv>
         </div>
       </RentContainerDiv>

@@ -2,15 +2,15 @@ import styled from "styled-components";
 
 export const RentCarCardContainer = styled.div`
   position: relative;
-  width: 300px;
-  height: 200px;
+  width: 400px;
+  height: 300px;
   display: flex;
   flex-direction: column;
   border-radius: 5%;
-  margin: 20px 20px 20px 20px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
   border: 1px solid #ddd;
   background-color: white;
+  font-size: 15px;
 
   &:hover {
     transform: translateY(-3px);
