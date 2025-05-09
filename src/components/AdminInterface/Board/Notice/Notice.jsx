@@ -1,14 +1,20 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import AdminNoitceNav from "../../AdminCommon/AdminNav/AdminNoitceNav";
 import "../Notice/Notice.css";
 
 function Notice() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // 쿼리 파라미터에서 페이지 번호를 읽어옴
+  const queryParams = new URLSearchParams(location.search);
+  const pageFromQuery = parseInt(queryParams.get("page")) || 1; // 기본값은 1페이지
+
   const [notices, setNotices] = useState([]);
   const [search, setSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(pageFromQuery); // 페이지 상태 설정
   const noticesPerPage = 5;
 
   useEffect(() => {
@@ -28,6 +34,11 @@ function Notice() {
   const totalPages = Math.ceil(filtered.length / noticesPerPage);
   const startIndex = (currentPage - 1) * noticesPerPage;
   const paginated = filtered.slice(startIndex, startIndex + noticesPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    navigate(`/admin/notice?page=${pageNumber}`); // 페이지 번호를 쿼리로 전달
+  };
 
   return (
     <div style={{ display: "flex" }}>
@@ -60,7 +71,9 @@ function Notice() {
                 {paginated.map((notice) => (
                   <tr
                     key={notice.id}
-                    onClick={() => navigate(`/admin/notice/${notice.id}`)}
+                    onClick={() =>
+                      navigate(`/admin/notice/${notice.id}?page=${currentPage}`)
+                    }
                     style={{ cursor: "pointer" }}
                   >
                     <td>{notice.noticeTitle}</td>
@@ -74,13 +87,13 @@ function Notice() {
 
           <div className="Notice-pagination">
             <button
-              onClick={() => setCurrentPage(1)}
+              onClick={() => handlePageChange(1)}
               disabled={currentPage === 1}
             >
               ◀ 처음
             </button>
             <button
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
               disabled={currentPage === 1}
             >
               ◀ 이전
@@ -88,7 +101,7 @@ function Notice() {
             {Array.from({ length: totalPages }, (_, i) => (
               <button
                 key={i}
-                onClick={() => setCurrentPage(i + 1)}
+                onClick={() => handlePageChange(i + 1)}
                 style={{
                   fontWeight: currentPage === i + 1 ? "bold" : "normal",
                 }}
@@ -97,13 +110,15 @@ function Notice() {
               </button>
             ))}
             <button
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              onClick={() =>
+                handlePageChange(Math.min(totalPages, currentPage + 1))
+              }
               disabled={currentPage === totalPages}
             >
               다음 ▶
             </button>
             <button
-              onClick={() => setCurrentPage(totalPages)}
+              onClick={() => handlePageChange(totalPages)}
               disabled={currentPage === totalPages}
             >
               끝 ▶

@@ -5,7 +5,7 @@ import { BoardContainerDiv, BoardBodyDiv } from "../Board.styles";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import axios from "axios";
 
-function Notice() {
+function UserNotice() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -16,7 +16,7 @@ function Notice() {
 
   useEffect(() => {
     axios
-      .get("http://localhost/api/notices")
+      .get("http://localhost/notices")
       .then((res) => setNotices(res.data))
       .catch((err) => console.error("공지사항 불러오기 실패:", err));
   }, []);
@@ -40,8 +40,10 @@ function Notice() {
 
   const filteredNotices = notices.filter(
     (n) =>
-      n.eventTitle.toLowerCase().includes(search.toLowerCase()) ||
-      n.enrollDate.toLowerCase().includes(search.toLowerCase())
+      (n.noticeTitle &&
+        n.noticeTitle.toLowerCase().includes(search.toLowerCase())) ||
+      (n.enrollDate &&
+        n.enrollDate.toLowerCase().includes(search.toLowerCase()))
   );
 
   const totalPages = Math.ceil(filteredNotices.length / noticesPerPage);
@@ -74,29 +76,32 @@ function Notice() {
           <div className="Notice-container">
             <table>
               <colgroup>
-                <col style={{ width: "70%" }} />
-                <col style={{ width: "30%" }} />
+                <col style={{ width: "60%" }} />
+                <col style={{ width: "20%" }} />
+                <col style={{ width: "20%" }} />
               </colgroup>
               <thead>
                 <tr>
                   <th>제목</th>
                   <th>작성일시</th>
+                  <th>작성자</th>
                 </tr>
               </thead>
               <tbody>
                 {paginatedNotices.length > 0 ? (
                   paginatedNotices.map((notice) => (
                     <tr
-                      key={notice.id} // key 변경
+                      key={notice.id}
                       style={{ cursor: "pointer" }}
                       onClick={() =>
                         navigate(`/notice/${notice.id}`, {
-                          state: { page: currentPage }, // 페이지 정보 유지
+                          state: { page: currentPage },
                         })
                       }
                     >
-                      <td>{notice.eventTitle}</td>
+                      <td>{notice.noticeTitle}</td>
                       <td>{notice.enrollDate}</td>
+                      <td>{notice.noticeWriter}</td>
                     </tr>
                   ))
                 ) : (
@@ -159,4 +164,4 @@ function Notice() {
   );
 }
 
-export default Notice;
+export default UserNotice;
