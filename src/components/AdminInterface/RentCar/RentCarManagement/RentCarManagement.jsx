@@ -13,7 +13,6 @@ const RentCarManagement = () => {
   const navigate = useNavigate();
 
   const [category, setCategory] = useState("");
-  const [manufacturer, setManufacturer] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState();
@@ -33,7 +32,6 @@ const RentCarManagement = () => {
         },
       })
       .then((result) => {
-        console.log(result.data);
         const res = result.data;
 
         setRentCarInfo(res.rentCarInfo);
@@ -49,7 +47,7 @@ const RentCarManagement = () => {
           carCompany: carinformation.carCompany,
         }));
 
-        setCarInfo(carList);
+        setCarInfo([...carList]);
 
         const rentCarList = res.rentCarInfo.map((rentCarinformation) => ({
           rentCarNo: rentCarinformation.rentCarNo,
@@ -62,14 +60,16 @@ const RentCarManagement = () => {
           garageNo: rentCarinformation.garageNo,
           status: rentCarinformation.status,
           statusName: rentCarinformation.statusName,
+          categoryNo: rentCarinformation.categoryNo,
         }));
 
-        setRentCarInfo(rentCarList);
+        setRentCarInfo([...rentCarList]);
+        console.log("데이타 ", result.data);
       })
       .catch((error) => {
         console.log(error);
       });
-  }, [category, useStatus]);
+  }, [currentPage, category, useStatus]);
 
   const handleSearch = () => {
     axios
@@ -253,6 +253,7 @@ const RentCarManagement = () => {
                               postAdd: car.postAdd,
                               garageNo: car.garageNo,
                               status: car.status,
+                              categoryNo: car.categoryNo,
                             },
                           })
                         }

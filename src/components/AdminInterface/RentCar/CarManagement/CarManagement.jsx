@@ -125,7 +125,14 @@ const CarManagement = () => {
                 <Col md={1}>
                   <Button
                     variant="dark"
-                    onClick={() => navigate("/admin/insertCar")} // 등록 페이지로 이동
+                    onClick={() =>
+                      navigate("/admin/insertCar", {
+                        state: {
+                          carType: carType,
+                          carCompany: carCompany,
+                        },
+                      })
+                    } // 등록 페이지로 이동
                   >
                     등록하기
                   </Button>

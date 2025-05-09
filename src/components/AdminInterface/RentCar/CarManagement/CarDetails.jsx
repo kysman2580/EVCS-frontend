@@ -46,10 +46,6 @@ const InsertCar = () => {
     setForm({ ...form, [name]: value });
   };
 
-  const handleCancel = (e) => {
-    navi(-1);
-  };
-
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -57,6 +53,7 @@ const InsertCar = () => {
     }
     setForm({ ...form, image: file });
   };
+
   const handleWrite = (e) => {
     if (disabled) {
       setDisabled(false);
@@ -155,18 +152,24 @@ const InsertCar = () => {
               </div>
 
               <Form>
-                {/* 차 이름 */}
+                {/* 연식 + 카테고리 */}
                 <Row className="mb-3">
                   <Col>
-                    <Form.Group className="mb-3" controlId="carName">
-                      <Form.Label className="fw-bold ">모델명 :</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="carName"
+                    <Form.Group controlId="carCompany">
+                      <Form.Label className="fw-bold ">제조사 :</Form.Label>
+                      <Form.Select
+                        name="companyNo"
+                        value={form.companyNo}
                         onChange={handleChange}
-                        value={form.carName}
                         disabled={disabled}
-                      />
+                      >
+                        <option value="">제조사</option>
+                        {carCompany.map((item) => (
+                          <option key={item.companyNo} value={item.companyNo}>
+                            {item.companyName}
+                          </option>
+                        ))}
+                      </Form.Select>
                     </Form.Group>
                   </Col>
                   <Col>
@@ -188,9 +191,21 @@ const InsertCar = () => {
                     </Form.Group>
                   </Col>
                 </Row>
+                {/* 차 이름 */}
 
-                {/* 연식 + 카테고리 */}
                 <Row className="mb-3">
+                  <Col>
+                    <Form.Group className="mb-3" controlId="carName">
+                      <Form.Label className="fw-bold ">모델명 :</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="carName"
+                        onChange={handleChange}
+                        value={form.carName}
+                        disabled={disabled}
+                      />
+                    </Form.Group>
+                  </Col>
                   <Col>
                     <Form.Group controlId="carYear">
                       <Form.Label className="fw-bold ">연식 :</Form.Label>
@@ -201,24 +216,6 @@ const InsertCar = () => {
                         onChange={handleChange}
                         disabled={disabled}
                       />
-                    </Form.Group>
-                  </Col>
-                  <Col>
-                    <Form.Group controlId="carCompany">
-                      <Form.Label className="fw-bold ">제조사 :</Form.Label>
-                      <Form.Select
-                        name="companyNo"
-                        value={form.companyNo}
-                        onChange={handleChange}
-                        disabled={disabled}
-                      >
-                        <option value="">제조사</option>
-                        {carCompany.map((item) => (
-                          <option key={item.companyNo} value={item.companyNo}>
-                            {item.companyName}
-                          </option>
-                        ))}
-                      </Form.Select>
                     </Form.Group>
                   </Col>
                 </Row>
