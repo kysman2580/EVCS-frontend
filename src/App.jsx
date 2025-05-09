@@ -45,6 +45,9 @@ import MemberRating from "./components/UserInterface/Member/Mypage/MemberRating"
 import ChangePasswordPage from "./components/UserInterface/Member/Mypage/ChangePassword";
 import FindByPwPage from "./components/UserInterface/Member/FindByPasswordPage/FindPwPage";
 
+/* 소셜 관련 */
+import KakaoRedirectHandler from "./components/UserInterface/Member/SocialHandler/KakaoRedirectHandler";
+
 /* 렌트카 관련 */
 import LongTermRentCarDetail from "./components/UserInterface/RentCar/LongTermRentCar/LongTermRentCarDetail";
 import InsertCar from "./components/AdminInterface/RentCar/CarManagement/InsertCar";
@@ -119,6 +122,9 @@ function App() {
             <Route path="/findByPwPage" element={<FindByPwPage />} />
 
             <Route path="/updatePwPage" element={<UpdatePwPage />} />
+
+            {/* 소셜 관련 */}
+            <Route path="/auth/kakao/callback" element={<KakaoRedirectHandler />} />
 
             {/* 신고 관련 */}
             <Route path="/report/*" element={<Report useDummyData={true} />} />
