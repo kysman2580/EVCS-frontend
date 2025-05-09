@@ -437,7 +437,12 @@ const DRBoard = () => {
                   </div>
                 </Images>
                 <PostIcon>
-                  <FavoriteBorderIcon style={{ cursor: "pointer" }} />
+                  {heart ? (
+                    <FavoriteBorderIcon style={{ cursor: "pointer" }} />
+                  ) : (
+                    <FavoriteRoundedIcon style={{ cursor: "pointer" }} />
+                  )}
+
                   <ChatIcon
                     onClick={() => handleCommentList(board)}
                     style={{ cursor: "pointer" }}
