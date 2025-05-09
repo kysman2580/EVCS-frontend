@@ -22,6 +22,7 @@ import IntegratedReportingPage from "./components/UserInterface/Report/Integrate
 import Report from "./components/UserInterface/Report/Report/Report";
 import AdminReport from "./components/AdminInterface/Report/AdminReport/AdminReport";
 import ReportDetail from "./components/UserInterface/Report/ReportDetail/ReportDetail";
+import AdminReportDetail from "./components/AdminInterface/Report/AdminReportDetail/AdminReportDetail";
 
 /* 게시판 페이지 관련 */
 import UserNotice from "./components/UserInterface/Board/Notice/UserNotice";
@@ -98,7 +99,10 @@ function App() {
 
             <Route path="/myPage" element={<MyPage />} />
 
-            <Route path="/changePasswordPage" element={<ChangePasswordPage />} />
+            <Route
+              path="/changePasswordPage"
+              element={<ChangePasswordPage />}
+            />
 
             {/* 신고 관련 */}
             <Route path="/report/*" element={<Report useDummyData={true} />} />
@@ -107,7 +111,7 @@ function App() {
               element={<IntegratedReportingPage />}
             ></Route>
             <Route
-              path="/reports/:boardNo"
+              path="/reports/:rpNo"
               element={<ReportDetail useDummyData={true} />}
             />
 
@@ -177,8 +181,8 @@ function App() {
                 element={<AdminReport useDummyData={true} />}
               />
               <Route
-                path="/admin/reports/:boardNo"
-                element={<ReportDetail useDummyData={true} />}
+                path="/admin/adminReports/:rpNo"
+                element={<AdminReportDetail useDummyData={true} />}
               />
             </Route>
           </Route>
