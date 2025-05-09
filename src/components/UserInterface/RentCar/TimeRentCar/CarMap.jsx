@@ -3,14 +3,16 @@ import styled from "styled-components";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import "./CarMap.css"; // 필요하면 유지
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Card, Container, Row, Col, Button, Image } from "react-bootstrap";
-import { ContainerDiv, DetailDiv } from "./CarMap.styles";
+import { Container, Row, Col, Button, Image } from "react-bootstrap";
 import axios from "axios";
-import { set } from "date-fns";
+import { useAuth } from "../../Context/AuthContext/AuthContext";
+import { H1, H3, RentBodyDiv, RentContainerDiv } from "./CarMap.styles";
+import { useNavigate, useLocation } from "react-router-dom";
+import RentCarNav from "../../Common/Nav/RentCarNav";
 
 const Map = styled.div`
-  width: 800px;
-  height: 500px;
+  width: 1200px;
+  height: 700px;
   margin: 50px auto;
   border: 2px solid black;
   border-radius: 1em;
@@ -19,6 +21,12 @@ const Map = styled.div`
 `;
 
 const CarMap = () => {
+  const location = useLocation();
+  const startDate = new Date(location.state.startDate);
+  const endDate = new Date(location.state.endDate);
+  const navi = useNavigate();
+  const { auth } = useAuth();
+  const [memberNo, setMemberNo] = useState(auth.user.memberNo);
   const [loaded, setLoaded] = useState(false);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -29,18 +37,6 @@ const CarMap = () => {
   const [enrollPosition, setEnrollPosition] = useState([]);
   const [currentPosition, setCurrentPosition] = useState(null);
   const [selectedCar, setSelectedCar] = useState(null);
-  const car = {
-    image: "images/아이오닉 5.png", // 이미지 URL 넣을 수 있음
-    name: "쏘나타 EV",
-    year: "2023년식",
-    location: "서울 강남지점",
-    period: "24개월 / 30개월",
-    startDate: "25.4.17.(목)",
-    monthlyFee: "450,000" + "원",
-    originalPrice: "12,000,000" + "원",
-    discountedPrice: "10,800,000" + "원",
-    totalEstimate: "10,800,000" + "원",
-  };
 
   useEffect(() => {
     window.kakao.maps.load(() => {
@@ -48,6 +44,8 @@ const CarMap = () => {
     });
   }, []);
 
+  console.log("startDate", startDate);
+  console.log("endDate", endDate);
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
@@ -142,23 +140,38 @@ const CarMap = () => {
       const content = `
         <div class="wrap">
           <div class="info">
-            <div class="title">이용 가능한 차량<div class="close" title="닫기"></div></div>
-            ${carsAtSamePosition
-              .map(
-                ({ index }) => `
-              <div class="wrapper">
-                <div class="customBody" style="cursor:pointer; padding:5px;">
-                  <div class="img">
-                    <img src="images/아이오닉 5.png" width="43" height="40">
-                  </div>
-                  <div class="desc">
-                    <div class="carTitle">${carResult[index].carName}</div>
-                    <div class="carPrice">${timeRentCarResult[index].rentCarPrice}</div>
-                  </div>
-                </div>
-              </div>`
-              )
-              .join("")}
+            <div class="header">
+              <div style="display: flex; align-items: center; height: 15px;">
+                <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" width="16" height="16" style="margin-right: 8px;" />
+                ${timeRentCarResult[carsAtSamePosition[0].index].address}
+              </div>
+              <div class="close" title="닫기"></div>
+            </div>
+            <div class="wrapper">
+              ${carsAtSamePosition
+                .map(
+                  ({ index }) => `
+                  <div class="customBody" >
+                    <div style="display: flex; align-items: center;">
+                      <div class="img">
+                        <img src="${
+                          timeRentCarResult[index].fileLoad
+                        }" width="60" height="40" style="object-fit: cover;" />
+                      </div>
+                      <div class="desc" style="margin-left: 10px;">
+                        <div class="carTitle">${carResult[index].carName}</div>
+                        <div style="color: #666; font-size: 12px;">
+                          ${timeRentCarResult[
+                            index
+                          ].rentCarPrice.toLocaleString()}원
+                        </div>
+                      </div>
+                    </div>
+                    <div class="arrow" style="font-size: 20px; color: #188ceb;">›</div>
+                  </div>`
+                )
+                .join("")}
+            </div>
           </div>
         </div>
       `;
@@ -189,8 +202,10 @@ const CarMap = () => {
             carType: carResult[carIndex].carType,
             carYear: carResult[carIndex].carYear,
             categoryName: timeRentCarResult[carIndex].categoryName,
+            fileLoad: timeRentCarResult[carIndex].fileLoad,
             enrollPlace: timeRentCarResult[carIndex].enrollPlace,
             garageNo: timeRentCarResult[carIndex].garageNo,
+            address: timeRentCarResult[carIndex].address,
             postAdd: timeRentCarResult[carIndex].postAdd,
             rentCarNo: timeRentCarResult[carIndex].rentCarNo,
             rentCarPrice: timeRentCarResult[carIndex].rentCarPrice,
@@ -220,9 +235,53 @@ const CarMap = () => {
     }
   }, [loaded, enrollPosition, carResult, timeRentCarResult, currentPosition]);
 
+  const handlePayment = () => {
+    // 결제 로직을 여기에 추가합니다.
+    // 예를 들어, 결제 API를 호출하거나 결제 모달을 띄우는 등의 작업을 수행할 수 있습니다.
+    console.log("결제하기 버튼 클릭됨");
+
+    axios
+      .post("http://localhost/reservation/insert", {
+        memberNo: memberNo,
+        rentCarNo: selectedCar.rentCarNo,
+        categoryName: selectedCar.categoryName,
+        enrollPlace: selectedCar.enrollPlace,
+        garageNo: selectedCar.garageNo,
+        rentCarPrice: selectedCar.rentCarPrice,
+        rentalTime: startDate,
+        returnTime: endDate,
+      })
+      .then((result) => {
+        console.log(result.data);
+      })
+      .catch((error) => {
+        console.error("Error message :", error.response.data.message);
+        alert(error.response.data.message);
+      });
+  };
   return (
     <>
-      <Map id="map" />
+      <RentContainerDiv>
+        <RentCarNav />
+        <RentBodyDiv>
+          <H1>시간별 렌트카 대여하기</H1>
+
+          <br />
+          <br />
+
+          <H3>대여위치 및 차량 설정</H3>
+          <Map id="map" />
+          <div style={{ textAlign: "right" }}>
+            <Button
+              variant="primary"
+              onClick={() => navi(-1)}
+              style={{ marginTop: "10px", marginRight: "350px" }}
+            >
+              이전으로
+            </Button>
+          </div>
+        </RentBodyDiv>
+      </RentContainerDiv>
 
       <Offcanvas
         show={show}
@@ -231,59 +290,109 @@ const CarMap = () => {
         className="custom-offcanvas"
       >
         <Offcanvas.Header closeButton>
-          <Offcanvas.Title>차량 상세 정보</Offcanvas.Title>
+          <Offcanvas.Title>예약 및 결제하기</Offcanvas.Title>
         </Offcanvas.Header>
-        <Offcanvas.Body style={{ height: "100%", width: "100%" }}>
-          <ContainerDiv>
-            <DetailDiv>
-              <Container style={{ height: "100%", width: "100%" }}>
-                <Row
-                  className="justify-content-center"
-                  style={{ height: "100%", width: "100%" }}
-                >
-                  <Col md={6} style={{ height: "100%", width: "100%" }}>
-                    <Card>
-                      <Image
-                        src={"images/아이오닉 5.png"} // 필요시 차량마다 다르게 처리도 가능
-                        alt="차 이미지"
-                        fluid
-                        style={{
-                          height: "300px",
-                          objectFit: "cover",
-                          width: "100%",
-                        }}
-                      />
+        <Offcanvas.Body>
+          <Container>
+            {/* 차량 기본 정보 */}
+            <Row className="mb-4">
+              <Col xs={12} className="d-flex align-items-center">
+                <Image
+                  src={selectedCar?.fileLoad}
+                  alt="차 이미지"
+                  width={100}
+                  height={60}
+                  style={{
+                    objectFit: "cover",
+                    borderRadius: "5px",
+                    marginRight: "10px",
+                  }}
+                />
+                <div>
+                  <strong>
+                    [{selectedCar?.categoryName}] {selectedCar?.carName}
+                  </strong>
+                  <div style={{ fontSize: "13px", color: "#777" }}>
+                    {selectedCar?.carType}
+                  </div>
+                </div>
+              </Col>
+            </Row>
 
-                      <Card.Body>
-                        <Row className="text-center mb-3">
-                          <Col>
-                            <h4>{selectedCar?.carName || "차량명"}</h4>
-                            <div className="text-muted">
-                              {selectedCar?.carYear} / {selectedCar?.carCompany}
-                            </div>
-                          </Col>
-                        </Row>
+            {/* 차량 세부 정보 */}
+            <Row className="mb-3">
+              <Col>
+                <h6>차량 정보</h6>
+                <ul style={{ paddingLeft: "1.2em", fontSize: "14px" }}>
+                  <li>차량 연식: {selectedCar?.carYear}</li>
+                  <li>제조사: {selectedCar?.carCompany}</li>
+                  <li>차량 번호: {selectedCar?.carNo}</li>
+                  <li>배터리: {selectedCar?.carBattery ?? "정보 없음"}</li>
+                </ul>
+              </Col>
+            </Row>
+            {/* 대여 위치 */}
+            <Row className="mb-2">
+              <Col>
+                <h6 className="mb-1">대여 및 반납 장소</h6>
+                <div style={{ fontWeight: "bold" }}>
+                  {selectedCar?.enrollPlace}
+                </div>
+                <div style={{ fontSize: "13px", color: "#666" }}>
+                  {selectedCar?.address}
+                </div>
+              </Col>
+            </Row>
 
-                        <hr />
+            {/* 이용 시간 (props에서 받아야 함) */}
+            <Row className="mb-3">
+              <Col>
+                <h6>이용 시간</h6>
+                <div>
+                  {Math.round((endDate - startDate) / (1000 * 60 * 60))}
+                </div>
+                <div>
+                  {startDate.toLocaleString()} ~ {endDate.toLocaleString()}
+                </div>{" "}
+                {/* 실제 props로 대체 */}
+              </Col>
+            </Row>
 
-                        <Row className="mb-3 px-3">
-                          <Col>
-                            <h6 className="fw-bold">요금 정보</h6>
-                            <Row>
-                              <Col>월 요금</Col>
-                              <Col className="text-end">
-                                {selectedCar?.rentCarPrice?.toLocaleString()}원
-                              </Col>
-                            </Row>
-                          </Col>
-                        </Row>
-                      </Card.Body>
-                    </Card>
+            {/* 요금 정보 */}
+            <Row className="mb-3">
+              <Col>
+                <h6>요금 합계</h6>
+                <Row>
+                  <Col>대여요금</Col>
+                  <Col className="text-end">
+                    {selectedCar?.rentCarPrice?.toLocaleString()}원
                   </Col>
                 </Row>
-              </Container>
-            </DetailDiv>
-          </ContainerDiv>
+              </Col>
+            </Row>
+
+            {/* 주행 요금 안내 */}
+            <Row className="mb-4">
+              <Col>
+                <div style={{ fontSize: "12px", color: "#888" }}>
+                  주행요금은 반납 후 결제 수단으로 자동 결제됩니다.
+                </div>
+              </Col>
+            </Row>
+
+            {/* 결제 버튼 */}
+            <Row>
+              <Col>
+                <Button
+                  variant="primary"
+                  className="w-100"
+                  onClick={handlePayment}
+                >
+                  결제하기
+                </Button>
+              </Col>
+            </Row>
+          </Container>
         </Offcanvas.Body>
       </Offcanvas>
     </>
