@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-// Report2는 스타일드 컨테이너입니다.
-import { Report2, Report3 } from "./Report.styled";
+import { Report2, Report3 } from "./ReportComments.styled";
 import { useAuth } from "../../Context/AuthContext/AuthContext";
 import axios from "axios";
 
-const Report = () => {
+const ReportComments = () => {
   const navigate = useNavigate();
   const { auth } = useAuth();
   const memberNo = auth.user.memberNo; // 사용자 번호로 필터링
@@ -39,7 +38,7 @@ const Report = () => {
         page,
         size: 10,
       };
-      const response = await axios.get("http://localhost:80/api/usReports", {
+      const response = await axios.get("http://localhost:80/api/usReportsCom", {
         params,
         headers: {
           Authorization: `Bearer ${token}`,
@@ -81,7 +80,7 @@ const Report = () => {
   };
 
   const handleRowClick = (rpNo) => {
-    navigate(`/reports/${rpNo}`);
+    navigate(`/reportsCom/${rpNo}`);
   };
 
   const handlePrev = () => {
@@ -95,7 +94,7 @@ const Report = () => {
   return (
     <Report2>
       <Report3>
-        <h2>내 게시판 신고 내역</h2>
+        <h2>내 댓글 신고 내역</h2>
 
         <div className="report-filters">
           <input
@@ -145,8 +144,8 @@ const Report = () => {
                 </thead>
                 <tbody>
                   {reports.map((r) => (
-                    <tr key={r.rpNo} onClick={() => handleRowClick(r.rpNo)}>
-                      <td>{r.rpNo}</td>
+                    <tr key={r.re_No} onClick={() => handleRowClick(r.re_No)}>
+                      <td>{r.re_No}</td>
                       <td className="report-title">{r.title}</td>
                       <td>{r.rpMemberNo}</td>
                       <td>{r.enrollDate?.slice(0, 10)}</td>
@@ -189,4 +188,4 @@ const Report = () => {
   );
 };
 
-export default Report;
+export default ReportComments;

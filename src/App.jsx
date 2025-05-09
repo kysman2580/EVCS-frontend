@@ -25,6 +25,8 @@ import Report from "./components/UserInterface/Report/Report/Report";
 import AdminReport from "./components/AdminInterface/Report/AdminReport/AdminReport";
 import ReportDetail from "./components/UserInterface/Report/ReportDetail/ReportDetail";
 import AdminReportDetail from "./components/AdminInterface/Report/AdminReportDetail/AdminReportDetail";
+import ReportComments from "./components/UserInterface/Report/ReportComments/ReportComments";
+import ReportComDetail from "./components/UserInterface/Report/ReportCommentsDetail/ReportComDetail";
 
 /* 게시판 페이지 관련 */
 import UserNotice from "./components/UserInterface/Board/Notice/UserNotice";
@@ -129,6 +131,14 @@ function App() {
             <Route
               path="/reports/:rpNo"
               element={<ReportDetail useDummyData={true} />}
+            />
+            <Route
+              path="/reportCom/*"
+              element={<ReportComments useDummyData={true} />}
+            />
+            <Route
+              path="/reportsCom/:rpNo"
+              element={<ReportComDetail useDummyData={true} />}
             />
 
             {/* 뉴스 관련 */}

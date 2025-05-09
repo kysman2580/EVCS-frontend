@@ -9,10 +9,10 @@ import {
   ActionButton,
   BackButton,
   FieldRow2,
-} from "./ReportDetail.styled";
+} from "./ReportComDetail.styled";
 import axios from "axios";
 
-const ReportDetail = () => {
+const ReportComDetail = () => {
   const { rpNo } = useParams();
   const navigate = useNavigate();
 
@@ -26,7 +26,7 @@ const ReportDetail = () => {
     const fetchDetail = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:80/api/usReports/${id}`,
+          `http://localhost:80/api/usReportsCom/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -47,7 +47,7 @@ const ReportDetail = () => {
   const cancellation = async () => {
     if (!window.confirm("신고를 정말 취소 하시겠습니까?")) return;
     try {
-      await axios.delete(`/api/reports/${rpNo}/o`);
+      await axios.delete(`/api/usReportsCom/${rpNo}/o`);
       alert("신고가 취소 되었습니다.");
       navigate(-1);
     } catch (err) {
@@ -69,7 +69,7 @@ const ReportDetail = () => {
 
   return (
     <DetailContainer>
-      <h2>게시판 신고 상세보기 (#{report.rpNo})</h2>
+      <h2>댓글 신고 상세보기 (#{report.rpNo})</h2>
 
       <FieldRow>
         <Label>제목</Label>
@@ -141,4 +141,4 @@ const ReportDetail = () => {
   );
 };
 
-export default ReportDetail;
+export default ReportComDetail;

@@ -25,7 +25,7 @@ const MyPageNav = () => {
                     <StyledHeaderBtn onClick={() => navi("/report")}>
                         게시글 신고 내역
                     </StyledHeaderBtn>
-                    <StyledHeaderBtn onClick={() => navi("/report")}>
+                    <StyledHeaderBtn onClick={() => navi("/reportCom")}>
                         댓글 신고 내역
                     </StyledHeaderBtn>
           <StyledHeaderBtn onClick={() => navi("/#")}>
