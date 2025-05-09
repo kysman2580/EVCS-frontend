@@ -96,12 +96,20 @@ const NewsDetail = ({ backendUrl = "http://localhost:80" }) => {
     const [r1, r2, r3, r4] = await Promise.all([
       axios.get(`${backendUrl}/api/news/like/status`, {
         params: { newsNo: p },
+        ...authHeader,
       }),
       axios.get(`${backendUrl}/api/news/hate/status`, {
         params: { newsNo: p },
+        ...authHeader,
       }),
-      axios.get(`${backendUrl}/api/news/like`, { params: { newsNo: p } }),
-      axios.get(`${backendUrl}/api/news/hate`, { params: { newsNo: p } }),
+      axios.get(`${backendUrl}/api/news/like`, {
+        params: { newsNo: p },
+        ...authHeader,
+      }),
+      axios.get(`${backendUrl}/api/news/hate`, {
+        params: { newsNo: p },
+        ...authHeader,
+      }),
     ]);
     setHasLiked(r1.data);
     setHasHated(r2.data);

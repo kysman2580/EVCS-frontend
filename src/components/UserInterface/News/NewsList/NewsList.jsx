@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import {
@@ -14,7 +14,7 @@ const NewsList = ({ backendUrl = "http://localhost:80" }) => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
 
-  // URL 쿼리 파라미터나 기본값("전기차")으로 초기화
+  // URL 쿼리 또는 기본값으로 초기화
   const [query, setQuery] = useState(queryParams.get("query") || "전기차");
   const [sort, setSort] = useState(queryParams.get("sort") || "sim");
   const [page, setPage] = useState(Number(queryParams.get("page")) || 1);
@@ -23,19 +23,26 @@ const NewsList = ({ backendUrl = "http://localhost:80" }) => {
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [imageResults, setImageResults] = useState({});
   const [keywords, setKeywords] = useState([]);
 
-  // 실제 뉴스 API 호출
-  const fetchNews = async (targetPage = 1) => {
+  // API 호출 함수
+  const fetchNews = async (
+    targetPage,
+    targetQuery = query,
+    targetSort = sort
+  ) => {
     setLoading(true);
     try {
       const res = await axios.get(`${backendUrl}/api/naver-news-list`, {
-        params: { query, sort, page: targetPage, size },
+        params: {
+          query: targetQuery,
+          sort: targetSort,
+          page: targetPage,
+          size,
+        },
       });
 
       const rawItems = res.data.items || [];
-      // 중복 제거
       const uniqueItems = Array.from(
         new Map(rawItems.map((item) => [item.originallink, item])).values()
       );
@@ -50,34 +57,40 @@ const NewsList = ({ backendUrl = "http://localhost:80" }) => {
     }
   };
 
-  // 검색 버튼 클릭 또는 키워드 버튼 클릭 핸들러
-  // searchQuery 파라미터가 있으면 그걸, 없으면 현재 query state를 사용
+  // 마운트 시: 카테고리 로드
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const res = await axios.get(`${backendUrl}/api/news/categories`);
+        const list = res.data
+          .map((item) => item.newsCategory)
+          .filter((name) => name && name !== "기타");
+        setKeywords(list);
+      } catch {
+        setKeywords(["전기차"]);
+      }
+    };
+    loadCategories();
+  }, [backendUrl]);
+
+  // 마운트 시: 기본 '전기차' 검색 실행
+  useEffect(() => {
+    fetchNews(1, query, sort);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // 검색 버튼 핸들러
   const handleSearch = (searchQuery) => {
     const q = (searchQuery ?? query).trim() || "전기차";
     setQuery(q);
-    fetchNews(1);
+    fetchNews(1, q, sort);
   };
 
-  // 카테고리(키워드) 불러오기
-  const fetchCategories = async () => {
-    try {
-      const res = await axios.get(`${backendUrl}/api/news/categories`);
-      const list = res.data
-        .map((item) => item.newsCategory)
-        .filter((name) => name && name !== "기타");
-      setKeywords(list);
-    } catch (err) {
-      console.error("카테고리 로딩 실패:", err);
-      setKeywords(["전기차"]);
-    }
+  // 정렬 버튼 핸들러
+  const handleSort = (newSort) => {
+    setSort(newSort);
+    fetchNews(1, query, newSort);
   };
-
-  // 컴포넌트 처음 마운트 시
-  useEffect(() => {
-    fetchNews(1);
-    fetchCategories();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // 페이지네이션 계산
   const totalPages = Math.ceil(Math.min(total, 1000) / size);
@@ -90,7 +103,9 @@ const NewsList = ({ backendUrl = "http://localhost:80" }) => {
   );
 
   // 페이지 변경 핸들러
-  const handlePageChange = (targetPage) => fetchNews(targetPage);
+  const handlePageChange = (targetPage) => {
+    fetchNews(targetPage, query, sort);
+  };
   const handleBlockPrev = () => {
     const prev = startPage - 10;
     if (prev >= 1) handlePageChange(prev);
@@ -100,7 +115,7 @@ const NewsList = ({ backendUrl = "http://localhost:80" }) => {
     if (next <= totalPages) handlePageChange(next);
   };
 
-  // 아이템 클릭 → 상세 페이지로 이동
+  // 뉴스 선택 → 상세 페이지
   const handleChatClick = (item) => {
     navigate("/newsDetail", {
       state: {
@@ -119,38 +134,32 @@ const NewsList = ({ backendUrl = "http://localhost:80" }) => {
       <S.Container>
         <S.PageHeader>뉴스 전체 보기</S.PageHeader>
 
-        {/* 수정된 SearchBar */}
+        {/* 검색 바 */}
         <SearchBar
           query={query}
           setQuery={setQuery}
           handleSearch={handleSearch}
           keywords={keywords}
+          loading={loading}
         />
 
-        <S.SectionHeader>
-          <S.SectionIcon>|</S.SectionIcon> 전체 뉴스 리스트
-        </S.SectionHeader>
+        {/* 정렬 버튼 */}
         <S.SortButtons>
           <S.KeywordButton
-            onClick={() => {
-              setSort("date");
-              fetchNews(1);
-            }}
+            onClick={() => handleSort("date")}
             active={sort === "date"}
           >
             최신순
           </S.KeywordButton>
           <S.KeywordButton
-            onClick={() => {
-              setSort("sim");
-              fetchNews(1);
-            }}
+            onClick={() => handleSort("sim")}
             active={sort === "sim"}
           >
             유사도순
           </S.KeywordButton>
         </S.SortButtons>
 
+        {/* 뉴스 리스트 */}
         <S.NewsList>
           <S.NewsItems>
             {items.map((item) => (
