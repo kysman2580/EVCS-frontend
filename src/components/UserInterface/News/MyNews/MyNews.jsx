@@ -1,16 +1,14 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { useAuth } from "../../Context/AuthContext/AuthContext";
 import axios from "axios";
 import { removeHtmlTags, formatDate } from "../NewsMain/NewsItemComponents";
 import MyPageNav from "../../Common/Nav/MyPageNav";
 import { MyPageDiv } from "../../Member/Mypage/MyPage.styles";
+import * as S from "../../News/NewsMain/NewsMain.styles";
 
 const backendUrl = "http://localhost:80";
 
 const MyNews = () => {
-  const { auth } = useAuth();
-  const memberNo = auth?.user?.memberNo;
   const [searchParams, setSearchParams] = useSearchParams();
   const [fullList, setFullList] = useState([]);
   const [imageResults, setImageResults] = useState({});
@@ -20,16 +18,19 @@ const MyNews = () => {
   const size = 3;
   const navigate = useNavigate();
 
+  const token = localStorage.getItem("accessToken");
+  const authHeader = {
+    headers: { Authorization: `Bearer ${token}` },
+  };
+
   useEffect(() => {
-    if (!memberNo) return;
+    if (!token) return;
 
     const fetchData = async () => {
       try {
         const res = await axios.get(
           `${backendUrl}/api/news/mypage/${activeTab}`,
-          {
-            params: { memberNo },
-          }
+          authHeader
         );
         setFullList(res.data || []);
         const updatedImages = {};
@@ -44,7 +45,7 @@ const MyNews = () => {
 
     fetchData();
     setSearchParams({ page: 1 });
-  }, [activeTab, memberNo]);
+  }, [activeTab, token]);
 
   const handleChatClick = async (item) => {
     const key = removeHtmlTags(item.title);
@@ -79,6 +80,27 @@ const MyNews = () => {
 
   const pagedList = fullList.slice((page - 1) * size, page * size);
   const totalPages = Math.ceil(fullList.length / size);
+  const currentBlock = Math.floor((page - 1) / 10);
+  const startPage = currentBlock * 10 + 1;
+  const endPage = Math.min(startPage + 9, totalPages);
+  const visiblePages = Array.from(
+    { length: endPage - startPage + 1 },
+    (_, i) => startPage + i
+  );
+
+  const handlePageChange = (targetPage) => {
+    setSearchParams({ page: targetPage });
+  };
+
+  const handleBlockPrev = () => {
+    const prevBlockStart = startPage - 10;
+    if (prevBlockStart >= 1) handlePageChange(prevBlockStart);
+  };
+
+  const handleBlockNext = () => {
+    const nextBlockStart = startPage + 10;
+    if (nextBlockStart <= totalPages) handlePageChange(nextBlockStart);
+  };
 
   return (
     <MyPageDiv>
@@ -86,21 +108,19 @@ const MyNews = () => {
       <div style={{ flex: 1, padding: "2rem" }}>
         <h2>내 뉴스</h2>
         <div style={{ marginBottom: "1rem" }}>
-          <button
+          <S.KeywordButton
             onClick={() => setActiveTab("likes")}
-            style={{ fontWeight: activeTab === "likes" ? "bold" : "normal" }}
+            active={activeTab === "likes"}
           >
             좋아요한 뉴스
-          </button>
+          </S.KeywordButton>
           {" | "}
-          <button
+          <S.KeywordButton
             onClick={() => setActiveTab("bookmarks")}
-            style={{
-              fontWeight: activeTab === "bookmarks" ? "bold" : "normal",
-            }}
+            active={activeTab === "bookmarks"}
           >
             북마크한 뉴스
-          </button>
+          </S.KeywordButton>
         </div>
         <ul>
           {pagedList.map((item) => (
@@ -122,24 +142,29 @@ const MyNews = () => {
             </li>
           ))}
         </ul>
-        <div
-          style={{
-            marginTop: "1rem",
-            display: "flex",
-            justifyContent: "center",
-            gap: "0.5rem",
-          }}
-        >
-          {Array.from({ length: totalPages }, (_, i) => (
+        <S.Pagination>
+          {page > 1 && (
+            <button onClick={() => handlePageChange(1)}>{"<<"}</button>
+          )}
+          {startPage > 1 && <button onClick={handleBlockPrev}>{"<"}</button>}
+
+          {visiblePages.map((p) => (
             <button
-              key={i}
-              onClick={() => setSearchParams({ page: i + 1 })}
-              disabled={i + 1 === page}
+              key={p}
+              onClick={() => handlePageChange(p)}
+              disabled={p === page}
             >
-              {i + 1}
+              {p}
             </button>
           ))}
-        </div>
+
+          {endPage < totalPages && (
+            <button onClick={handleBlockNext}>{">"}</button>
+          )}
+          {page < totalPages && (
+            <button onClick={() => handlePageChange(totalPages)}>{">>"}</button>
+          )}
+        </S.Pagination>
       </div>
     </MyPageDiv>
   );
