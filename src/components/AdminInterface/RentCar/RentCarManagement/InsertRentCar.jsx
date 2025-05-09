@@ -33,9 +33,11 @@ const InsertRentCar = () => {
     rentCarPrice: "",
     carName: "",
     enrollPlace: "",
-    carCompany: "",
+    carCompanyNo: "",
+    carCompanyName: "",
     carYear: "",
-    carType: "",
+    carTypeNo: "",
+    carTypeName: "",
     garageNo: "",
   });
 
@@ -120,7 +122,7 @@ const InsertRentCar = () => {
       .get("http://localhost/rentCar/category")
       .then((result) => {
         console.log(result.data);
-        setCategory(result.data);
+        setCategory(result.data.categoryInfo);
       })
       .catch((error) => {
         console.log(error);
@@ -128,17 +130,19 @@ const InsertRentCar = () => {
 
     axios
       .get("http://localhost/rentCar/carInfo")
-      .then((result) => {
-        console.log(result.data);
-        const carData = result.data.carInfoResult.map((item, index) => ({
+      .then((res) => {
+        console.log("res.data : ", res.data);
+        const data = res.data.carInfoResult.map((item, idx) => ({
           carNo: item.carNo,
           carName: item.carName,
-          carType: item.carType,
-          carCompany: item.carCompany,
+          carTypeNo: item.carTypeNo,
+          carTypeName: item.carTypeName,
+          carCompanyNo: item.companyNo,
+          carCompanyName: item.companyName,
           carYear: item.carYear,
-          carImage: result.data.imageResult[index].fileLoad,
+          carImage: res.data.imageResult[idx].fileLoad,
         }));
-        setCarInfo(carData);
+        setCarInfo(data);
       })
       .catch((error) => {
         console.log(error);
@@ -155,19 +159,19 @@ const InsertRentCar = () => {
   };
 
   const handleCarName = (e) => {
-    carInfo.map((item) => {
-      if (item.carName == e.target.value) {
-        setForm({
-          ...form,
-          carNo: item.carNo,
-          carName: item.carName,
-          carType: item.carType,
-          carCompany: item.carCompany,
-          carYear: item.carYear,
-        });
-        setImagePreview(item.carImage);
-      }
-    });
+    const sel = carInfo.find((i) => i.carName === e.target.value);
+    if (!sel) return;
+    setForm((f) => ({
+      ...f,
+      carName: sel.carName,
+      carNo: sel.carNo,
+      carYear: sel.carYear,
+      carCompanyNo: sel.carCompanyNo,
+      carCompanyName: sel.carCompanyName,
+      carTypeNo: sel.carTypeNo,
+      carTypeName: sel.carTypeName,
+    }));
+    setImagePreview(sel.carImage);
   };
 
   //  필드별 ref 선언
@@ -184,11 +188,11 @@ const InsertRentCar = () => {
 
     // 빈 값 체크 & ref 매핑
     const checks = [
-      { val: form.carCompany, name: "제조사", ref: carCompanyRef },
-      { val: form.carType, name: "차종", ref: carTypeRef },
+      { val: form.carCompanyNo, name: "제조사", ref: carCompanyRef },
+      { val: form.carTypeNo, name: "차종", ref: carTypeRef },
       { val: form.carName, name: "모델명", ref: carNameRef },
       { val: form.rentCarNo, name: "차 번호", ref: rentCarNoRef },
-      { val: form.categoryName, name: "카테고리", ref: categoryNameRef },
+      { val: form.categoryNo, name: "카테고리", ref: categoryNameRef },
       { val: form.rentCarPrice, name: "가격", ref: rentCarPriceRef },
       { val: form.garageNo, name: "차고지", ref: enrollPlaceRef },
     ];
@@ -201,7 +205,9 @@ const InsertRentCar = () => {
     axios
       .post("http://localhost/rentCar/insert", {
         rentCarNo: form.rentCarNo,
-        categoryName: form.categoryName,
+        categoryNo: form.categoryNo,
+        companyNo: form.carCompanyNo,
+        carTypeNo: form.carTypeNo,
         carNo: form.carNo,
         rentCarPrice: form.rentCarPrice,
         garageNo: form.garageNo,
@@ -215,21 +221,24 @@ const InsertRentCar = () => {
       });
   };
 
-  console.log("category :", category);
-  console.log("form :", form);
-  console.log("carInfo :", carInfo);
-
   const companyOptions = Array.from(
-    new Set(carInfo.map((item) => item.carCompany))
-  );
-  const typeOptions = form.carCompany
+    new Map(
+      carInfo
+        .filter((i) => i.carCompanyNo != null) // null 항목 제거
+        .map((i) => [i.carCompanyNo, i.carCompanyName])
+    ).entries()
+  ).map(([companyNo, companyName]) => ({ companyNo, companyName }));
+
+  const typeOptions = form.carCompanyNo
     ? Array.from(
-        new Set(
+        new Map(
           carInfo
-            .filter((item) => item.carCompany === form.carCompany)
-            .map((item) => item.carType)
-        )
-      )
+            .filter(
+              (i) => i.carCompanyNo === form.carCompanyNo && i.carTypeNo != null // null 항목 제거
+            )
+            .map((i) => [i.carTypeNo, i.carTypeName])
+        ).entries()
+      ).map(([carTypeNo, carTypeName]) => ({ carTypeNo, carTypeName }))
     : [];
 
   return (
@@ -271,15 +280,22 @@ const InsertRentCar = () => {
                     <Form.Group className="mb-3" controlId="carCompany">
                       <Form.Label className="fw-bold">제조사 :</Form.Label>
                       <Form.Select
-                        name="carCompany"
-                        value={form.carCompany}
+                        name="carCompanyNo"
+                        value={form.carCompanyNo}
                         ref={carCompanyRef}
                         onChange={(e) => {
+                          const companyNo = parseInt(e.target.value, 10);
+                          const companyName =
+                            companyOptions.find((c) => c.companyNo == companyNo)
+                              ?.companyName || "";
                           setForm({
                             ...form,
-                            carCompany: e.target.value,
-                            carType: "", // 선택 바뀌면 차종 초기화
-                            carName: "", // 모델명 초기화
+                            carCompanyNo: companyNo,
+                            carCompanyName: companyName,
+                            // 차종·모델 초기화
+                            carTypeNo: "",
+                            carTypeName: "",
+                            carName: "",
                             carNo: "",
                             carYear: "",
                           });
@@ -287,9 +303,9 @@ const InsertRentCar = () => {
                         }}
                       >
                         <option value="">제조사 선택</option>
-                        {companyOptions.map((c) => (
-                          <option key={c} value={c}>
-                            {c}
+                        {companyOptions.map(({ companyNo, companyName }) => (
+                          <option key={companyNo} value={companyNo}>
+                            {companyName}
                           </option>
                         ))}
                       </Form.Select>
@@ -300,25 +316,31 @@ const InsertRentCar = () => {
                     <Form.Group className="mb-3" controlId="carType">
                       <Form.Label className="fw-bold">차종 :</Form.Label>
                       <Form.Select
-                        name="carType"
-                        value={form.carType}
+                        name="carTypeNo"
+                        value={form.carTypeNo}
                         ref={carTypeRef}
+                        disabled={!form.carCompanyNo}
                         onChange={(e) => {
+                          const typeNo = parseInt(e.target.value, 10);
+                          const typeName =
+                            typeOptions.find((t) => t.carTypeNo == typeNo)
+                              ?.carTypeName || "";
                           setForm({
                             ...form,
-                            carType: e.target.value,
-                            carName: "", // 모델명 초기화
+                            carTypeNo: typeNo,
+                            carTypeName: typeName,
+                            // 모델명 초기화
+                            carName: "",
                             carNo: "",
                             carYear: "",
                           });
                           setImagePreview(null);
                         }}
-                        disabled={!form.carCompany}
                       >
                         <option value="">차종 선택</option>
-                        {typeOptions.map((t) => (
-                          <option key={t} value={t}>
-                            {t}
+                        {typeOptions.map(({ carTypeNo, carTypeName }) => (
+                          <option key={carTypeNo} value={carTypeNo}>
+                            {carTypeName}
                           </option>
                         ))}
                       </Form.Select>
@@ -333,14 +355,14 @@ const InsertRentCar = () => {
                         value={form.carName}
                         onChange={handleCarName}
                         ref={carNameRef}
-                        disabled={!form.carCompany || !form.carType}
+                        disabled={!form.carCompanyNo || !form.carTypeNo}
                       >
                         <option>선택</option>
                         {carInfo
                           .filter(
                             (item) =>
-                              item.carCompany === form.carCompany && // 1) 회사 일치
-                              item.carType === form.carType // 2) 차종 일치
+                              item.carCompanyNo === form.carCompanyNo &&
+                              item.carTypeNo === form.carTypeNo
                           )
                           .map((item) => (
                             <option key={item.carNo} value={item.carName}>
@@ -383,18 +405,20 @@ const InsertRentCar = () => {
                 {/* 가격 */}
                 <Row>
                   <Col>
-                    <Form.Group controlId="categoryName">
+                    <Form.Group controlId="categoryNo">
                       <Form.Label className="fw-bold ">카테고리 :</Form.Label>
                       <Form.Select
-                        name="categoryName"
-                        value={form.categoryName}
+                        name="categoryNo"
+                        value={form.categoryNo}
                         ref={categoryNameRef}
                         onChange={handleChange}
                       >
                         <option>선택</option>
-                        {category.map((item) => {
-                          return <option key={item}>{item}</option>;
-                        })}
+                        {category.map((item) => (
+                          <option key={item.categoryNo} value={item.categoryNo}>
+                            {item.categoryName}
+                          </option>
+                        ))}
                       </Form.Select>
                     </Form.Group>
                   </Col>

@@ -40,6 +40,7 @@ const RentCarDetails = () => {
     postAdd,
     garageNo,
     status,
+    categoryNo,
   } = location.state;
 
   const [form, setForm] = useState({
@@ -55,9 +56,9 @@ const RentCarDetails = () => {
     postAdd: postAdd,
     garageNo: garageNo,
     status: status,
+    categoryNo: categoryNo,
   });
-
-  console.log(form);
+  console.log("form 나와라 : ", form);
 
   // --- 주소 찾기 모달 관련 상태들 추가  ---
   const [addressModal, setAddressModal] = useState(false);
