@@ -59,18 +59,23 @@ const AdminReport = () => {
     setTitleQuery(titleQueryInput);
   };
 
+  function toKSTDateString(date) {
+    const kstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+    return kstDate.toISOString().slice(0, 10);
+  }
+
   const handlePreset = (days) => {
     const end = new Date();
     const start = new Date();
     start.setDate(end.getDate() - days);
-    setStartDate(start.toISOString().slice(0, 10));
-    setEndDate(end.toISOString().slice(0, 10));
+    setStartDate(toKSTDateString(start));
+    setEndDate(toKSTDateString(end));
     setPage(0);
     setTitleQuery(titleQueryInput);
   };
 
-  const handleRowClick = (boardNo) => {
-    navigate(`/admin/reports/${boardNo}`);
+  const handleRowClick = (rpNo) => {
+    navigate(`/admin/adminReports/${rpNo}`);
   };
 
   const handlePrev = () => {
@@ -136,16 +141,21 @@ const AdminReport = () => {
                 </thead>
                 <tbody>
                   {reports.map((r) => (
-                    <tr
-                      key={r.boardNo}
-                      onClick={() => handleRowClick(r.boardNo)}
-                    >
+                    <tr key={r.rpNo} onClick={() => handleRowClick(r.rpNo)}>
                       <td>{r.rpNo}</td>
                       <td className="report-title">{r.title}</td>
                       <td>{r.memberNo}</td>
                       <td>{r.rpMemberNo}</td>
                       <td>{r.enrollDate}</td>
-                      <td>{r.status}</td>
+                      <td>
+                        {r.status === "Y"
+                          ? "처리완료"
+                          : r.status === "N"
+                          ? "거부됨"
+                          : r.status === "P"
+                          ? "진행중"
+                          : "알 수 없음"}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

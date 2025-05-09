@@ -67,7 +67,7 @@ function UserNotice() {
 
           <input
             type="text"
-            placeholder="제목 또는 작성일시 검색"
+            placeholder="제목/작성일시/작성자 검색"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             style={{ marginBottom: "10px", padding: "5px", width: "250px" }}
@@ -76,8 +76,8 @@ function UserNotice() {
           <div className="Notice-container">
             <table>
               <colgroup>
-                <col style={{ width: "60%" }} />
-                <col style={{ width: "20%" }} />
+                <col style={{ width: "50%" }} />
+                <col style={{ width: "30%" }} />
                 <col style={{ width: "20%" }} />
               </colgroup>
               <thead>
