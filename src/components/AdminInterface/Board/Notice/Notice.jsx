@@ -48,7 +48,7 @@ function Notice() {
           <h1>공지사항</h1>
           <input
             type="text"
-            placeholder="제목/작성자/날짜 검색"
+            placeholder="제목/작성일시/작성자 검색"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
