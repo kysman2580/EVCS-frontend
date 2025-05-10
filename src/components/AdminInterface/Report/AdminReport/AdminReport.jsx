@@ -6,6 +6,7 @@ import AdminReportNav from "../../AdminCommon/AdminNav/AdminReportNav";
 
 const AdminReport = () => {
   const navigate = useNavigate();
+  const token = localStorage.getItem("accessToken");
 
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -33,6 +34,9 @@ const AdminReport = () => {
       };
       const response = await axios.get("http://localhost:80/api/reports", {
         params,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       const payload = response.data;
       const list = Array.isArray(payload)

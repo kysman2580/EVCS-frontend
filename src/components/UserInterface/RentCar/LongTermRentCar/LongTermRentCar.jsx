@@ -33,7 +33,7 @@ const LongTermRentCar = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost/user-rentcars/category/1`)
+      .get(`http://localhost/user-rentcars/category/2`)
       .then((res) => {
         console.log(res.data);
         setRentCars(res.data);
@@ -49,7 +49,7 @@ const LongTermRentCar = () => {
       if (
         filterType === "category" &&
         searchText.trim() !== "" &&
-        car.carType !== searchText
+        !car.carTypeName.includes(searchText)
       )
         return false;
 
@@ -67,6 +67,13 @@ const LongTermRentCar = () => {
       )
         return false;
 
+      if (
+        filterType === "company" &&
+        searchText.trim() !== "" &&
+        !car.companyName.includes(searchText)
+      )
+        return false;
+
       return true;
     });
   }, [rentCars, onlyHotdeal, filterType, searchText]);
@@ -81,6 +88,7 @@ const LongTermRentCar = () => {
 
   const handleSearch = () => {
     // 검색 시 보이는 개수를 다시 초기화
+    setSearchText(inputText);
     setVisibleCount(10000000);
   };
 
@@ -108,6 +116,7 @@ const LongTermRentCar = () => {
               <option value="category">차종</option>
               <option value="model">모델명</option>
               <option value="region">지역</option>
+              <option value="company">제조사</option>
             </Dropdown>
 
             <TextInput

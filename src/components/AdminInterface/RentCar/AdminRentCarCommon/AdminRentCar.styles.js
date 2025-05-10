@@ -12,7 +12,7 @@ export const RentBodyDiv = styled.div`
 
 export const RentContainerDiv = styled.div`
   display: flex;
-  height: 800px;
+  height: 900px;
 `;
 
 export const RentCarListDiv = styled.div`
