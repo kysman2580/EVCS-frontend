@@ -1,129 +1,121 @@
-import {
-  StyledHeaderDiv,
-  StyledHomeDiv,
-  StyledHeaderBtn,
-  StyledHomeCenterDiv,
-  StyledMemberDiv,
-  StyledLogoDiv,
-  LogoImg,
-  NavLink,
-} from "./Header.styles";
+// components/Header/Header.jsx
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../Context/AuthContext/AuthContext";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { useEffect, useState } from "react";
-
+import {
+  StyledHeaderDiv,
+  StyledHeaderTop,
+  StyledLogoDiv,
+  LogoImage,
+  LogoText,
+  StyledAuthButtons,
+  StyledLoginButton,
+  StyledSignupButton,
+  StyledNavbar,
+  StyledNavLink,
+  StyledMemberDiv,
+} from "./Header.styles";
 
 const Header = () => {
-  const navi = useNavigate();
+  const navigate = useNavigate();
   const { auth, logout } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
 
-  useEffect(() => {
-    if (auth.user && auth.user.isAuthenticated) {
-      checkAdminRole();
+  const checkAdminRole = useCallback(async () => {
+    const token = auth.user?.accessToken;
+    if (!token) {
+      setIsAdmin(false);
+      return;
+    }
+    try {
+      const { data } = await axios.get("http://localhost:80/admin/user/info", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setIsAdmin(!!data.isAdmin);
+    } catch {
+      setIsAdmin(false);
     }
   }, [auth.user]);
 
-  const checkAdminRole = () => {
-    const accessToken = auth.user.accessToken;
-    console.log("권한 확인 요청 시작", { token: accessToken });
+  useEffect(() => {
+    if (auth.user?.isAuthenticated) checkAdminRole();
+    else setIsAdmin(false);
+  }, [auth.user, checkAdminRole]);
 
-    axios.get("http://localhost:80/admin/user/info", {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`
-      }
-    })
-      .then((response) => {
-        console.log("권한 확인 응답:", response.data);
-        setIsAdmin(response.data && response.data.isAdmin);
-      })
-      .catch((error) => {
-        console.error("권한 확인 중 오류 발생:", error);
-        setIsAdmin(false);
-      });
+  const handleAdminAccess = async () => {
+    const token = auth.user?.accessToken;
+    if (!token) return;
+    try {
+      await axios.post(
+        "http://localhost:80/admin",
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      navigate("/admin/main");
+    } catch (err) {
+      toast.error(
+        err.response?.status === 403
+          ? "관리자만 접속할 수 있습니다."
+          : "오류가 발생했습니다."
+      );
+    }
   };
-
-
-
-  const handleAdminAccess = () => {
-
-    const accessToken = auth.user.accessToken;
-
-    axios.post("http://localhost:80/admin", {}, {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`
-      }
-    })
-      .then((response) => {
-        if (response.status === 200) {
-          alert('관리자 페이지 이동');
-          navi("/admin/main")
-        }
-      }).catch((error) => {
-        if (error.response && error.response.status === 403) {
-          toast.error("관리자만 접속할 수 있습니다.");
-        } else {
-          toast.error("오류가 발생했습니다.");
-        }
-      });
-  };
-
-
-
-
 
   return (
-    <>
-      <StyledHeaderDiv>
-        <StyledLogoDiv>
-          <NavLink onClick={() => navi("/")}>
-            <LogoImg src="/images/Logo.png" />
-          </NavLink>
+    <StyledHeaderDiv>
+      <StyledHeaderTop>
+        <StyledLogoDiv onClick={() => navigate("/")}>
+          <LogoImage src="/images/hourRent.png" alt="Logo" />
+          <LogoText>전기충만</LogoText>
         </StyledLogoDiv>
-        <StyledHomeCenterDiv>
-          <StyledHeaderBtn onClick={() => navi("/timerentalPage")}>
-            렌트카
-          </StyledHeaderBtn>
-          <StyledHeaderBtn onClick={() => navi("/driveRouteBoard")}>
-            커뮤니티
-          </StyledHeaderBtn>
-          <StyledHeaderBtn onClick={() => navi("/chargingMap")}>
-            충전소 조회
-          </StyledHeaderBtn>
-          <StyledHeaderBtn onClick={() => navi("/newsMain")}>
-            뉴스
-          </StyledHeaderBtn>
-          <StyledHeaderBtn onClick={() => navi("/notice")}>
-            공지사항
-          </StyledHeaderBtn>
-        </StyledHomeCenterDiv>
-        <StyledMemberDiv>
-          {auth.user.isAuthenticated ? (
-            <>
-              <StyledHeaderBtn onClick={() => navi("/myPage")}>{auth.user.memberName}님</StyledHeaderBtn>
-              <StyledHeaderBtn onClick={logout}>로그아웃</StyledHeaderBtn>
-              <StyledHeaderBtn>아이콘</StyledHeaderBtn>
+
+        <StyledAuthButtons>
+          {auth.user?.isAuthenticated ? (
+            <StyledMemberDiv>
+              <StyledLoginButton onClick={() => navigate("/myPage")}>
+                {auth.user.memberName}님
+              </StyledLoginButton>
+              <StyledSignupButton onClick={logout}>로그아웃</StyledSignupButton>
               {isAdmin && (
-                <StyledHeaderBtn onClick={handleAdminAccess}>
-                  관리자페이지로
-                </StyledHeaderBtn>
+                <StyledSignupButton onClick={handleAdminAccess}>
+                  관리자페이지
+                </StyledSignupButton>
               )}
-            </>
+            </StyledMemberDiv>
           ) : (
-            <>
-              <StyledHeaderBtn onClick={() => navi("/loginPage")}>
+            <StyledMemberDiv>
+              <StyledLoginButton onClick={() => navigate("/loginPage")}>
                 로그인
-              </StyledHeaderBtn>
-              <StyledHeaderBtn onClick={() => navi("/signUpPage")}>
+              </StyledLoginButton>
+              <StyledSignupButton onClick={() => navigate("/signUpPage")}>
                 회원가입
-              </StyledHeaderBtn>
-            </>
+              </StyledSignupButton>
+            </StyledMemberDiv>
           )}
-        </StyledMemberDiv>
-      </StyledHeaderDiv>
-    </>
+        </StyledAuthButtons>
+      </StyledHeaderTop>
+
+      <StyledNavbar>
+        <StyledNavLink onClick={() => navigate("/")}>홈</StyledNavLink>
+        <StyledNavLink onClick={() => navigate("/timerentalPage")}>
+          렌트카
+        </StyledNavLink>
+        <StyledNavLink onClick={() => navigate("/driveRouteBoard")}>
+          커뮤니티
+        </StyledNavLink>
+        <StyledNavLink onClick={() => navigate("/chargingMap")}>
+          충전소 조회
+        </StyledNavLink>
+        <StyledNavLink onClick={() => navigate("/newsMain")}>
+          뉴스
+        </StyledNavLink>
+        <StyledNavLink onClick={() => navigate("/notice")}>
+          공지사항
+        </StyledNavLink>
+      </StyledNavbar>
+    </StyledHeaderDiv>
   );
 };
 
