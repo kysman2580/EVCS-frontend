@@ -276,7 +276,7 @@ export const SeeDriveRoute = styled.div`
   font-size: 20px;
 `;
 export const Comments = styled.div`
-  height: 90%;
+  height: 85%;
   overflow-y: auto;
   padding: 10px 15px;
   background-color: transparent;
