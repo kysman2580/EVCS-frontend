@@ -2,7 +2,6 @@ import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import RentCarNav from "../../Common/Nav/RentCarNav";
-import CarMap from "./CarMap";
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import {
@@ -27,14 +26,31 @@ const RentalPage = () => {
     0,
     0
   );
+  // YYYY-MM-DD HH:mm 포맷 헬퍼 (로컬 타임존 기준)
+  const formatLocalDateTime = (date) => {
+    const y = date.getFullYear();
+    const M = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    const h = String(date.getHours()).padStart(2, "0");
+    const m = String(date.getMinutes()).padStart(2, "0");
+    return `${y}-${M}-${d}T${h}:${m}`;
+  };
+
   const [startDate, setStartDate] = useState(currentTime);
   const [endDate, setEndDate] = useState(currentTime);
 
+  const handleEndDate = (date) => {
+    if (date <= startDate) {
+      alert("반납 시각은 대여 시각보다 늦어야 합니다.");
+      return;
+    }
+    setEndDate(date);
+  };
   const handleConfirm = () => {
     navi("/rentCarMap", {
       state: {
-        startDate: startDate,
-        endDate: endDate,
+        startDate: formatLocalDateTime(startDate),
+        endDate: formatLocalDateTime(endDate),
       },
     });
   };
@@ -59,6 +75,22 @@ const RentalPage = () => {
                 onChange={(date) => setStartDate(date)}
                 dateFormat="yy/MM/dd/HH:mm"
                 showTimeSelect
+                timeIntervals={30}
+                minDate={startDate}
+                minTime={
+                  startDate.toDateString() === new Date().toDateString()
+                    ? new Date(
+                        now.getFullYear(),
+                        now.getMonth(),
+                        now.getDate(),
+                        now.getHours() + 1,
+                        0,
+                        0,
+                        0
+                      )
+                    : new Date(0, 0, 0, 0, 0)
+                }
+                maxTime={new Date(0, 0, 0, 23, 59)}
               />
             </StyledDatePicker>
 
@@ -68,9 +100,23 @@ const RentalPage = () => {
                 className="datepicker"
                 showIcon
                 selected={endDate}
-                onChange={(date) => setEndDate(date)}
-                dateFormat="yy/MM/dd/HH:mm"
+                onChange={(date) => handleEndDate(date)}
+                dateFormat="yy/MM/dd HH:mm"
+                timeFormat="HH:mm"
                 showTimeSelect
+                timeIntervals={30} // 옵션: 30분 간격
+                minDate={startDate}
+                maxDate={
+                  new Date(
+                    now.getFullYear(),
+                    now.getMonth(),
+                    now.getDate() + 7,
+                    now.getHours(),
+                    0,
+                    0,
+                    0
+                  )
+                }
               />
             </StyledDatePicker>
           </Wrapper>

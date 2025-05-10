@@ -370,7 +370,7 @@ const DRBoard = () => {
       .then((result) => {
         const drComment = result.data.drComment;
         setCommentInfo(drComment);
-        setHasMoreComment(drComment.length === 10); // 10개 미만이면 더보기 X
+        setHasMoreComment(drComment.length === 10);
       })
       .catch((error) => {
         console.error("댓글 조회 실패:", error);
@@ -452,9 +452,47 @@ const DRBoard = () => {
   };
 
   // ----------------------댓글 수정----------------------
-  const handleUpdateComment = (comment) => {};
-
-  const handleSaveEditedComment = () => {};
+  const handleUpdateComment = (commentNo) => {
+    axios
+      .put(
+        "http://localhost/driveRouteComment/update",
+        {
+          commentContent: editedContent,
+          commentNo: commentNo,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${auth.user.accessToken}`,
+          },
+        }
+      )
+      .then((result) => {
+        console.log(result);
+        alert("댓글이 수정되었습니다.");
+        setEditingCommentNo(null);
+        // 댓글 재조회
+        setCurrentCommentPage(1);
+        axios
+          .get(
+            `http://localhost/driveRouteComment/${commentTargetBoard.boardNo}/1`,
+            {
+              headers: {
+                Authorization: `Bearer ${auth.user.accessToken}`,
+              },
+            }
+          )
+          .then((res) => {
+            const drComment = res.data.drComment;
+            setCommentInfo(drComment);
+            setHasMoreComment(drComment.length === 10);
+            setComment((prev) => ({ ...prev, commentContent: "" }));
+          })
+          .catch((err) => console.error("댓글 재조회 실패", err));
+      })
+      .catch((error) => {
+        console.error("댓글 삭제 실패:", error);
+      });
+  };
 
   /* 하얀하트 누르면 게시글 번호 들고 db 가서 좋아요 테이블에 memberNo boardNo 추가
     검정 하트를 한 번 더 누르면 게시글 번호 들고 가서 memberNo boardNo 삭제
@@ -485,6 +523,15 @@ const DRBoard = () => {
         },
       })
       .then(() => {
+        setBoards((prevBoards) =>
+          prevBoards.map((board) =>
+            board.boardNo === boardNo
+              ? { ...board, likeCount: board.likeCount + 1 }
+              : board
+          )
+        );
+        setBoardLikesInfo((prev) => [...prev, { boardNo }]);
+
         axios
           .get("http://localhost/driveRouteBoard/selectLikes", {
             headers: {
@@ -511,6 +558,19 @@ const DRBoard = () => {
         },
       })
       .then(() => {
+        setBoards((prevBoards) =>
+          prevBoards.map((board) =>
+            board.boardNo === boardNo
+              ? {
+                  ...board,
+                  likeCount: Math.max(board.likeCount - 1, 0), // 0 미만 방지
+                }
+              : board
+          )
+        );
+        setBoardLikesInfo((prev) =>
+          prev.filter((item) => item.boardNo !== boardNo)
+        );
         axios
           .get("http://localhost/driveRouteBoard/selectLikes", {
             headers: {
@@ -626,6 +686,18 @@ const DRBoard = () => {
                     드라이브 경로
                   </DriveRouteIcon>
                 </PostIcon>
+                {board.likeCount > 0 && (
+                  <span
+                    style={{
+                      marginLeft: "15px",
+                      marginBottom: "20px",
+                      fontWeight: "bold",
+                      color: "#949393",
+                    }}
+                  >
+                    {board.likeCount}명이 좋아합니다
+                  </span>
+                )}
 
                 <Content expanded={!!expandedPost[board.boardNo]}>
                   {board.boardContent}
@@ -714,22 +786,41 @@ const DRBoard = () => {
                           height: "100%",
                         }}
                       >
-                        <Slider {...settings}>
-                          {imagesUrl.map((url, index) => (
-                            <div key={index} style={{ position: "relative" }}>
-                              <img
-                                src={url}
-                                style={{
-                                  width: "100%",
-                                  maxHeight: "630px",
-                                  objectFit: "cover",
-                                  backgroundRepeat: "no-repeat",
-                                }}
-                                alt={`preview-${index}`}
-                              />
-                            </div>
-                          ))}
-                        </Slider>
+                        {imagesUrl.length === 1 ? (
+                          <>
+                            {imagesUrl.map((url, index) => (
+                              <div key={index} style={{ position: "relative" }}>
+                                <img
+                                  src={url}
+                                  style={{
+                                    width: "100%",
+                                    maxHeight: "630px",
+                                    objectFit: "cover",
+                                    backgroundRepeat: "no-repeat",
+                                  }}
+                                  alt={`preview-${index}`}
+                                />
+                              </div>
+                            ))}
+                          </>
+                        ) : (
+                          <Slider {...settings}>
+                            {imagesUrl.map((url, index) => (
+                              <div key={index} style={{ position: "relative" }}>
+                                <img
+                                  src={url}
+                                  style={{
+                                    width: "100%",
+                                    maxHeight: "630px",
+                                    objectFit: "cover",
+                                    backgroundRepeat: "no-repeat",
+                                  }}
+                                  alt={`preview-${index}`}
+                                />
+                              </div>
+                            ))}
+                          </Slider>
+                        )}
                       </div>
                       <AutoAwesomeMotionOutlinedIcon
                         style={{
@@ -914,20 +1005,20 @@ const DRBoard = () => {
                             <CommentAuthor>
                               {comment.memberNickname}
                             </CommentAuthor>
-                            {comment.commentWriter === auth.user.memberNo && (
+                            {comment.commentWriter == auth.user.memberNo && (
                               <CommentButtonGroup>
-                                {editingCommentNo === comment.commentNo ? (
+                                {editingCommentNo == comment.commentNo ? (
                                   <>
                                     <span
+                                      className="save"
                                       onClick={() =>
-                                        handleSaveEditedComment(
-                                          comment.commentNo
-                                        )
+                                        handleUpdateComment(comment.commentNo)
                                       }
                                     >
                                       저장
                                     </span>
                                     <span
+                                      className="cancel"
                                       onClick={() => setEditingCommentNo(null)}
                                     >
                                       취소
@@ -936,6 +1027,7 @@ const DRBoard = () => {
                                 ) : (
                                   <>
                                     <span
+                                      className="edit"
                                       onClick={() => {
                                         setEditingCommentNo(comment.commentNo);
                                         setEditedContent(
@@ -946,6 +1038,7 @@ const DRBoard = () => {
                                       수정
                                     </span>
                                     <span
+                                      className="delete"
                                       onClick={() =>
                                         handleDeleteComment(comment.commentNo)
                                       }

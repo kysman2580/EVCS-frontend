@@ -455,4 +455,17 @@ export const CommentButtonGroup = styled.div`
     font-size: 13px;
     font-weight: bold;
   }
+
+  .save {
+    color: rgb(44, 72, 233);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+  }
+  .cancel {
+    color: black;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+  }
 `;
