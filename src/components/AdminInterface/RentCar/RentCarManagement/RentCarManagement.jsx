@@ -257,6 +257,7 @@ const RentCarManagement = () => {
                               garageNo: car.garageNo,
                               status: car.status,
                               categoryNo: car.categoryNo,
+                              optionNos: car.optionNos,
                             },
                           })
                         }
