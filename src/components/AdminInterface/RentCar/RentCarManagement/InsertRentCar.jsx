@@ -51,6 +51,19 @@ const InsertRentCar = () => {
   const [status, setStatus] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
 
+  const [options, setOptions] = useState([]); // 전체 옵션 목록
+  const [selectedOptions, setSelectedOptions] = useState([]); // 선택된 옵션번호 배열
+
+  useEffect(() => {
+    axios
+      .get("http://localhost/rentCar/options") // 옵션 목록 불러오기
+      .then((res) => {
+        console.log("옵션들 : ", res.data);
+        setOptions(res.data); // [{ optionNo: 1, optionName: '네비' }, ...]
+      })
+      .catch(console.error);
+  }, []);
+
   // 중복 제거 함수
   const getUniqueList = (arr, key) => {
     const seen = new Set();
@@ -149,10 +162,6 @@ const InsertRentCar = () => {
       });
   }, []);
 
-  const handleAdress = () => {
-    setAddressModal(true);
-  };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
@@ -211,6 +220,7 @@ const InsertRentCar = () => {
         carNo: form.carNo,
         rentCarPrice: form.rentCarPrice,
         garageNo: form.garageNo,
+        optionNos: selectedOptions,
       })
       .then((result) => {
         alert("차량이 등록되었습니다!");
@@ -435,6 +445,36 @@ const InsertRentCar = () => {
                     </Form.Group>
                   </Col>
                 </Row>
+                <Form.Group className="mb-3" controlId="carOptions">
+                  <Form.Label className="fw-bold">차량 옵션 :</Form.Label>
+                  <Row>
+                    {options.map((opt) => {
+                      const inputId = `option-${opt.optionNo}`; // 고유 id 생성
+                      return (
+                        <Col xs={6} key={opt.optionNo}>
+                          <Form.Check
+                            id={inputId} // 🔑 고유 ID
+                            type="checkbox"
+                            label={opt.optionName}
+                            checked={selectedOptions.includes(opt.optionNo)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedOptions((prev) => [
+                                  ...prev,
+                                  opt.optionNo,
+                                ]);
+                              } else {
+                                setSelectedOptions((prev) =>
+                                  prev.filter((no) => no !== opt.optionNo)
+                                );
+                              }
+                            }}
+                          />
+                        </Col>
+                      );
+                    })}
+                  </Row>
+                </Form.Group>
 
                 {/* 변경된 부분: enrollPlace + postAdd를 한 줄에 */}
                 <Row className="mb-4" style={{ alignItems: "flex-end" }}>
@@ -513,7 +553,7 @@ const InsertRentCar = () => {
             <Row className="mb-3">
               {/* 상태(전체/사용중/사용중지) */}
               {/* 시/도 */}
-              <Col md={2}>
+              <Col md={4}>
                 <Form.Select
                   value={regionSido}
                   onChange={(e) => {
@@ -532,7 +572,7 @@ const InsertRentCar = () => {
                 </Form.Select>
               </Col>
               {/* 시군구 */}
-              <Col md={2}>
+              <Col md={4}>
                 <Form.Select
                   value={regionSigungu}
                   disabled={!regionSido}
@@ -551,7 +591,7 @@ const InsertRentCar = () => {
                 </Form.Select>
               </Col>
               {/* 동 */}
-              <Col md={2}>
+              <Col md={4}>
                 <Form.Select
                   value={regionDong}
                   disabled={!regionSigungu}
@@ -567,29 +607,6 @@ const InsertRentCar = () => {
                     </option>
                   ))}
                 </Form.Select>
-              </Col>
-              {/* 검색어 */}
-              <Col md={4}>
-                <Form.Control
-                  value={searchKeyword}
-                  placeholder="검색어"
-                  onChange={(e) => setSearchKeyword(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleRegionSearch();
-                    }
-                  }}
-                />
-              </Col>
-              <Col md={2}>
-                <Button
-                  className="w-100"
-                  variant="secondary"
-                  onClick={handleRegionSearch}
-                >
-                  검색
-                </Button>
               </Col>
             </Row>
 
