@@ -11,6 +11,8 @@ import {
 import DatePicker from "react-datepicker";
 import axios from "axios";
 
+import { PaymentButton } from "./PaymentButton";
+
 const LongTermRentCarDetail = () => {
   const location = useLocation();
   const rentCarNo = location.state?.rentCarNo;
@@ -20,6 +22,8 @@ const LongTermRentCarDetail = () => {
   const [endDate, setEndDate] = useState(new Date());
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [optionList, setOptionList] = useState([]);
+
+  const userName = localStorage.getItem("memberName");
 
   const OPTION_ICONS = {
     1: "/rentCar/gps-navigation.png",
@@ -103,7 +107,9 @@ const LongTermRentCarDetail = () => {
     const originalPrice = car.rentCarPrice;
     const monthlyPrice = Math.round(originalPrice / months);
     const discountedTotal = Math.round(originalPrice * (1 - totalDiscount));
-    const totalDiscountAmount = originalPrice - discountedTotal;
+
+    const monthlyPaymentOriginal = Math.round(originalPrice / months);
+    const monthlyPayment = Math.round(discountedTotal / months);
 
     return {
       months,
@@ -113,9 +119,20 @@ const LongTermRentCarDetail = () => {
       monthlyPrice,
       originalPrice,
       discountedTotal,
-      totalDiscountAmount,
+      monthlyPaymentOriginal,
+      monthlyPayment,
     };
   };
+
+  const {
+    months,
+    baseDiscount,
+    hotdealDiscount,
+    originalPrice,
+    discountedTotal,
+    monthlyPaymentOriginal, // 변경
+    monthlyPayment, // 변경
+  } = getDiscountInfo();
 
   return (
     <>
@@ -243,7 +260,7 @@ const LongTermRentCarDetail = () => {
                                 textAlign: "center",
                                 opacity: selectedOptions.includes(opt.optionNo)
                                   ? 1
-                                  : 0.3,
+                                  : 0.2,
                                 transition: "opacity 0.2s",
                               }}
                             >
@@ -253,7 +270,7 @@ const LongTermRentCarDetail = () => {
                                 fluid
                                 style={{ maxHeight: 40 }}
                               />
-                              <div style={{ fontSize: 12, marginTop: 4 }}>
+                              <div style={{ fontSize: 18, marginTop: 4 }}>
                                 {opt.optionName}
                               </div>
                             </div>
@@ -268,82 +285,97 @@ const LongTermRentCarDetail = () => {
                     <Row className="mb-3 px-3">
                       <Col>
                         <h6 className="fw-bold">요금 정보</h6>
-                        {car &&
-                          (() => {
-                            const {
-                              months,
-                              baseDiscount,
-                              hotdealDiscount,
-                              monthlyPrice,
-                              originalPrice,
-                              discountedTotal,
-                              totalDiscountAmount,
-                            } = getDiscountInfo();
-
-                            return (
-                              <>
-                                <Row>
-                                  <Col>월 요금</Col>
-                                  <Col className="text-end">
-                                    {monthlyPrice.toLocaleString()}원
-                                  </Col>
-                                </Row>
-                                <Row>
-                                  <Col>원래 가격 / 실제 가격</Col>
-                                  <Col className="text-end">
-                                    {originalPrice.toLocaleString()}원 /{" "}
-                                    {discountedTotal.toLocaleString()}원
-                                  </Col>
-                                </Row>
-                                <Row>
-                                  <Col>
-                                    {months}개월 할인 ({baseDiscount * 100}%)
-                                  </Col>
-                                  <Col className="text-end">
-                                    -
-                                    {Math.round(
-                                      originalPrice * baseDiscount
-                                    ).toLocaleString()}
-                                    원
-                                  </Col>
-                                </Row>
-                                {hotdealDiscount > 0 && (
-                                  <Row>
-                                    <Col>
-                                      🔥 핫딜 추가 할인 ({hotdealDiscount * 100}
-                                      %)
-                                    </Col>
-                                    <Col className="text-end">
-                                      -
-                                      {Math.round(
-                                        originalPrice * hotdealDiscount
-                                      ).toLocaleString()}
-                                      원
-                                    </Col>
-                                  </Row>
-                                )}
-                              </>
-                            );
-                          })()}
+                        <>
+                          <Row>
+                            <Col>
+                              {months}개월 할인 ({baseDiscount * 100}%)
+                            </Col>
+                            <Col className="text-end">
+                              -
+                              {Math.round(
+                                originalPrice * baseDiscount
+                              ).toLocaleString()}
+                              원
+                            </Col>
+                          </Row>
+                          {hotdealDiscount > 0 && (
+                            <Row>
+                              <Col>
+                                🔥 핫딜 추가 할인 ({hotdealDiscount * 100}
+                                %)
+                              </Col>
+                              <Col className="text-end">
+                                -
+                                {Math.round(
+                                  originalPrice * hotdealDiscount
+                                ).toLocaleString()}
+                                원
+                              </Col>
+                            </Row>
+                          )}
+                          <Row>
+                            <Col>월 요금</Col>
+                            <Col className="text-end">
+                              {monthlyPaymentOriginal.toLocaleString()}원
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col>원래 가격 / 실제 가격</Col>
+                            <Col className="text-end">
+                              <span
+                                style={{
+                                  textDecoration: "line-through",
+                                  marginRight: 8,
+                                  color: "#999",
+                                }}
+                              >
+                                {originalPrice.toLocaleString()}원 /{" "}
+                              </span>
+                              <span>{discountedTotal.toLocaleString()}원</span>
+                            </Col>
+                          </Row>
+                        </>
                       </Col>
                     </Row>
 
                     <hr />
 
                     {/* 계산 가격 + 결제 */}
-                    <Row className="mb-3 px-3">
+                    <Row className="mb-3 px-3" style={{ marginTop: "40px" }}>
                       <Col>
-                        <Row className="align-items-center">
+                        <Row className="mb-3 px-3">
                           <Col>
-                            <strong>계산할 가격</strong>
-                          </Col>
-                          <Col className="text-center fw-bold">
-                            {car &&
-                              getDiscountInfo().discountedTotal.toLocaleString()}
-                            원
-                          </Col>
-                          <Col className="text-end">
-                            <Button variant="dark">결제하기</Button>
+                            <Row className="align-items-center">
+                              <Col md={2}>
+                                <strong>총 가격</strong>
+                              </Col>
+                              <Col className="text-end" md={6}>
+                                <span
+                                  style={{
+                                    textDecoration: "line-through",
+                                    marginRight: 8,
+                                    color: "#999",
+                                  }}
+                                >
+                                  월 {monthlyPaymentOriginal.toLocaleString()}원
+                                </span>
+                                <span>
+                                  / 월 {monthlyPayment.toLocaleString()}원
+                                </span>
+                              </Col>
+                              <Col className="text-end" md={4}>
+                                <PaymentButton
+                                  startDate={startDate}
+                                  endDate={endDate}
+                                  memberNo={localStorage.getItem("memberNo")}
+                                  rentCarNo={rentCarNo}
+                                  amount={monthlyPayment}
+                                  customerName={userName}
+                                  carName={car.carName}
+                                  selectedPeriod={selectedPeriod}
+                                />
+                              </Col>
+                            </Row>
                           </Col>
                         </Row>
                       </Col>
