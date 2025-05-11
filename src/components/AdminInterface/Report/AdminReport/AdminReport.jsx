@@ -158,6 +158,8 @@ const AdminReport = () => {
                           ? "거부됨"
                           : r.status === "P"
                           ? "진행중"
+                          : r.status === "O"
+                          ? "취소됨"
                           : "알 수 없음"}
                       </td>
                     </tr>

@@ -78,7 +78,7 @@ const ReportComments = () => {
   };
 
   const handleRowClick = (rpNo) => {
-    navigate(`adminReportsCom/${rpNo}`);
+    navigate(`/reportsCom/${rpNo}`);
   };
 
   const handlePrev = () => {
@@ -160,6 +160,8 @@ const ReportComments = () => {
                             ? "거부됨"
                             : r.reStatus === "P"
                             ? "진행중"
+                            : r.reStatus === "O"
+                            ? "취소됨"
                             : "알 수 없음"}
                         </td>
                       </tr>
