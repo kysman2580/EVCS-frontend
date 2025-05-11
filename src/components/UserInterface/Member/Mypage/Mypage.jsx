@@ -70,25 +70,14 @@ const MyPage = () => {
                   </ChangeButton>
                 </InputLabel>
               </InputWrapByPassword>
-
-              <InputWrap>
-                <InputLabel>ㅇㅅㅇ</InputLabel>
-                <StyledInput id="name" type="text" />
-              </InputWrap>
             </>
           )}
 
-          <SubmitWrapDiv>
-            <SubmitButton>정보 수정</SubmitButton>
-          </SubmitWrapDiv>
           <DeleteButtonWrap>
             <DeleteButton>회원 탈퇴</DeleteButton>
           </DeleteButtonWrap>
         </InputGroup>
       </Form>
-      <RatingDiv>
-        <RatingGauge rating={userRating} />
-      </RatingDiv>
     </MyPageDiv>
   );
 };

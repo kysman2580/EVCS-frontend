@@ -43,6 +43,11 @@ function LoginPage() {
     const handleLogin = (e) => {
         e.preventDefault();
 
+        if (!email.includes("@")) {
+            toast.error("유효한 이메일 주소를 입력해주세요.");
+            return;
+        }
+
         const loginData = {
             email: email,
             memberPw: password

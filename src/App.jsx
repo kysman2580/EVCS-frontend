@@ -81,6 +81,10 @@ import GarageEnrollForm from "./components/AdminInterface/RentCar/Garage/GarageE
 import GarageDetails from "./components/AdminInterface/RentCar/Garage/GarageDetails";
 import GarageUpdateForm from "./components/AdminInterface/RentCar/Garage/GarageUpdateForm";
 import CarMap from "./components/UserInterface/RentCar/TimeRentCar/CarMap";
+import MemberManagement from "./components/AdminInterface/Member/MemberManagement/MemberManagement";
+import PaymentsSuccess from "./components/UserInterface/RentCar/LongTermRentCar/PaymentsSuccess";
+import PaymentFail from "./components/UserInterface/RentCar/LongTermRentCar/PaymentFail";
+import MyReservationList from "./components/UserInterface/Member/MyReservationList/MyReservationList";
 
 function App() {
   return (
@@ -165,6 +169,9 @@ function App() {
             />
             <Route path="/longRentCar" element={<LongTermRentCar />} />
             <Route path="/timerentalPage" element={<RentalPage />} />
+            <Route path="/success" element={<PaymentsSuccess />} />
+            <Route path="/fail" element={<PaymentFail />} />
+            <Route path="/reservationList" element={<MyReservationList />} />
           </Route>
 
           {/* 아래부터는 관리자페이지만 적자 */}
@@ -173,6 +180,9 @@ function App() {
           <Route path="/admin" element={<AdminRoute />}>
             <Route element={<AdminLayout />}>
               <Route path="main" element={<AdminMain />} />
+
+              {/* 회원 관리 */}
+              <Route path="memberManagement" element={<MemberManagement />} />
 
               {/* 렌트카 관련 */}
               <Route path="insertCar" element={<InsertCar />}></Route>

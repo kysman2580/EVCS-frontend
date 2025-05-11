@@ -125,13 +125,16 @@ font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 export const DeleteButtonWrap = styled.div`
     width: 1500px;
     height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `
 
 export const DeleteButton = styled.button`
 display: flex;
 justify-content: center;
 align-items: center;
-width: 190px;
+width: 460px;
 height: 60px;
 border-radius: 5px;
 border: solid 1px white;

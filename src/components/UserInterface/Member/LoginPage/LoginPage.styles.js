@@ -22,20 +22,68 @@ export const StyledInput = styled.input`
 `;
 
 export const SendCodeButton = styled.button`
+    position: absolute;
+    top: 0;
+    right: 50;
+    height: 40px;
+    width: 65px;
+    border: none;
+    background-color: #4caf50;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 10px;
+    border-radius: 5px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 13px;
+
+
+        &:hover{
+            color:rgb(255, 255, 255);
+            background-color:rgb(73, 168, 76);
+            transform: scale(1.05);
+        }
+
+`;
+
+
+export const DisableSendCodeButton = styled.button`
 position: absolute;
-top: 0;
-right: 50;
-height: 40px;
-width: 65px;
-border: none;
-background-color: #4caf50;
-color: white;
-font-weight: bold;
-cursor: pointer;
-margin-left: 10px;
-border-radius: 5px;
-font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-font-size: 13px;
+    top: 0;
+    right: -77px;
+    height: 40px;
+    width: 65px;
+    border: none;
+    background-color: ${props => (props.disabled ? '#d3d3d3' : '#4caf50')}; // 비활성화 시 회색
+    color: ${props => (props.disabled ? '#808080' : 'white')}; // 비활성화 시 회색 텍스트
+    font-weight: bold;
+    cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')}; // 비활성화 시 'not-allowed'
+    margin-left: 10px;
+    border-radius: 5px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 13px;
+
+    &:hover {
+        background-color: ${props => (props.disabled ? '#d3d3d3' : 'rgb(73, 168, 76)')}; // 비활성화 시 hover 없음
+        color: ${props => (props.disabled ? '#808080' : 'rgb(255, 255, 255)')}; // 비활성화 시 텍스트 회색
+        transform: ${props => (props.disabled ? 'none' : 'scale(1.05)')}; // 비활성화 시 크기 변하지 않음
+    }
+`;
+
+
+export const ReSendCodeButton = styled.button`
+    height: 40px;
+    width: 65px;
+    border: none;
+    background-color: #4caf50;
+    color: white;
+    font-weight: bold;
+    margin-left: 10px;
+    border-radius: 5px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 13px;
+    position: absolute;
+    right: -150px;
 
 
     &:hover{
