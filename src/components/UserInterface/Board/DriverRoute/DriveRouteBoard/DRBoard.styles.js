@@ -276,7 +276,7 @@ export const SeeDriveRoute = styled.div`
   font-size: 20px;
 `;
 export const Comments = styled.div`
-  height: 90%;
+  height: 85%;
   overflow-y: auto;
   padding: 10px 15px;
   background-color: transparent;
@@ -451,6 +451,19 @@ export const CommentButtonGroup = styled.div`
 
   .delete {
     color: #ff4d4f;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+  }
+
+  .save {
+    color: rgb(44, 72, 233);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+  }
+  .cancel {
+    color: black;
     cursor: pointer;
     font-size: 13px;
     font-weight: bold;
