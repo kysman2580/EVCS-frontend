@@ -8,7 +8,7 @@ const MyPageNav = () => {
   return (
     <>
       <NavDiv>
-        <NavRentContentDiv>
+        <NavRentContentDiv style={{height:"400px"}}>
           <StyledHeaderBtn onClick={() => navi("/myPage")}>
             내 정보
           </StyledHeaderBtn>
@@ -28,9 +28,9 @@ const MyPageNav = () => {
                     <StyledHeaderBtn onClick={() => navi("/report")}>
                         댓글 신고 내역
                     </StyledHeaderBtn>
-          <StyledHeaderBtn onClick={() => navi("/#")}>
-            구매 내역
-          </StyledHeaderBtn>
+                    <StyledHeaderBtn onClick={() => navi("/reservationList")}>
+                      구매 내역
+                    </StyledHeaderBtn>
         </NavRentContentDiv>
       </NavDiv>
     </>

@@ -421,7 +421,7 @@ const AdminHotDealRentCarUpdate = () => {
                 <>
                   <div className="text-center mb-3">
                     <Image
-                      src={selectedCar.imageUrl}
+                      src={selectedCar.fileLoad}
                       alt="차량 이미지"
                       fluid
                       style={{ maxHeight: "200px", objectFit: "cover" }}
@@ -439,10 +439,10 @@ const AdminHotDealRentCarUpdate = () => {
                       </Row>
                       <Row className="mb-2">
                         <Col>
-                          <strong>제조사:</strong> {selectedCar.carCompany}
+                          <strong>제조사:</strong> {selectedCar.companyName}
                         </Col>
                         <Col>
-                          <strong>차종:</strong> {selectedCar.carType}
+                          <strong>차종:</strong> {selectedCar.carTypeName}
                         </Col>
                       </Row>
                       <Row className="mb-2">
