@@ -32,18 +32,16 @@ const KakaoMap = () => {
       setKakaoLoadErring(true);
       return;
     }
-    // 로딩 구현할시 밑에 때가면됨
+
     let index = 1;
     const interval = setInterval(() => {
-      // baseText에서 0부터 index까지의 부분 문자열 표시
       setDisplayText(baseText.slice(0, index));
       index++;
-      // index가 baseText의 길이를 초과하면 1로 초기화하여 반복
       if (index > baseText.length) {
         index = 1;
       }
     }, 50);
-    // 요 위에 까지 로딩
+
     window.kakao.maps.load(() => {
       const { provinceMapping, detailedMapping } = mappings;
 
@@ -214,11 +212,6 @@ const KakaoMap = () => {
             const userLng = position.coords.longitude;
             const userLatLng = new window.kakao.maps.LatLng(userLat, userLng);
             map.setCenter(userLatLng);
-            // new window.kakao.maps.Marker({
-            //   map: map,
-            //   position: userLatLng,
-            //   title: "현재 위치",
-            // });
 
             const geocoder = new window.kakao.maps.services.Geocoder();
             geocoder.coord2RegionCode(userLng, userLat, (result, status) => {
@@ -236,24 +229,12 @@ const KakaoMap = () => {
                   }
                 }
                 if (!provinceName) provinceName = result[0].region_1depth_name;
-                console.log(
-                  "provinceName:",
-                  provinceName,
-                  "districtName:",
-                  districtName
-                );
 
                 const apiZcode = provinceMapping[provinceName] || "11";
                 const provinceDetail = detailedMapping[provinceName];
                 const userDetailedZscode = provinceDetail
                   ? provinceDetail[districtName]
                   : null;
-                console.log(
-                  "API zcode:",
-                  apiZcode,
-                  "User detailed zscode:",
-                  userDetailedZscode
-                );
 
                 fetchEVChargerInfo(apiZcode, userDetailedZscode);
               } else {

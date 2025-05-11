@@ -160,6 +160,8 @@ const Report = () => {
                             ? "거부됨"
                             : r.status === "P"
                             ? "진행중"
+                            : r.status === "O"
+                            ? "진행중"
                             : "알 수 없음"}
                         </td>
                       </tr>

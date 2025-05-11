@@ -48,10 +48,23 @@ const AdminReportDetail = () => {
     fetchDetail();
   }, [rpNo]);
 
+  const payload2 = {
+    status: "Y",
+  };
+
   const approval = async () => {
     if (!window.confirm("정말 피의자를 차단하시겠습니까?")) return;
     try {
-      await axios.delete(`/api/reports/${rpNo}`);
+      await axios.patch(
+        `http://localhost:80/api/reports/${report.rpNo}/y`,
+        payload2,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       alert("차단되었습니다");
       navigate(-1);
     } catch (err) {
@@ -60,10 +73,23 @@ const AdminReportDetail = () => {
     }
   };
 
+  const payload = {
+    status: "N",
+  };
+
   const refusal = async () => {
     if (!window.confirm("상태코드를 거부됨 으로 변경하시겠습니까?")) return;
     try {
-      await axios.delete(`/api/reports/${rpNo}`);
+      await axios.patch(
+        `http://localhost:80/api/reports/${report.rpNo}/n`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       alert("상태코드 변경 성공");
       navigate(-1);
     } catch (err) {
@@ -112,6 +138,8 @@ const AdminReportDetail = () => {
             ? "거부됨"
             : report.status === "P"
             ? "진행중"
+            : report.status === "O"
+            ? "취소됨"
             : "알 수 없음"}
         </Value>
       </FieldRow>
@@ -144,8 +172,12 @@ const AdminReportDetail = () => {
       <ButtonGroup>
         <BackButton onClick={() => navigate(-1)}>뒤로가기</BackButton>
         <div>
-          <ActionButton onClick={refusal}>거부</ActionButton>
-          <ActionButton onClick={approval}>승인</ActionButton>
+          {report.status === "P" && (
+            <>
+              <ActionButton onClick={refusal}>거부</ActionButton>
+              <ActionButton onClick={approval}>승인</ActionButton>
+            </>
+          )}
         </div>
       </ButtonGroup>
     </DetailContainer>
