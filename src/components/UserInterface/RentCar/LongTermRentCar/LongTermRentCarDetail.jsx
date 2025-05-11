@@ -13,6 +13,13 @@ import axios from "axios";
 
 import { PaymentButton } from "./PaymentButton";
 
+const calculateEndDate = (start, monthsToAdd) => {
+  const date = new Date(start);
+  date.setMonth(date.getMonth() + monthsToAdd);
+
+  return date; // YYYY-MM-DD 포맷
+};
+
 const LongTermRentCarDetail = () => {
   const location = useLocation();
   const rentCarNo = location.state?.rentCarNo;
@@ -41,13 +48,11 @@ const LongTermRentCarDetail = () => {
 
   useEffect(() => {
     if (!car) return;
-
-    // 초기 로딩 시, 기본 기간으로 반납일자 자동 계산
     const months = selectedPeriod === "30개월" ? 30 : 24;
     const returnDate = calculateEndDate(startDate, months);
-    setEndDate(new Date(returnDate));
-    setReturnDateText(returnDate);
-  }, [car, selectedPeriod, startDate]);
+    setEndDate(returnDate);
+    setReturnDateText(returnDate.toISOString().split("T")[0]);
+  }, [selectedPeriod, startDate, car]);
 
   useEffect(() => {
     axios
@@ -91,13 +96,6 @@ const LongTermRentCarDetail = () => {
       </div>
     );
   }
-
-  const calculateEndDate = (start, monthsToAdd) => {
-    const date = new Date(start);
-    date.setMonth(date.getMonth() + monthsToAdd);
-
-    return date.toISOString().split("T")[0]; // YYYY-MM-DD 포맷
-  };
 
   const getDiscountInfo = () => {
     const months = selectedPeriod === "30개월" ? 30 : 24;
@@ -179,12 +177,7 @@ const LongTermRentCarDetail = () => {
                               : "outline-secondary"
                           }
                           className="me-2"
-                          onClick={() => {
-                            setSelectedPeriod("24개월");
-                            const returnDate = calculateEndDate(startDate, 24);
-                            setEndDate(new Date(returnDate)); // 내부 state 업데이트용
-                            setReturnDateText(returnDate); // 화면에 보여줄 텍스트
-                          }}
+                          onClick={() => setSelectedPeriod("24개월")}
                         >
                           24개월
                         </Button>
@@ -194,12 +187,7 @@ const LongTermRentCarDetail = () => {
                               ? "success"
                               : "outline-secondary"
                           }
-                          onClick={() => {
-                            setSelectedPeriod("30개월");
-                            const returnDate = calculateEndDate(startDate, 30);
-                            setEndDate(new Date(returnDate));
-                            setReturnDateText(returnDate);
-                          }}
+                          onClick={() => setSelectedPeriod("30개월")}
                         >
                           30개월
                         </Button>
