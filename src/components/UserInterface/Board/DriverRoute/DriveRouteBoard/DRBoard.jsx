@@ -8,7 +8,6 @@ import InsertPhotoRoundedIcon from "@mui/icons-material/InsertPhotoRounded";
 import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import AutoAwesomeMotionOutlinedIcon from "@mui/icons-material/AutoAwesomeMotionOutlined";
 import { useNavigate } from "react-router-dom";
 import { useRef, useState, useEffect, use } from "react";
@@ -242,13 +241,32 @@ const DRBoard = () => {
         setMapUrl("");
         setSrcMap("");
         alert("게시물이 등록되었습니다.");
-        window.location.reload(); // 페이지 전체 새로고침
-      })
-      .catch((error) => {
-        console.error("게시물 등록 실패:", error);
+        axios
+          .get("http://localhost/driveRouteBoard/1", {
+            headers: {
+              Authorization: `Bearer ${auth.user.accessToken}`,
+            },
+          })
+          .then((res) => {
+            const { drBoard, drBoardImages } = res.data;
+            setBoards([...drBoard]);
+            setBoardImages([...drBoardImages]);
+            setCurrentPage(1); // 페이지 초기화
+
+            return axios.get("http://localhost/driveRouteBoard/selectLikes", {
+              headers: {
+                Authorization: `Bearer ${auth.user.accessToken}`,
+              },
+            });
+          })
+          .then((res) => {
+            setBoardLikesInfo([...res.data]);
+          })
+          .catch((err) => {
+            console.error("게시물/좋아요 재조회 실패", err);
+          });
       });
   };
-
   const handleContentValue = (e) => {
     setBoardContent(e.target.value);
   };
@@ -277,7 +295,6 @@ const DRBoard = () => {
     setIsUpdateMode(false);
     setopenPhotoModal(true); // 모달 열기
   };
-
   const handleUpdateBoard = async () => {
     if (!boardContent) {
       alert("내용을 입력해주세요.");
@@ -324,10 +341,30 @@ const DRBoard = () => {
         setMapUrl("");
         setSrcMap("");
         alert("게시물이 수정되었습니다.");
-        window.location.reload(); // 페이지 전체 새로고침
-      })
-      .catch((error) => {
-        console.error("게시물 등록 실패:", error);
+        axios
+          .get("http://localhost/driveRouteBoard/1", {
+            headers: {
+              Authorization: `Bearer ${auth.user.accessToken}`,
+            },
+          })
+          .then((res) => {
+            const { drBoard, drBoardImages } = res.data;
+            setBoards([...drBoard]);
+            setBoardImages([...drBoardImages]);
+            setCurrentPage(1); // 페이지 초기화
+
+            return axios.get("http://localhost/driveRouteBoard/selectLikes", {
+              headers: {
+                Authorization: `Bearer ${auth.user.accessToken}`,
+              },
+            });
+          })
+          .then((res) => {
+            setBoardLikesInfo([...res.data]);
+          })
+          .catch((err) => {
+            console.error("게시물/좋아요 재조회 실패", err);
+          });
       });
   };
 
@@ -341,16 +378,34 @@ const DRBoard = () => {
           },
         })
         .then((result) => {
-          console.log(result.data);
           alert("게시물이 삭제되었습니다.");
-          window.location.reload(); // 페이지 전체 새로고침
-        })
-        .catch((error) => {
-          console.error("게시물 삭제 실패:", error);
+          axios
+            .get("http://localhost/driveRouteBoard/1", {
+              headers: {
+                Authorization: `Bearer ${auth.user.accessToken}`,
+              },
+            })
+            .then((res) => {
+              const { drBoard, drBoardImages } = res.data;
+              setBoards([...drBoard]);
+              setBoardImages([...drBoardImages]);
+              setCurrentPage(1); // 페이지 초기화
+
+              return axios.get("http://localhost/driveRouteBoard/selectLikes", {
+                headers: {
+                  Authorization: `Bearer ${auth.user.accessToken}`,
+                },
+              });
+            })
+            .then((res) => {
+              setBoardLikesInfo([...res.data]);
+            })
+            .catch((err) => {
+              console.error("게시물/좋아요 재조회 실패", err);
+            });
         });
     }
   };
-
   // ----------------------댓글 조회----------------------
   useEffect(() => {
     if (!commentTargetBoard) return;
@@ -386,7 +441,6 @@ const DRBoard = () => {
         },
       })
       .then((result) => {
-        console.log(result.data);
         alert("댓글이 등록되었습니다.");
         // 댓글 재조회 - 1페이지로 초기화
         setCurrentCommentPage(1);
@@ -419,7 +473,6 @@ const DRBoard = () => {
           },
         })
         .then((result) => {
-          console.log(result.data);
           alert("댓글이 삭제되었습니다.");
 
           // 댓글 재조회
@@ -463,7 +516,6 @@ const DRBoard = () => {
         }
       )
       .then((result) => {
-        console.log(result);
         alert("댓글이 수정되었습니다.");
         setEditingCommentNo(null);
         // 댓글 재조회
