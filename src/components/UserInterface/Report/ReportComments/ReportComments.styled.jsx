@@ -7,6 +7,7 @@ export const Report2 = styled.div`
   .nav {
     display: flex;
   }
+
   h2 {
     display: flex;
     align-items: center;

@@ -1,12 +1,11 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-// Report2는 스타일드 컨테이너입니다.
-import { Report2, Report3 } from "./Report.styled";
+import { Report2, Report3 } from "./ReportComments.styled";
 import { useAuth } from "../../Context/AuthContext/AuthContext";
 import axios from "axios";
 import MyPageNav from "../../../UserInterface/Common/Nav/MyPageNav";
 
-const Report = () => {
+const ReportComments = () => {
   const navigate = useNavigate();
   const { auth } = useAuth();
   const memberNo = auth.user.memberNo; // 사용자 번호로 필터링
@@ -24,9 +23,6 @@ const Report = () => {
   const [totalPages, setTotalPages] = useState(0);
 
   const token = localStorage.getItem("accessToken");
-  // const authHeader = token
-  //   ? { headers: { Authorization: `Bearer ${token}` } }
-  //   : {};
 
   const fetchReports = useCallback(async () => {
     setLoading(true);
@@ -40,7 +36,7 @@ const Report = () => {
         page,
         size: 10,
       };
-      const response = await axios.get("http://localhost:80/api/usReports", {
+      const response = await axios.get("http://localhost:80/api/usReportsCom", {
         params,
         headers: {
           Authorization: `Bearer ${token}`,
@@ -82,7 +78,7 @@ const Report = () => {
   };
 
   const handleRowClick = (rpNo) => {
-    navigate(`/reports/${rpNo}`);
+    navigate(`adminReportsCom/${rpNo}`);
   };
 
   const handlePrev = () => {
@@ -98,7 +94,7 @@ const Report = () => {
       <div className="nav">
         <MyPageNav />
         <Report3>
-          <h2>내 게시판 신고 내역</h2>
+          <h2>내 댓글 신고 내역</h2>
 
           <div className="report-filters">
             <input
@@ -140,25 +136,29 @@ const Report = () => {
                   <thead>
                     <tr>
                       <th>번호</th>
-                      <th>제목</th>
+                      <th>내용</th>
                       <th>피의자</th>
-                      <th>신청일</th>
-                      <th>진행상황</th>
+                      <th>신고날자</th>
+                      <th>뉴스번호</th>
+                      <th>뉴스댓글번호</th>
+                      <th>상태코드</th>
                     </tr>
                   </thead>
                   <tbody>
                     {reports.map((r) => (
-                      <tr key={r.rpNo} onClick={() => handleRowClick(r.rpNo)}>
-                        <td>{r.rpNo}</td>
-                        <td className="report-title">{r.title}</td>
-                        <td>{r.rpMemberNo}</td>
-                        <td>{r.enrollDate?.slice(0, 10)}</td>
+                      <tr key={r.reNo} onClick={() => handleRowClick(r.reNo)}>
+                        <td>{r.reNo}</td>
+                        <td className="report-title">{r.reContent}</td>
+                        <td>{r.reMemberNo}</td>
+                        <td>{r.reEnrollDate}</td>
+                        <td>{r.commentGroupNo}</td>
+                        <td>{r.commentDepth}</td>
                         <td>
-                          {r.status === "Y"
+                          {r.reStatus === "Y"
                             ? "처리완료"
-                            : r.status === "N"
+                            : r.reStatus === "N"
                             ? "거부됨"
-                            : r.status === "P"
+                            : r.reStatus === "P"
                             ? "진행중"
                             : "알 수 없음"}
                         </td>
@@ -196,4 +196,4 @@ const Report = () => {
   );
 };
 
-export default Report;
+export default ReportComments;

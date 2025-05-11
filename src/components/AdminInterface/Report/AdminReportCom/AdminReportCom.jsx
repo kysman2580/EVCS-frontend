@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Report2, Report3 } from "./AdminReport.styled";
+import { Report2, Report3 } from "./AdminReportCom.styled";
 import axios from "axios";
 import AdminReportNav from "../../AdminCommon/AdminNav/AdminReportNav";
 
-const AdminReport = () => {
+const AdminReportCom = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("accessToken");
 
@@ -32,7 +32,7 @@ const AdminReport = () => {
         page: page,
         size: 10,
       };
-      const response = await axios.get("http://localhost:80/api/reports", {
+      const response = await axios.get("http://localhost:80/api/amReportsCom", {
         params,
         headers: {
           Authorization: `Bearer ${token}`,
@@ -94,7 +94,7 @@ const AdminReport = () => {
     <Report2>
       <AdminReportNav />
       <Report3>
-        <h2>관리자용 게시글 신고 내역</h2>
+        <h2>관리자용 댓글 신고 내역</h2>
 
         <div className="report-filters">
           <input
@@ -193,4 +193,4 @@ const AdminReport = () => {
   );
 };
 
-export default AdminReport;
+export default AdminReportCom;

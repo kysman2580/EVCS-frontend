@@ -283,7 +283,7 @@ const KakaoMap = () => {
       {loading && <LoadingMaps>{displayText}</LoadingMaps>}
       {kakaoloadErring && <LoadingMaps>{ErrText}</LoadingMaps>}
       {evloadErring && <LoadingMaps>{EvErrText}</LoadingMaps>}
-      <OptionsBar>옵션 들어갈 예정입니다.</OptionsBar>
+      {/* <OptionsBar>옵션 들어갈 예정입니다.</OptionsBar> */}
       <Maps id="map"></Maps>
       {notice && <GuideBook>{notice}</GuideBook>}
     </BodyMaps>
