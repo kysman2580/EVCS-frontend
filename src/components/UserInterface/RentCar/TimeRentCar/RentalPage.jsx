@@ -26,6 +26,7 @@ const RentalPage = () => {
     0,
     0
   );
+
   // YYYY-MM-DD HH:mm 포맷 헬퍼 (로컬 타임존 기준)
   const formatLocalDateTime = (date) => {
     const y = date.getFullYear();
@@ -47,6 +48,10 @@ const RentalPage = () => {
     setEndDate(date);
   };
   const handleConfirm = () => {
+    if (endDate <= startDate) {
+      alert("대여시간을 다시 설정해주세요");
+      return;
+    }
     navi("/rentCarMap", {
       state: {
         startDate: formatLocalDateTime(startDate),

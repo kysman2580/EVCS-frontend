@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Offcanvas from "react-bootstrap/Offcanvas";
-import "./CarMap.css"; // 필요하면 유지
+import "./CarMap.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Container, Row, Col, Button, Image } from "react-bootstrap";
 import axios from "axios";
