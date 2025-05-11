@@ -61,6 +61,7 @@ const RentCarManagement = () => {
           status: rentCarinformation.status,
           statusName: rentCarinformation.statusName,
           categoryNo: rentCarinformation.categoryNo,
+          reserStatus: rentCarinformation.reserStatus,
         }));
 
         setRentCarInfo([...rentCarList]);
@@ -225,7 +226,7 @@ const RentCarManagement = () => {
                     <th>등록 주소지</th>
                     <th>우편번호</th>
                     <th>가격</th>
-                    <th>예약 여부</th>
+                    <th>가용 여부</th>
                     <th>등록일자</th>
                     <th>상태</th>
                   </tr>
@@ -272,7 +273,7 @@ const RentCarManagement = () => {
                         <td>{car.enrollPlace}</td>
                         <td>{car.postAdd}</td>
                         <td>{car.rentCarPrice}</td>
-                        <td>{car.status}</td>
+                        <td>{car.reserStatus}</td>
                         <td>{car.enrollDate}</td>
                         <td
                           className={

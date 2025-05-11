@@ -450,10 +450,10 @@ const AdminHotDealRentCarEnrollForm = () => {
                       </Row>
                       <Row className="mb-2">
                         <Col>
-                          <strong>제조사:</strong> {selectedCar.carCompany}
+                          <strong>제조사:</strong> {selectedCar.companyName}
                         </Col>
                         <Col>
-                          <strong>차종:</strong> {selectedCar.carType}
+                          <strong>차종:</strong> {selectedCar.carTypeName}
                         </Col>
                       </Row>
                       <Row className="mb-2">
