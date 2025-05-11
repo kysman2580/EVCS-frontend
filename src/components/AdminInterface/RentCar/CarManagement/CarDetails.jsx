@@ -19,43 +19,31 @@ import {
 
 const InsertCar = () => {
   const location = useLocation();
-  const [imagePreview, setImagePreview] = useState(null);
   const [disabled, setDisabled] = useState(true);
   const navi = useNavigate();
 
-  const { no, name, type, year, company, battery, enrollDate } = location.state;
+  const car = location.state?.car;
+  const carCompany = location.state?.carCompany;
+  const carType = location.state?.carType;
+  const [imagePreview, setImagePreview] = useState(car?.fileLoad);
 
   const [form, setForm] = useState({
-    carNo: no,
-    carName: name,
-    carType: type,
-    carYear: year,
-    carCompany: company,
-    carBattery: battery,
-    enrollDate: enrollDate,
+    carNo: car.carNo,
+    carName: car.carName,
+    carTypeName: car.carTypeName,
+    carTypeNo: car.carTypeNo,
+    carYear: car.carYear,
+    companyName: car.companyName,
+    companyNo: car.companyNo,
+    carBattery: car.carBattery,
+    enrollDate: car.returnEnrollDate,
   });
 
   console.log(form);
 
-  useEffect(() => {
-    axios
-      .get(`http://localhost/car/image/${name}`)
-      .then((result) => {
-        console.log(result.data);
-        setImagePreview(result.data.fileLoad);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
-  };
-
-  const handleCancel = (e) => {
-    navi(-1);
   };
 
   const handleImageUpload = (e) => {
@@ -67,7 +55,11 @@ const InsertCar = () => {
   };
 
   const handleWrite = (e) => {
-    setDisabled(false);
+    if (disabled) {
+      setDisabled(false);
+    } else {
+      setDisabled(true);
+    }
   };
 
   const handleUpdate = (e) => {
@@ -77,9 +69,9 @@ const InsertCar = () => {
     const formData = new FormData();
     formData.append("carNo", form.carNo);
     formData.append("carName", form.carName);
-    formData.append("carType", form.carType);
+    formData.append("carTypeNo", form.carTypeNo);
     formData.append("carYear", form.carYear);
-    formData.append("carCompany", form.carCompany);
+    formData.append("companyNo", form.companyNo);
     formData.append("carBattery", form.carBattery);
     formData.append("image", form.image);
 
@@ -160,7 +152,47 @@ const InsertCar = () => {
               </div>
 
               <Form>
+                {/* 연식 + 카테고리 */}
+                <Row className="mb-3">
+                  <Col>
+                    <Form.Group controlId="carCompany">
+                      <Form.Label className="fw-bold ">제조사 :</Form.Label>
+                      <Form.Select
+                        name="companyNo"
+                        value={form.companyNo}
+                        onChange={handleChange}
+                        disabled={disabled}
+                      >
+                        <option value="">제조사</option>
+                        {carCompany.map((item) => (
+                          <option key={item.companyNo} value={item.companyNo}>
+                            {item.companyName}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+                  <Col>
+                    <Form.Group controlId="carType">
+                      <Form.Label className="fw-bold ">차종 :</Form.Label>
+                      <Form.Select
+                        name="carTypeNo"
+                        value={form.carTypeNo}
+                        onChange={handleChange}
+                        disabled={disabled}
+                      >
+                        <option value="">차종</option>
+                        {carType.map((item) => (
+                          <option key={item.carTypeNo} value={item.carTypeNo}>
+                            {item.carTypeName}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+                </Row>
                 {/* 차 이름 */}
+
                 <Row className="mb-3">
                   <Col>
                     <Form.Group className="mb-3" controlId="carName">
@@ -175,25 +207,6 @@ const InsertCar = () => {
                     </Form.Group>
                   </Col>
                   <Col>
-                    <Form.Group controlId="carType">
-                      <Form.Label className="fw-bold ">차종 :</Form.Label>
-                      <Form.Select
-                        name="carType"
-                        value={form.carType}
-                        onChange={handleChange}
-                        disabled={disabled}
-                      >
-                        <option value="">선택</option>
-                        <option value="SUV">SUV</option>
-                        <option value="SEDAN">SEDAN</option>
-                      </Form.Select>
-                    </Form.Group>
-                  </Col>
-                </Row>
-
-                {/* 연식 + 카테고리 */}
-                <Row className="mb-3">
-                  <Col>
                     <Form.Group controlId="carYear">
                       <Form.Label className="fw-bold ">연식 :</Form.Label>
                       <Form.Control
@@ -203,22 +216,6 @@ const InsertCar = () => {
                         onChange={handleChange}
                         disabled={disabled}
                       />
-                    </Form.Group>
-                  </Col>
-                  <Col>
-                    <Form.Group controlId="carCompany">
-                      <Form.Label className="fw-bold ">제조사 :</Form.Label>
-                      <Form.Select
-                        name="carCompany"
-                        value={form.carCompany}
-                        onChange={handleChange}
-                        disabled={disabled}
-                      >
-                        <option value="">선택</option>
-                        <option value="HYUNDAI">HYUNDAI</option>
-                        <option value="KIA">KIA</option>
-                        <option value="VOLVO">VOLVO</option>
-                      </Form.Select>
                     </Form.Group>
                   </Col>
                 </Row>
@@ -238,27 +235,64 @@ const InsertCar = () => {
                 <div className="text-center">
                   {disabled ? (
                     <>
-                      <Button
-                        type="button"
-                        variant="dark"
-                        onClick={handleWrite}
-                        style={{ marginRight: "10px" }}
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
                       >
-                        수정하기
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="dark"
-                        onClick={handleDelete}
-                        style={{ margin: "20px" }}
-                      >
-                        삭제하기
-                      </Button>
+                        <div>
+                          <Button
+                            type="button"
+                            variant="secondary"
+                            onClick={() => navi(-1)}
+                          >
+                            뒤로가기
+                          </Button>
+                        </div>
+                        <div>
+                          <Button
+                            type="button"
+                            variant="dark"
+                            onClick={handleWrite}
+                            style={{ marginRight: "10px" }}
+                          >
+                            수정하기
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="danger"
+                            onClick={handleDelete}
+                          >
+                            삭제하기
+                          </Button>
+                        </div>
+                      </div>
                     </>
                   ) : (
-                    <Button type="button" variant="dark" onClick={handleUpdate}>
-                      수정완료
-                    </Button>
+                    <>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div>
+                          <Button variant="secondary" onClick={handleWrite}>
+                            취소
+                          </Button>
+                        </div>
+                        <div>
+                          <Button
+                            type="button"
+                            variant="dark"
+                            onClick={handleUpdate}
+                          >
+                            수정완료
+                          </Button>
+                        </div>
+                      </div>
+                    </>
                   )}
                 </div>
               </Form>
