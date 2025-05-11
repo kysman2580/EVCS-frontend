@@ -19,7 +19,11 @@ const AdminEventBoardUpdateForm = () => {
 
   // 로컬 상태로 바꿔주기
   const [title, setTitle] = useState(event?.eventName || "");
-  const [content, setContent] = useState(event?.eventContent || "");
+  const initialContent = event?.eventContent
+    ? event.eventContent.replace(/<br\s*\/?>/gi, "\n")
+    : "";
+
+  const [content, setContent] = useState(initialContent);
   const [imageFile, setImageFile] = useState(null);
   const [preview, setPreview] = useState(event?.filePath || "");
 
@@ -111,7 +115,7 @@ const AdminEventBoardUpdateForm = () => {
   };
   return (
     <>
-      <BoardContainerDiv style={{ height: "auto", paddingBottom: "60px" }}>
+      <BoardContainerDiv style={{ height: "800px", paddingBottom: "60px" }}>
         <NoticeNav />
         <Container className="my-5">
           <Row className="justify-content-center">

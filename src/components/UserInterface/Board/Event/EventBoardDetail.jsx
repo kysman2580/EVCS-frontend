@@ -8,10 +8,13 @@ const EventBoardDetail = () => {
   const location = useLocation();
   const event = location.state?.event;
   const navigate = useNavigate();
+  const plainContent = event?.eventContent
+    ? event.eventContent.replace(/<br\s*\/?>/gi, "\n")
+    : "";
 
   return (
     <>
-      <BoardContainerDiv style={{ height: "800px" }}>
+      <BoardContainerDiv style={{ height: "1000px" }}>
         <NoticeNav />
         <div style={{ width: "100%" }}>
           <Container className="my-5">
@@ -41,9 +44,9 @@ const EventBoardDetail = () => {
                     <strong>이벤트 내용:</strong>
                     <div
                       className="border rounded p-3 mt-1 bg-light"
-                      style={{ minHeight: "300px" }}
+                      style={{ minHeight: "300px", whiteSpace: "pre-wrap" }}
                     >
-                      {event.eventContent}
+                      {plainContent}
                     </div>
                   </div>
 
