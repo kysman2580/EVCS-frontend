@@ -51,7 +51,7 @@ const AdminHeader = () => {
         </StyledNavLink>
         <StyledNavLink
           style={{ color: "#ffffff" }}
-          onClick={() => navigate("/admin/adminReport")}
+          onClick={() => navigate("/admin/memberManagement")}
         >
           회원관리
         </StyledNavLink>

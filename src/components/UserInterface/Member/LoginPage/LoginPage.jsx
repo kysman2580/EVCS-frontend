@@ -54,18 +54,33 @@ function LoginPage() {
                 const { email, memberName, memberNo, refreshToken, accessToken } = response.data;
                 login(email, memberName, memberNo, refreshToken, accessToken);
 
-                alert('로그인 성공!')
+                alert('로그인 성공!');
                 window.location.href = "/";
             })
             .catch(error => {
-                console.error('로그인 실패 : ', error);
+                // 서버에서 반환된 응답이 있을 경우 처리
                 if (error.response) {
-                    toast.error(error.response.data.message);
-                } else {
+                    // 400번 오류 처리 (예: 계정이 잠금 상태인 경우)
+                    if (error.response.status === 400) {
+                        const errorMessage = error.response.data.message;
+                        toast.error(errorMessage || "로그인 실패");
+                    }
+                    // 401번 오류 처리 (예: 인증 실패)
+                    else if (error.response.status === 401) {
+                        toast.error("아이디 또는 비밀번호를 잘못 입력하셨습니다.");
+                    }
+                    // 기타 상태 코드 처리
+                    else {
+                        toast.error(error.response.data.message || "알 수 없는 오류가 발생했습니다.");
+                    }
+                }
+                // 서버 응답이 없을 경우
+                else {
                     toast.error('알 수 없는 오류가 발생했습니다.');
                 }
             });
     };
+
 
 
     const handleKakaoLogin = () => {

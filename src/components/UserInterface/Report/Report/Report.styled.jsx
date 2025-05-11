@@ -2,9 +2,11 @@ import styled from "styled-components";
 
 export const Report2 = styled.div`
   padding: 24px;
-  margin: 10px 400px;
   background: #fafafa;
 
+  .nav {
+    display: flex;
+  }
   h2 {
     display: flex;
     align-items: center;
@@ -109,6 +111,26 @@ export const Report2 = styled.div`
     text-align: center;
     margin: 16px 0;
     color: #666;
+  }
+
+  .pagination {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  .pagination button {
+    padding: 6px 12px;
+    background: #f9f9f9;
+    border: 1px solid #ccc;
+    cursor: pointer;
+  }
+
+  .pagination button.active {
+    font-weight: bold;
+    background: #dcefff;
+    border-color: #007bff;
   }
 `;
 

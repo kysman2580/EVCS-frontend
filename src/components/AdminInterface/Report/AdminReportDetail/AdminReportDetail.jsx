@@ -21,12 +21,19 @@ const AdminReportDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const token = localStorage.getItem("accessToken");
+
   useEffect(() => {
     const id = Number(rpNo);
     const fetchDetail = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:80/api/reports/${id}`
+          `http://localhost:80/api/reports/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         setReport(data);
         console.log("신고 상세 데이터:", data);
@@ -41,10 +48,23 @@ const AdminReportDetail = () => {
     fetchDetail();
   }, [rpNo]);
 
+  const payload2 = {
+    status: "Y",
+  };
+
   const approval = async () => {
     if (!window.confirm("정말 피의자를 차단하시겠습니까?")) return;
     try {
-      await axios.delete(`/api/reports/${rpNo}`);
+      await axios.patch(
+        `http://localhost:80/api/reports/${report.rpNo}/y`,
+        payload2,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       alert("차단되었습니다");
       navigate(-1);
     } catch (err) {
@@ -53,10 +73,23 @@ const AdminReportDetail = () => {
     }
   };
 
+  const payload = {
+    status: "N",
+  };
+
   const refusal = async () => {
     if (!window.confirm("상태코드를 거부됨 으로 변경하시겠습니까?")) return;
     try {
-      await axios.delete(`/api/reports/${rpNo}`);
+      await axios.patch(
+        `http://localhost:80/api/reports/${report.rpNo}/n`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       alert("상태코드 변경 성공");
       navigate(-1);
     } catch (err) {
@@ -105,6 +138,8 @@ const AdminReportDetail = () => {
             ? "거부됨"
             : report.status === "P"
             ? "진행중"
+            : report.status === "O"
+            ? "취소됨"
             : "알 수 없음"}
         </Value>
       </FieldRow>
@@ -137,8 +172,12 @@ const AdminReportDetail = () => {
       <ButtonGroup>
         <BackButton onClick={() => navigate(-1)}>뒤로가기</BackButton>
         <div>
-          <ActionButton onClick={refusal}>거부</ActionButton>
-          <ActionButton onClick={approval}>승인</ActionButton>
+          {report.status === "P" && (
+            <>
+              <ActionButton onClick={refusal}>거부</ActionButton>
+              <ActionButton onClick={approval}>승인</ActionButton>
+            </>
+          )}
         </div>
       </ButtonGroup>
     </DetailContainer>

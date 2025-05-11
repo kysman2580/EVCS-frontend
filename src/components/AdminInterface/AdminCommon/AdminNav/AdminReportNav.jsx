@@ -8,14 +8,14 @@ const AdminReportNav = () => {
     <>
       <NavDiv>
         <NavRentContentDiv>
-          <StyledHeaderBtn onClick={() => navi("/admin/adminReport")}>
-            1
+          <StyledHeaderBtn onClick={() => navi("/admin/memberManagement")}>
+            회원 관리
           </StyledHeaderBtn>
           <StyledHeaderBtn onClick={() => navi("/admin/adminReport")}>
-            2
+            게시글 신고 관리
           </StyledHeaderBtn>
-          <StyledHeaderBtn onClick={() => navi("/admin/adminReport")}>
-            3
+          <StyledHeaderBtn onClick={() => navi("/admin/adminReportCom")}>
+            댓글 신고 관리
           </StyledHeaderBtn>
         </NavRentContentDiv>
       </NavDiv>
