@@ -144,7 +144,7 @@ const CarMap = () => {
             <div class="header">
               <div style="display: flex; align-items: center; height: 15px;">
                 <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" width="16" height="16" style="margin-right: 8px;" />
-                ${timeRentCarResult[carsAtSamePosition[0].index].address}
+               ${address}
               </div>
               <div class="close" title="닫기"></div>
             </div>
