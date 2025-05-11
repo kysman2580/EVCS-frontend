@@ -70,11 +70,6 @@ const MyPage = () => {
                   </ChangeButton>
                 </InputLabel>
               </InputWrapByPassword>
-
-              <InputWrap>
-                <InputLabel>ㅇㅅㅇ</InputLabel>
-                <StyledInput id="name" type="text" />
-              </InputWrap>
             </>
           )}
 

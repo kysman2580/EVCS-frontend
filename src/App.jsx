@@ -77,6 +77,7 @@ import GarageEnrollForm from "./components/AdminInterface/RentCar/Garage/GarageE
 import GarageDetails from "./components/AdminInterface/RentCar/Garage/GarageDetails";
 import GarageUpdateForm from "./components/AdminInterface/RentCar/Garage/GarageUpdateForm";
 import CarMap from "./components/UserInterface/RentCar/TimeRentCar/CarMap";
+import MemberManagement from "./components/AdminInterface/Member/MemberManagement/MemberManagement";
 
 function App() {
   return (
@@ -161,6 +162,9 @@ function App() {
           <Route path="/admin" element={<AdminRoute />}>
             <Route element={<AdminLayout />}>
               <Route path="main" element={<AdminMain />} />
+
+              {/* 회원 관리 */}
+              <Route path="memberManagement" element={<MemberManagement />} />
 
               {/* 렌트카 관련 */}
               <Route path="insertCar" element={<InsertCar />}></Route>
