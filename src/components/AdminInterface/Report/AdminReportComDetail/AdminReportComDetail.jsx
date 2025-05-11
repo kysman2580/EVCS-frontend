@@ -9,10 +9,10 @@ import {
   ActionButton,
   BackButton,
   FieldRow2,
-} from "./AdminReportDetail.styled";
+} from "./AdminReportComDetail.styled";
 import axios from "axios";
 
-const AdminReportDetail = () => {
+const AdminReportComDetail = () => {
   const { rpNo } = useParams();
   console.log("rpNo param:", rpNo);
   const navigate = useNavigate();
@@ -152,4 +152,4 @@ const AdminReportDetail = () => {
   );
 };
 
-export default AdminReportDetail;
+export default AdminReportComDetail;

@@ -69,7 +69,7 @@ const ReportDetail = () => {
 
   return (
     <DetailContainer>
-      <h2>신고 상세보기 (#{report.rpNo})</h2>
+      <h2>게시판 신고 상세보기 (#{report.rpNo})</h2>
 
       <FieldRow>
         <Label>제목</Label>

@@ -1,12 +1,11 @@
 import styled from "styled-components";
 
 export const Report2 = styled.div`
-  padding: 24px;
+  margin: 10px;
   background: #fafafa;
+  display: flex;
+  margin: 20px auto;
 
-  .nav {
-    display: flex;
-  }
   h2 {
     display: flex;
     align-items: center;
@@ -19,7 +18,7 @@ export const Report2 = styled.div`
       display: block;
       width: 4px;
       height: 24px;
-      background-color: #4caf50;
+      background-color: rgb(190, 190, 190);
       margin-right: 8px;
       border-radius: 2px;
     }
@@ -63,12 +62,12 @@ export const Report2 = styled.div`
     }
 
     .search-button {
-      background-color: #4caf50;
+      background-color: rgb(190, 190, 190);
       color: #fff;
     }
 
     .search-button:hover {
-      background-color: #43a047;
+      background-color: rgb(190, 190, 190);
     }
   }
 
@@ -86,7 +85,7 @@ export const Report2 = styled.div`
   }
 
   .report-table thead th {
-    background-color: #4caf50;
+    background-color: rgb(190, 190, 190);
     color: #fff;
     font-weight: 500;
     padding: 12px 16px;
@@ -133,7 +132,6 @@ export const Report2 = styled.div`
     border-color: #007bff;
   }
 `;
-
 export const Report3 = styled.div`
   margin: 0 auto;
 `;
