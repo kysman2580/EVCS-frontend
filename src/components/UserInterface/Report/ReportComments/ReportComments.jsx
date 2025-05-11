@@ -22,9 +22,6 @@ const ReportComments = () => {
   const [totalPages, setTotalPages] = useState(0);
 
   const token = localStorage.getItem("accessToken");
-  // const authHeader = token
-  //   ? { headers: { Authorization: `Bearer ${token}` } }
-  //   : {};
 
   const fetchReports = useCallback(async () => {
     setLoading(true);
@@ -136,25 +133,31 @@ const ReportComments = () => {
                 <thead>
                   <tr>
                     <th>번호</th>
-                    <th>제목</th>
+                    <th>내용</th>
+                    <th>신고자</th>
                     <th>피의자</th>
-                    <th>신청일</th>
-                    <th>진행상황</th>
+                    <th>신고날자</th>
+                    <th>뉴스번호</th>
+                    <th>뉴스댓글번호</th>
+                    <th>상태코드</th>
                   </tr>
                 </thead>
                 <tbody>
                   {reports.map((r) => (
-                    <tr key={r.re_No} onClick={() => handleRowClick(r.re_No)}>
-                      <td>{r.re_No}</td>
-                      <td className="report-title">{r.title}</td>
-                      <td>{r.rpMemberNo}</td>
-                      <td>{r.enrollDate?.slice(0, 10)}</td>
+                    <tr key={r.reNo} onClick={() => handleRowClick(r.reNo)}>
+                      <td>{r.reNo}</td>
+                      <td className="report-title">{r.reContent}</td>
+                      <td>{r.memberNo}</td>
+                      <td>{r.reMemberNo}</td>
+                      <td>{r.reEnrollDate}</td>
+                      <td>{r.commentGroupNo}</td>
+                      <td>{r.commentDepth}</td>
                       <td>
-                        {r.status === "Y"
+                        {r.reStatus === "Y"
                           ? "처리완료"
-                          : r.status === "N"
+                          : r.reStatus === "N"
                           ? "거부됨"
-                          : r.status === "P"
+                          : r.reStatus === "P"
                           ? "진행중"
                           : "알 수 없음"}
                       </td>

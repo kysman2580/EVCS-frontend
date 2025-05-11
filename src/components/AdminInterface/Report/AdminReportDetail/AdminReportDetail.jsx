@@ -21,12 +21,19 @@ const AdminReportDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const token = localStorage.getItem("accessToken");
+
   useEffect(() => {
     const id = Number(rpNo);
     const fetchDetail = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:80/api/reports/${id}`
+          `http://localhost:80/api/reports/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         setReport(data);
         console.log("신고 상세 데이터:", data);

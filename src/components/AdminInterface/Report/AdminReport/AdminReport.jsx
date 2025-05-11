@@ -20,6 +20,8 @@ const AdminReport = () => {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
+  const token = localStorage.getItem("accessToken");
+
   const fetchReports = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -33,6 +35,9 @@ const AdminReport = () => {
       };
       const response = await axios.get("http://localhost:80/api/reports", {
         params,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       const payload = response.data;
       const list = Array.isArray(payload)
