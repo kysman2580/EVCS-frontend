@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Report2, Report3 } from "./ReportComments.styled";
 import { useAuth } from "../../Context/AuthContext/AuthContext";
 import axios from "axios";
+import MyPageNav from "../../../UserInterface/Common/Nav/MyPageNav";
 
 const ReportComments = () => {
   const navigate = useNavigate();
@@ -77,7 +78,7 @@ const ReportComments = () => {
   };
 
   const handleRowClick = (rpNo) => {
-    navigate(`/reportsCom/${rpNo}`);
+    navigate(`adminReportsCom/${rpNo}`);
   };
 
   const handlePrev = () => {
@@ -90,103 +91,107 @@ const ReportComments = () => {
 
   return (
     <Report2>
-      <Report3>
-        <h2>내 댓글 신고 내역</h2>
+      <div className="nav">
+        <MyPageNav />
+        <Report3>
+          <h2>내 댓글 신고 내역</h2>
 
-        <div className="report-filters">
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-          />
-          <span>~</span>
-          <input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="제목 검색"
-            value={titleQueryInput}
-            onChange={(e) => setTitleQueryInput(e.target.value)}
-          />
-          <button onClick={() => handlePreset(7)}>1주일</button>
-          <button onClick={() => handlePreset(30)}>1개월</button>
-          <button onClick={() => handlePreset(90)}>3개월</button>
-          <button onClick={() => handlePreset(180)}>6개월</button>
-          <button onClick={() => handlePreset(365)}>1년</button>
-          <button className="search-button" onClick={handleSearch}>
-            검색
-          </button>
-        </div>
+          <div className="report-filters">
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+            <span>~</span>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="제목 검색"
+              value={titleQueryInput}
+              onChange={(e) => setTitleQueryInput(e.target.value)}
+            />
+            <button onClick={() => handlePreset(7)}>1주일</button>
+            <button onClick={() => handlePreset(30)}>1개월</button>
+            <button onClick={() => handlePreset(90)}>3개월</button>
+            <button onClick={() => handlePreset(180)}>6개월</button>
+            <button onClick={() => handlePreset(365)}>1년</button>
+            <button className="search-button" onClick={handleSearch}>
+              검색
+            </button>
+          </div>
 
-        <div className="report-table-container">
-          {loading && <p>불러오는 중...</p>}
-          {error && <p style={{ color: "red" }}>{error}</p>}
-          {!loading && reports.length === 0 && !error && (
-            <p>신고 내역이 없습니다.</p>
-          )}
-          {reports.length > 0 && (
-            <>
-              <table className="report-table">
-                <thead>
-                  <tr>
-                    <th>번호</th>
-                    <th>내용</th>
-                    <th>신고자</th>
-                    <th>피의자</th>
-                    <th>신고날자</th>
-                    <th>뉴스번호</th>
-                    <th>뉴스댓글번호</th>
-                    <th>상태코드</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {reports.map((r) => (
-                    <tr key={r.reNo} onClick={() => handleRowClick(r.reNo)}>
-                      <td>{r.reNo}</td>
-                      <td className="report-title">{r.reContent}</td>
-                      <td>{r.memberNo}</td>
-                      <td>{r.reMemberNo}</td>
-                      <td>{r.reEnrollDate}</td>
-                      <td>{r.commentGroupNo}</td>
-                      <td>{r.commentDepth}</td>
-                      <td>
-                        {r.reStatus === "Y"
-                          ? "처리완료"
-                          : r.reStatus === "N"
-                          ? "거부됨"
-                          : r.reStatus === "P"
-                          ? "진행중"
-                          : "알 수 없음"}
-                      </td>
+          <div className="report-table-container">
+            {loading && <p>불러오는 중...</p>}
+            {error && <p style={{ color: "red" }}>{error}</p>}
+            {!loading && reports.length === 0 && !error && (
+              <p>신고 내역이 없습니다.</p>
+            )}
+            {reports.length > 0 && (
+              <>
+                <table className="report-table">
+                  <thead>
+                    <tr>
+                      <th>번호</th>
+                      <th>내용</th>
+                      <th>피의자</th>
+                      <th>신고날자</th>
+                      <th>뉴스번호</th>
+                      <th>뉴스댓글번호</th>
+                      <th>상태코드</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {reports.map((r) => (
+                      <tr key={r.reNo} onClick={() => handleRowClick(r.reNo)}>
+                        <td>{r.reNo}</td>
+                        <td className="report-title">{r.reContent}</td>
+                        <td>{r.reMemberNo}</td>
+                        <td>{r.reEnrollDate}</td>
+                        <td>{r.commentGroupNo}</td>
+                        <td>{r.commentDepth}</td>
+                        <td>
+                          {r.reStatus === "Y"
+                            ? "처리완료"
+                            : r.reStatus === "N"
+                            ? "거부됨"
+                            : r.reStatus === "P"
+                            ? "진행중"
+                            : "알 수 없음"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
 
-              <div className="pagination">
-                <button onClick={handlePrev} disabled={page === 0}>
-                  ◀ 이전
-                </button>
-                {Array.from({ length: totalPages }, (_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setPage(idx)}
-                    className={idx === page ? "active" : ""}
-                  >
-                    {idx + 1}
+                <div className="pagination">
+                  <button onClick={handlePrev} disabled={page === 0}>
+                    ◀ 이전
                   </button>
-                ))}
-                <button onClick={handleNext} disabled={page >= totalPages - 1}>
-                  다음 ▶
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-      </Report3>
+                  {Array.from({ length: totalPages }, (_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setPage(idx)}
+                      className={idx === page ? "active" : ""}
+                    >
+                      {idx + 1}
+                    </button>
+                  ))}
+                  <button
+                    onClick={handleNext}
+                    disabled={page >= totalPages - 1}
+                  >
+                    다음 ▶
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </Report3>
+      </div>
     </Report2>
   );
 };

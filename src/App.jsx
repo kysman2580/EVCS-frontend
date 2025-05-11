@@ -27,6 +27,8 @@ import ReportDetail from "./components/UserInterface/Report/ReportDetail/ReportD
 import AdminReportDetail from "./components/AdminInterface/Report/AdminReportDetail/AdminReportDetail";
 import ReportComments from "./components/UserInterface/Report/ReportComments/ReportComments";
 import ReportComDetail from "./components/UserInterface/Report/ReportCommentsDetail/ReportComDetail";
+import AdminReportCom from "./components/AdminInterface/Report/AdminReportCom/AdminReportCom";
+import AdminReportComDetail from "./components/AdminInterface/Report/AdminReportComDetail/AdminReportComDetail";
 
 /* 게시판 페이지 관련 */
 import UserNotice from "./components/UserInterface/Board/Notice/UserNotice";
@@ -230,6 +232,14 @@ function App() {
               <Route
                 path="/admin/adminReports/:rpNo"
                 element={<AdminReportDetail useDummyData={true} />}
+              />
+              <Route
+                path="/admin/adminReportCom/*"
+                element={<AdminReportCom useDummyData={true} />}
+              />
+              <Route
+                path="/admin/adminReportsCom/:rpNo"
+                element={<AdminReportComDetail useDummyData={true} />}
               />
 
               {/* 뉴스 관련 */}

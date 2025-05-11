@@ -9,16 +9,18 @@ import {
   ActionButton,
   BackButton,
   FieldRow2,
-} from "./ReportComDetail.styled";
+} from "./AdminReportComDetail.styled";
 import axios from "axios";
 
-const ReportComDetail = () => {
+const AdminReportComDetail = () => {
   const { rpNo } = useParams();
+  console.log("rpNo param:", rpNo);
   const navigate = useNavigate();
 
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   const token = localStorage.getItem("accessToken");
 
   useEffect(() => {
@@ -26,7 +28,7 @@ const ReportComDetail = () => {
     const fetchDetail = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:80/api/usReportsCom/${id}`,
+          `http://localhost:80/api/reports/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -34,8 +36,10 @@ const ReportComDetail = () => {
           }
         );
         setReport(data);
+        console.log("신고 상세 데이터:", data);
       } catch (err) {
-        setError("권한이 부족합니다.");
+        console.error(err);
+        setError("신고 상세를 불러오는 중 오류가 발생했습니다.");
       } finally {
         setLoading(false);
       }
@@ -44,15 +48,27 @@ const ReportComDetail = () => {
     fetchDetail();
   }, [rpNo]);
 
-  const cancellation = async () => {
-    if (!window.confirm("신고를 정말 취소 하시겠습니까?")) return;
+  const approval = async () => {
+    if (!window.confirm("정말 피의자를 차단하시겠습니까?")) return;
     try {
-      await axios.delete(`/api/usReportsCom/${rpNo}/o`);
-      alert("신고가 취소 되었습니다.");
+      await axios.delete(`/api/reports/${rpNo}`);
+      alert("차단되었습니다");
       navigate(-1);
     } catch (err) {
       console.error(err);
-      alert("신고 취소중 오류가 발생하였습니다.");
+      alert("차단 중 오류가 발생했습니다.");
+    }
+  };
+
+  const refusal = async () => {
+    if (!window.confirm("상태코드를 거부됨 으로 변경하시겠습니까?")) return;
+    try {
+      await axios.delete(`/api/reports/${rpNo}`);
+      alert("상태코드 변경 성공");
+      navigate(-1);
+    } catch (err) {
+      console.error(err);
+      alert("상태코드 변경 중 오류가 발생했습니다.");
     }
   };
 
@@ -69,36 +85,35 @@ const ReportComDetail = () => {
 
   return (
     <DetailContainer>
-      <h2>댓글 신고 상세보기 (#{report.reNo})</h2>
+      <h2>신고 상세보기 (#{report.rpNo})</h2>
+
+      <FieldRow>
+        <Label>제목</Label>
+        <Value>{report.title}</Value>
+      </FieldRow>
       <FieldRow>
         <Label>신고자</Label>
         <Value>{report.memberNo}</Value>
       </FieldRow>
       <FieldRow>
         <Label>피의자</Label>
-        <Value>{report.reMemberNo}</Value>
+        <Value>{report.rpMemberNo}</Value>
       </FieldRow>
       <FieldRow>
         <Label>신청일</Label>
-        <Value>{report.reEnrollDate}</Value>
+        <Value>{report.enrollDate}</Value>
       </FieldRow>
       <FieldRow>
         <Label>진행상황</Label>
         <Value>
-          {report.reStatus === "Y"
+          {report.status === "Y"
             ? "처리완료"
-            : report.reStatus === "N"
+            : report.status === "N"
             ? "거부됨"
-            : report.reStatus === "P"
+            : report.status === "P"
             ? "진행중"
-            : report.reStatus === "O"
-            ? "취소됨"
             : "알 수 없음"}
         </Value>
-      </FieldRow>
-      <FieldRow>
-        <Label>신고 내용</Label>
-        <Value>{report.reContent}</Value>
       </FieldRow>
 
       {report.content && (
@@ -108,18 +123,33 @@ const ReportComDetail = () => {
         </FieldRow2>
       )}
 
+      {report.fileLink && (
+        <FieldRow>
+          <Label>첨부파일</Label>
+          <Value>
+            <img
+              src={report.fileLink}
+              alt="첨부이미지"
+              style={{
+                width: 500,
+                height: 500,
+                objectFit: "cover",
+                borderRadius: 4,
+              }}
+            />
+          </Value>
+        </FieldRow>
+      )}
+
       <ButtonGroup>
         <BackButton onClick={() => navigate(-1)}>뒤로가기</BackButton>
         <div>
-          {report.reStatus === "P" && (
-            <>
-              <ActionButton onClick={cancellation}>신고 취소</ActionButton>
-            </>
-          )}
+          <ActionButton onClick={refusal}>거부</ActionButton>
+          <ActionButton onClick={approval}>승인</ActionButton>
         </div>
       </ButtonGroup>
     </DetailContainer>
   );
 };
 
-export default ReportComDetail;
+export default AdminReportComDetail;

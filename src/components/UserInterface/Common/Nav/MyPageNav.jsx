@@ -12,22 +12,15 @@ const MyPageNav = () => {
           <StyledHeaderBtn onClick={() => navi("/myPage")}>
             내 정보
           </StyledHeaderBtn>
-
-          <StyledHeaderBtn onClick={() => navi("/#")}>내 리뷰</StyledHeaderBtn>
-                    <StyledHeaderBtn onClick={() => navi("/newsMyPage")}>
-                        내 뉴스
-                    </StyledHeaderBtn>
-
-                    <StyledHeaderBtn onClick={() => navi("/#")}>
-                        내 평점
-                    </StyledHeaderBtn>
-
-                    <StyledHeaderBtn onClick={() => navi("/report")}>
-                        게시글 신고 내역
-                    </StyledHeaderBtn>
-                    <StyledHeaderBtn onClick={() => navi("/reportCom")}>
-                        댓글 신고 내역
-                    </StyledHeaderBtn>
+          <StyledHeaderBtn onClick={() => navi("/newsMyPage")}>
+            내 뉴스
+          </StyledHeaderBtn>
+          <StyledHeaderBtn onClick={() => navi("/report")}>
+            게시글 신고 내역
+          </StyledHeaderBtn>
+          <StyledHeaderBtn onClick={() => navi("/reportCom")}>
+            댓글 신고 내역
+          </StyledHeaderBtn>
           <StyledHeaderBtn onClick={() => navi("/#")}>
             구매 내역
           </StyledHeaderBtn>
