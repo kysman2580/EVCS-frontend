@@ -3,36 +3,38 @@ import { useNavigate } from "react-router-dom";
 import { Report2, Report3 } from "../../Report/AdminReport/AdminReport.styled";
 import axios from "axios";
 import AdminReportNav from "../../AdminCommon/AdminNav/AdminReportNav";
+import { MemberBanButton } from "./MemberManagement.styled";
+import RoleCell from "./RoleCell";
 
-const AdminReport = () => {
+const AdminMemberManagement = () => {
     const navigate = useNavigate();
     const token = localStorage.getItem("accessToken");
 
-    const [reports, setReports] = useState([]);
+    const [members, setMembers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
 
-    const [titleQueryInput, setTitleQueryInput] = useState("");
-    const [titleQuery, setTitleQuery] = useState("");
+    const [emailQueryInput, setEmailQueryInput] = useState("");
+    const [emailQuery, setEmailQuery] = useState("");
 
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
 
-    const fetchReports = useCallback(async () => {
+    const fetchMembers = useCallback(async () => {
         setLoading(true);
         setError(null);
         try {
             const params = {
                 startDate: startDate || undefined,
                 endDate: endDate || undefined,
-                title: titleQuery || undefined,
+                email: emailQuery || undefined,
                 page: page,
                 size: 10,
             };
-            const response = await axios.get("http://localhost:80/api/admin/management", {
+            const response = await axios.get("http://localhost:80/api/admin/management/members", {
                 params,
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -44,23 +46,23 @@ const AdminReport = () => {
                 : Array.isArray(payload.content)
                     ? payload.content
                     : [];
-            setReports(list);
+            setMembers(list);
             setTotalPages(payload.totalPages || 1); // ← 최소 1페이지 보장
         } catch (err) {
             console.error(err);
-            setError("신고 내역을 불러오는 중 오류가 발생했습니다.");
+            setError("회원 목록을 불러오는 중 오류가 발생했습니다.");
         } finally {
             setLoading(false);
         }
-    }, [startDate, endDate, titleQuery, page]);
+    }, [startDate, endDate, emailQuery, page, token]);
 
     useEffect(() => {
-        fetchReports();
-    }, [fetchReports]);
+        fetchMembers();
+    }, [fetchMembers]);
 
     const handleSearch = () => {
         setPage(0);
-        setTitleQuery(titleQueryInput);
+        setEmailQuery(emailQueryInput);
     };
 
     function toKSTDateString(date) {
@@ -75,11 +77,7 @@ const AdminReport = () => {
         setStartDate(toKSTDateString(start));
         setEndDate(toKSTDateString(end));
         setPage(0);
-        setTitleQuery(titleQueryInput);
-    };
-
-    const handleRowClick = (rpNo) => {
-        navigate(`/admin/adminReports/${rpNo}`);
+        setEmailQuery(emailQueryInput);
     };
 
     const handlePrev = () => {
@@ -90,11 +88,43 @@ const AdminReport = () => {
         if (page < totalPages - 1) setPage(page + 1);
     };
 
+    // 회원 상태 표시 함수
+    const getMemberStatusText = (status) => {
+        switch (status) {
+            case "Y": return "활성화";
+            case "N": return "제한";
+            case "R": return "탈퇴";
+            default: return "알 수 없음";
+        }
+    };
+
+    // 이메일 인증 상태 표시 함수
+    const getEmailVerifiedText = (verified) => {
+        return verified === "Y" ? "인증됨" : "미인증";
+    };
+
+    // 날짜 형식 포맷팅 함수
+    const formatDate = (dateString) => {
+        if (!dateString) return "";
+        const date = new Date(dateString);
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    };
+
+
+    const handleRoleChange = (memberNo, newRole) => {
+        // members 상태를 업데이트하는 로직
+        setMembers(prevMembers =>
+            prevMembers.map(m =>
+                m.memberNo === memberNo ? { ...m, role: newRole } : m
+            )
+        );
+    };
+
     return (
         <Report2>
             <AdminReportNav />
             <Report3>
-                <h2>관리자용 신고 내역</h2>
+                <h2>회원 관리</h2>
 
                 <div className="report-filters">
                     <input
@@ -110,9 +140,9 @@ const AdminReport = () => {
                     />
                     <input
                         type="text"
-                        placeholder="제목 검색"
-                        value={titleQueryInput}
-                        onChange={(e) => setTitleQueryInput(e.target.value)}
+                        placeholder="이메일 검색"
+                        value={emailQueryInput}
+                        onChange={(e) => setEmailQueryInput(e.target.value)}
                     />
                     <button onClick={() => handlePreset(7)}>1주일</button>
                     <button onClick={() => handlePreset(30)}>1개월</button>
@@ -127,45 +157,42 @@ const AdminReport = () => {
                 <div className="report-table-container">
                     {loading && <p>불러오는 중...</p>}
                     {error && <p style={{ color: "red" }}>{error}</p>}
-                    {!loading && reports.length === 0 && !error && (
-                        <p>신고 내역이 없습니다.</p>
+                    {!loading && members.length === 0 && !error && (
+                        <p>회원 목록이 없습니다.</p>
                     )}
-                    {reports.length > 0 && (
+                    {members.length > 0 && (
                         <>
                             <table className="report-table">
                                 <thead>
                                     <tr>
+                                        <th>회원번호</th>
                                         <th>이메일</th>
                                         <th>닉네임</th>
                                         <th>이메일 인증</th>
                                         <th>권한</th>
                                         <th>회원 상태</th>
                                         <th>생성일</th>
+                                        <th>회원 제재</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {reports.map((r) => (
-                                        <tr key={r.rpNo} onClick={() => handleRowClick(r.rpNo)}>
-                                            <td>{r.rpNo}</td>
-                                            <td className="report-title">{r.title}</td>
-                                            <td>{r.memberNo}</td>
-                                            <td>{r.rpMemberNo}</td>
-                                            <td>{r.enrollDate}</td>
-                                            <td>
-                                                {r.status === "Y"
-                                                    ? "처리완료"
-                                                    : r.status === "N"
-                                                        ? "거부됨"
-                                                        : r.status === "P"
-                                                            ? "진행중"
-                                                            : "알 수 없음"}
-                                            </td>
+                                    {members.map((member) => (
+                                        <tr key={member.memberNo}>
+                                            <td>{member.memberNo}</td>
+                                            <td>{member.email}</td>
+                                            <td >{member.memberNickname}</td>
+                                            <td >{member.emailVerified}</td>
+                                            {/* 권한 변경 컴포넌트 */}
+                                            <RoleCell member={member} onRoleChange={handleRoleChange} />
+                                            <td>{member.memberStatus}</td>
+                                            <td>{member.createdAt}</td>
+                                            <td><MemberBanButton>정지</MemberBanButton></td>
                                         </tr>
                                     ))}
                                 </tbody>
                             </table>
 
-                            {/* 📌 페이징 */}
+                            {/* 페이징 */}
                             <div className="pagination">
                                 <button onClick={handlePrev} disabled={page === 0}>
                                     ◀ 이전
@@ -193,4 +220,4 @@ const AdminReport = () => {
     );
 };
 
-export default AdminReport;
+export default AdminMemberManagement;

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const NavDiv = styled.div`
-  width: 10%;
+  width: 180px;
   height: 100vh;
   display: flex;
   flex-direction: column;
