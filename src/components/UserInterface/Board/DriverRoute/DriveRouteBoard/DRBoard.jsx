@@ -494,7 +494,6 @@ const DRBoard = () => {
     검정 하트를 한 번 더 누르면 게시글 번호 들고 가서 memberNo boardNo 삭제
    driveRouteBoard join해서 status가 Y인 것만 boardNo desc로 memberNo,boardNo을 조회해와서  boardNo,memberNo이 일치하면 좋아요 표시됨
   */
-
   useEffect(() => {
     axios
       .get("http://localhost/driveRouteBoard/selectLikes", {
