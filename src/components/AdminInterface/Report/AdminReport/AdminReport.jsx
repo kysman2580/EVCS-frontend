@@ -6,6 +6,7 @@ import AdminReportNav from "../../AdminCommon/AdminNav/AdminReportNav";
 
 const AdminReport = () => {
   const navigate = useNavigate();
+  const token = localStorage.getItem("accessToken");
 
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(false);

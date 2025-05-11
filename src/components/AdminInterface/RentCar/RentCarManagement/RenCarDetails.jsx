@@ -40,7 +40,11 @@ const RentCarDetails = () => {
     postAdd,
     garageNo,
     status,
+    categoryNo,
   } = location.state;
+
+  const [optionList, setOptionList] = useState([]); // 전체 옵션 목록
+  const [selectedOptions, setSelectedOptions] = useState([]); // 체크된 옵션 번호
 
   const [form, setForm] = useState({
     carNo: carNo,
@@ -55,9 +59,8 @@ const RentCarDetails = () => {
     postAdd: postAdd,
     garageNo: garageNo,
     status: status,
+    categoryNo: categoryNo,
   });
-
-  console.log(form);
 
   // --- 주소 찾기 모달 관련 상태들 추가  ---
   const [addressModal, setAddressModal] = useState(false);
@@ -146,6 +149,37 @@ const RentCarDetails = () => {
       });
   }, []);
 
+  useEffect(() => {
+    console.log("렌트카 번호 확인: ", rentCarNo);
+
+    axios
+      .get("http://localhost/rentCar/rentCaroptions", {
+        params: { rentCarNo: rentCarNo },
+      })
+      .then((res) => {
+        console.log("등록된 옵션들: ", res.data);
+
+        // 등록된 옵션 번호들만 추출
+        const selected = res.data.map((opt) => opt.optionNo);
+
+        setSelectedOptions(selected); // 선택된 옵션 번호만 저장
+      })
+      .catch((err) => {
+        console.error("옵션 리스트 불러오기 실패:", err);
+      });
+
+    // 전체 옵션 목록은 따로 불러오기
+    axios
+      .get("http://localhost/rentCar/options")
+      .then((res) => {
+        console.log("전체 옵션 목록: ", res.data);
+        setOptionList(res.data); // 전체 옵션 [{optionNo, optionName}, ...]
+      })
+      .catch((err) => {
+        console.error("전체 옵션 목록 실패:", err);
+      });
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
@@ -169,7 +203,6 @@ const RentCarDetails = () => {
 
   const handleUpdate = (e) => {
     e.preventDefault();
-    console.log(form);
 
     // 빈 값 체크 & ref 매핑
     const checks = [
@@ -189,7 +222,10 @@ const RentCarDetails = () => {
     }
 
     axios
-      .post("http://localhost/rentCar/update", form)
+      .post("http://localhost/rentCar/update", {
+        ...form,
+        optionNos: selectedOptions,
+      })
       .then((result) => {
         console.log("등록된 데이터:", result);
         alert("차량이 수정되었습니다.");
@@ -203,7 +239,6 @@ const RentCarDetails = () => {
 
   const handleDelete = (e) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
-    console.log(form);
     axios
       .post("http://localhost/rentCar/delete", form, {
         headers: {
@@ -352,6 +387,32 @@ const RentCarDetails = () => {
                     </Form.Group>
                   </Col>
                 </Row>
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-bold">옵션 :</Form.Label>
+                  <div>
+                    {optionList.map((opt) => (
+                      <Form.Check
+                        inline
+                        key={opt.optionNo}
+                        label={opt.optionName}
+                        value={opt.optionNo}
+                        type="checkbox"
+                        checked={selectedOptions.includes(opt.optionNo)}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value);
+                          if (e.target.checked) {
+                            setSelectedOptions([...selectedOptions, value]);
+                          } else {
+                            setSelectedOptions(
+                              selectedOptions.filter((o) => o !== value)
+                            );
+                          }
+                        }}
+                        disabled={disabled}
+                      />
+                    ))}
+                  </div>
+                </Form.Group>
                 {/* 변경된 부분: enrollPlace + postAdd를 한 줄에 */}
                 <Row className="mb-4" style={{ alignItems: "flex-end" }}>
                   {/* 등록 주소 */}

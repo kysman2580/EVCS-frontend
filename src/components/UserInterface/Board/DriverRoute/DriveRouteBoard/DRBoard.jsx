@@ -8,6 +8,7 @@ import InsertPhotoRoundedIcon from "@mui/icons-material/InsertPhotoRounded";
 import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import AutoAwesomeMotionOutlinedIcon from "@mui/icons-material/AutoAwesomeMotionOutlined";
 import { useNavigate } from "react-router-dom";
 import { useRef, useState, useEffect, use } from "react";
@@ -75,7 +76,7 @@ const DRBoard = () => {
   const [openMapModal, setOpenMapModal] = useState(false);
   const [openDriveRoute, setOpenDriveRoute] = useState(false);
   const [mapUrl, setMapUrl] = useState("");
-  const [heart, setHeart] = useState(false);
+  const [heart, setHeart] = useState(true);
   const ref = useRef(null);
   const [imagesUrl, setImagesUrl] = useState([]);
   const [boardImage, setBoardImage] = useState([]);
@@ -88,7 +89,7 @@ const DRBoard = () => {
   const [commentInfo, setCommentInfo] = useState([]);
   const [hasMoreComment, setHasMoreComment] = useState(true);
   const [boards, setBoards] = useState([]);
-  const [boardImages, setBoardboardImages] = useState([]);
+  const [boardImages, setBoardImages] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [srcMap, setSrcMap] = useState("");
   const [commentTargetBoard, setCommentTargetBoard] = useState(null);
@@ -96,6 +97,11 @@ const DRBoard = () => {
     boardNo: null,
     commentContent: null,
   });
+  const [boardLikesInfo, setBoardLikesInfo] = useState([]);
+  const [isUpdateMode, setIsUpdateMode] = useState(true);
+  const [updateBoardNo, setUpdateBoardNo] = useState(null);
+  const [editingCommentNo, setEditingCommentNo] = useState(null); // 수정 중인 댓글 번호
+  const [editedContent, setEditedContent] = useState(""); // 임시 수정 값 저장
 
   useEffect(() => {
     if (mapUrl !== "") {
@@ -109,6 +115,11 @@ const DRBoard = () => {
       ref.current.value = null;
       ref.current.click();
     }
+  };
+
+  const handleDeleteImage = (indexToDelete) => {
+    setImagesUrl((prev) => prev.filter((_, index) => index !== indexToDelete));
+    setBoardImage((prev) => prev.filter((_, index) => index !== indexToDelete));
   };
 
   const handleImageChange = (e) => {
@@ -163,10 +174,10 @@ const DRBoard = () => {
         console.log("drBoardImages : ", drBoardImages);
         if (currentPage === 1) {
           setBoards([...drBoard]);
-          setBoardboardImages([...drBoardImages]);
+          setBoardImages([...drBoardImages]);
         } else {
           setBoards([...drBoard]);
-          setBoardboardImages([...drBoardImages]);
+          setBoardImages([...drBoardImages]);
         }
 
         if (drBoard.length % 10 != 0) {
@@ -214,8 +225,6 @@ const DRBoard = () => {
       const drFile = new File([blob], "driveRoute.png", { type: blob.type });
       formData.append("drFile", drFile);
     }
-    console.log("drBoardContent : ", boardContent);
-    console.log("boardImage : ", boardImage);
 
     axios
       .post("http://localhost/driveRouteBoard/insert", formData, {
@@ -255,7 +264,72 @@ const DRBoard = () => {
   };
 
   // ----------------------게시물 수정----------------------
-  const handleUpdate = (boardNo) => {};
+  const handleUpdate = (board) => {
+    setBoardContent(board.boardContent);
+    setMapUrl(board.driveRouteImage); // 드라이브 경로 이미지
+    setImagesUrl(
+      boardImages
+        .filter((image) => image.boardNo == board.boardNo)
+        .map((image) => image.boardImage) // URL만 추출
+    );
+    setBoardImage([]); // 실제 파일은 없지만 placeholder로라도 빈 배열로 초기화
+    setUpdateBoardNo(board.boardNo);
+    setIsUpdateMode(false);
+    setopenPhotoModal(true); // 모달 열기
+  };
+
+  const handleUpdateBoard = async () => {
+    if (!boardContent) {
+      alert("내용을 입력해주세요.");
+      return;
+    } else if (boardContent.length < 5 || boardContent.length > 200) {
+      alert("내용은 5자 이상 200자 이하로 입력해주세요.");
+      return;
+    } else if (boardImage.length > 10) {
+      alert("사진을 10장 이하로로 첨부해주세요.");
+      return;
+    } else if (mapUrl === "") {
+      alert("드라이브 루트를 선택해주세요.");
+      return;
+    }
+
+    const formData = new FormData();
+
+    formData.append("boardNo", updateBoardNo);
+    formData.append("boardContent", boardContent);
+    formData.append("boardWriter", auth.user.memberNo);
+    boardImage.forEach((boardFiles) => {
+      formData.append("boardFiles", boardFiles);
+    });
+    if (mapUrl) {
+      const response = await fetch(mapUrl);
+      const blob = await response.blob();
+      const drFile = new File([blob], "driveRoute.png", { type: blob.type });
+      formData.append("drFile", drFile);
+    }
+
+    axios
+      .post("http://localhost/driveRouteBoard/update", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${auth.user.accessToken}`,
+        },
+      })
+      .then((result) => {
+        console.log(result.data);
+        setOpenRouteModal(false);
+        setBoardContent("");
+        setBoardImage([]);
+        setImagesUrl([]);
+        setMapUrl("");
+        setSrcMap("");
+        alert("게시물이 수정되었습니다.");
+        window.location.reload(); // 페이지 전체 새로고침
+      })
+      .catch((error) => {
+        console.error("게시물 등록 실패:", error);
+      });
+  };
 
   // ----------------------게시물 삭제----------------------
   const handleDelete = (boardNo) => {
@@ -292,7 +366,7 @@ const DRBoard = () => {
       .then((result) => {
         const drComment = result.data.drComment;
         setCommentInfo(drComment);
-        setHasMoreComment(drComment.length === 10); // 10개 미만이면 더보기 X
+        setHasMoreComment(drComment.length === 10);
       })
       .catch((error) => {
         console.error("댓글 조회 실패:", error);
@@ -373,6 +447,143 @@ const DRBoard = () => {
     }
   };
 
+  // ----------------------댓글 수정----------------------
+  const handleUpdateComment = (commentNo) => {
+    axios
+      .put(
+        "http://localhost/driveRouteComment/update",
+        {
+          commentContent: editedContent,
+          commentNo: commentNo,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${auth.user.accessToken}`,
+          },
+        }
+      )
+      .then((result) => {
+        console.log(result);
+        alert("댓글이 수정되었습니다.");
+        setEditingCommentNo(null);
+        // 댓글 재조회
+        setCurrentCommentPage(1);
+        axios
+          .get(
+            `http://localhost/driveRouteComment/${commentTargetBoard.boardNo}/1`,
+            {
+              headers: {
+                Authorization: `Bearer ${auth.user.accessToken}`,
+              },
+            }
+          )
+          .then((res) => {
+            const drComment = res.data.drComment;
+            setCommentInfo(drComment);
+            setHasMoreComment(drComment.length === 10);
+            setComment((prev) => ({ ...prev, commentContent: "" }));
+          })
+          .catch((err) => console.error("댓글 재조회 실패", err));
+      })
+      .catch((error) => {
+        console.error("댓글 삭제 실패:", error);
+      });
+  };
+
+  /* 하얀하트 누르면 게시글 번호 들고 db 가서 좋아요 테이블에 memberNo boardNo 추가
+    검정 하트를 한 번 더 누르면 게시글 번호 들고 가서 memberNo boardNo 삭제
+   driveRouteBoard join해서 status가 Y인 것만 boardNo desc로 memberNo,boardNo을 조회해와서  boardNo,memberNo이 일치하면 좋아요 표시됨
+  */
+  useEffect(() => {
+    axios
+      .get("http://localhost/driveRouteBoard/selectLikes", {
+        headers: {
+          Authorization: `Bearer ${auth.user.accessToken}`,
+        },
+      })
+      .then((result) => {
+        console.log("boardLikesInfo :", result.data);
+        setBoardLikesInfo([...result.data]);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  const handleLikeBtn = (boardNo) => {
+    axios
+      .get(`http://localhost/driveRouteBoard/likes/${boardNo}`, {
+        headers: {
+          Authorization: `Bearer ${auth.user.accessToken}`,
+        },
+      })
+      .then(() => {
+        setBoards((prevBoards) =>
+          prevBoards.map((board) =>
+            board.boardNo === boardNo
+              ? { ...board, likeCount: board.likeCount + 1 }
+              : board
+          )
+        );
+        setBoardLikesInfo((prev) => [...prev, { boardNo }]);
+
+        axios
+          .get("http://localhost/driveRouteBoard/selectLikes", {
+            headers: {
+              Authorization: `Bearer ${auth.user.accessToken}`,
+            },
+          })
+          .then((result) => {
+            console.log("boardLikesInfo :", result.data);
+            setBoardLikesInfo([...result.data]);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const handleLikeCancelBtn = (boardNo) => {
+    axios
+      .delete(`http://localhost/driveRouteBoard/likesCancel/${boardNo}`, {
+        headers: {
+          Authorization: `Bearer ${auth.user.accessToken}`,
+        },
+      })
+      .then(() => {
+        setBoards((prevBoards) =>
+          prevBoards.map((board) =>
+            board.boardNo === boardNo
+              ? {
+                  ...board,
+                  likeCount: Math.max(board.likeCount - 1, 0), // 0 미만 방지
+                }
+              : board
+          )
+        );
+        setBoardLikesInfo((prev) =>
+          prev.filter((item) => item.boardNo !== boardNo)
+        );
+        axios
+          .get("http://localhost/driveRouteBoard/selectLikes", {
+            headers: {
+              Authorization: `Bearer ${auth.user.accessToken}`,
+            },
+          })
+          .then((result) => {
+            console.log("boardLikesInfo :", result.data);
+            setBoardLikesInfo([...result.data]);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   console.log("로그인한 유저 번호:", auth.user.memberNo);
   return (
     <>
@@ -390,7 +601,11 @@ const DRBoard = () => {
           <H3>당신의 일상과 드라이브 루트를 공유해보세요~</H3>
 
           <br />
-          <InsertButton onClick={() => setopenPhotoModal(true)}>
+          <InsertButton
+            onClick={() => {
+              setopenPhotoModal(true), setIsUpdateMode(true);
+            }}
+          >
             <AddBoxOutlinedIcon /> 게시물 만들기
           </InsertButton>
           <br />
@@ -437,7 +652,20 @@ const DRBoard = () => {
                   </div>
                 </Images>
                 <PostIcon>
-                  <FavoriteBorderIcon style={{ cursor: "pointer" }} />
+                  {boardLikesInfo.some(
+                    (item) => item.boardNo == board.boardNo
+                  ) ? (
+                    <FavoriteRoundedIcon
+                      style={{ cursor: "pointer" }}
+                      onClick={() => handleLikeCancelBtn(board.boardNo)}
+                    />
+                  ) : (
+                    <FavoriteBorderIcon
+                      style={{ cursor: "pointer" }}
+                      onClick={() => handleLikeBtn(board.boardNo)}
+                    />
+                  )}
+
                   <ChatIcon
                     onClick={() => handleCommentList(board)}
                     style={{ cursor: "pointer" }}
@@ -453,6 +681,18 @@ const DRBoard = () => {
                     드라이브 경로
                   </DriveRouteIcon>
                 </PostIcon>
+                {board.likeCount > 0 && (
+                  <span
+                    style={{
+                      marginLeft: "15px",
+                      marginBottom: "20px",
+                      fontWeight: "bold",
+                      color: "#949393",
+                    }}
+                  >
+                    {board.likeCount}명이 좋아합니다
+                  </span>
+                )}
 
                 <Content expanded={!!expandedPost[board.boardNo]}>
                   {board.boardContent}
@@ -495,7 +735,7 @@ const DRBoard = () => {
               </CloseBtn>
               <ModalLabel>
                 <ModalHeader>
-                  새 게시물 만들기
+                  {isUpdateMode ? <>새 게시물 만들기</> : <>게시물 수정하기</>}
                   <ModalSubmit
                     onClick={() => {
                       setOpenRouteModal(true);
@@ -541,27 +781,46 @@ const DRBoard = () => {
                           height: "100%",
                         }}
                       >
-                        <Slider {...settings}>
-                          {imagesUrl.map((url, index) => (
-                            <div style={{}} key={index}>
-                              <img
-                                src={url}
-                                style={{
-                                  width: "100%",
-                                  maxHeight: "630px",
-                                  objectFit: "cover",
-                                  backgroundRepeat: "none",
-                                }}
-                                alt={`preview-${index}`}
-                              />
-                            </div>
-                          ))}
-                        </Slider>
+                        {imagesUrl.length === 1 ? (
+                          <>
+                            {imagesUrl.map((url, index) => (
+                              <div key={index} style={{ position: "relative" }}>
+                                <img
+                                  src={url}
+                                  style={{
+                                    width: "100%",
+                                    maxHeight: "630px",
+                                    objectFit: "cover",
+                                    backgroundRepeat: "no-repeat",
+                                  }}
+                                  alt={`preview-${index}`}
+                                />
+                              </div>
+                            ))}
+                          </>
+                        ) : (
+                          <Slider {...settings}>
+                            {imagesUrl.map((url, index) => (
+                              <div key={index} style={{ position: "relative" }}>
+                                <img
+                                  src={url}
+                                  style={{
+                                    width: "100%",
+                                    maxHeight: "630px",
+                                    objectFit: "cover",
+                                    backgroundRepeat: "no-repeat",
+                                  }}
+                                  alt={`preview-${index}`}
+                                />
+                              </div>
+                            ))}
+                          </Slider>
+                        )}
                       </div>
                       <AutoAwesomeMotionOutlinedIcon
                         style={{
                           position: "absolute",
-                          bottom: "3px",
+                          bottom: "5px",
                           right: "20px",
                           fontSize: "30px",
                           color: "#fff",
@@ -593,10 +852,21 @@ const DRBoard = () => {
               </CloseBtn>
               <ModalLabel>
                 <ModalHeader>
-                  새 게시물 만들기
-                  <ModalSubmit onClick={handleInsertBoard}>
-                    공유하기
-                  </ModalSubmit>
+                  {isUpdateMode ? (
+                    <>
+                      새 게시물 만들기
+                      <ModalSubmit onClick={handleInsertBoard}>
+                        공유하기
+                      </ModalSubmit>
+                    </>
+                  ) : (
+                    <>
+                      게시물 수정하기
+                      <ModalSubmit onClick={handleUpdateBoard}>
+                        수정하기
+                      </ModalSubmit>
+                    </>
+                  )}
                   <ModalBack
                     onClick={() => {
                       setOpenRouteModal(false);
@@ -635,6 +905,7 @@ const DRBoard = () => {
                         type="text"
                         onChange={handleContentValue}
                         placeholder="내용을 작성해주세요"
+                        value={boardContent}
                       ></Textarea>
                     </DriveContent>
                   </RightContent>
@@ -731,27 +1002,69 @@ const DRBoard = () => {
                             </CommentAuthor>
                             {comment.commentWriter == auth.user.memberNo && (
                               <CommentButtonGroup>
-                                <span
-                                  className="edit"
-                                  onClick={() => handleEditComment(comment)}
-                                >
-                                  수정
-                                </span>
-                                <span
-                                  className="delete"
-                                  onClick={() =>
-                                    handleDeleteComment(comment.commentNo)
-                                  }
-                                >
-                                  삭제
-                                </span>
+                                {editingCommentNo == comment.commentNo ? (
+                                  <>
+                                    <span
+                                      className="save"
+                                      onClick={() =>
+                                        handleUpdateComment(comment.commentNo)
+                                      }
+                                    >
+                                      저장
+                                    </span>
+                                    <span
+                                      className="cancel"
+                                      onClick={() => setEditingCommentNo(null)}
+                                    >
+                                      취소
+                                    </span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <span
+                                      className="edit"
+                                      onClick={() => {
+                                        setEditingCommentNo(comment.commentNo);
+                                        setEditedContent(
+                                          comment.commentContent
+                                        ); // 현재 내용 가져오기
+                                      }}
+                                    >
+                                      수정
+                                    </span>
+                                    <span
+                                      className="delete"
+                                      onClick={() =>
+                                        handleDeleteComment(comment.commentNo)
+                                      }
+                                    >
+                                      삭제
+                                    </span>
+                                  </>
+                                )}
                               </CommentButtonGroup>
                             )}
                           </CommentTop>
-                          <CommentText>{comment.commentContent}</CommentText>
+
+                          {editingCommentNo === comment.commentNo ? (
+                            <input
+                              type="text"
+                              value={editedContent}
+                              onChange={(e) => setEditedContent(e.target.value)}
+                              maxLength={85}
+                              style={{ width: "100%", marginTop: "5px" }}
+                            />
+                          ) : (
+                            <CommentText>{comment.commentContent}</CommentText>
+                          )}
                         </CommentItem>
                       ))}
                     </Comments>
+                    {hasMoreComment && (
+                      <CommentSubmit onClick={handleMoreComments}>
+                        댓글 더보기
+                      </CommentSubmit>
+                    )}
                     <InsertComment>
                       <Commentarea
                         type="text"

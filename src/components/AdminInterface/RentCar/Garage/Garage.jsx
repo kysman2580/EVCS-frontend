@@ -19,6 +19,7 @@ const Garage = () => {
   const [regionSido, setRegionSido] = useState("");
   const [regionSigungu, setRegionSigungu] = useState("");
   const [regionDong, setRegionDong] = useState("");
+  const [searchCategory, setSearchCategory] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
   const [garages, setGarages] = useState([]);
   const [regionList, setRegionList] = useState([]);
@@ -55,6 +56,7 @@ const Garage = () => {
           regionDong,
           searchKeyword,
           status,
+          searchCategory,
         },
       })
       .then((res) => {
@@ -63,7 +65,7 @@ const Garage = () => {
         setRegionList(res.data.regionList || []);
       })
       .catch(console.error);
-  }, [regionSido, regionSigungu, regionDong, status]);
+  }, [regionSido, regionSigungu, regionDong, status, searchCategory]);
 
   const handleSearch = () => {
     axios
@@ -74,6 +76,7 @@ const Garage = () => {
           regionDong,
           searchKeyword,
           status,
+          searchCategory,
         },
       })
       .then((res) => {
@@ -89,7 +92,7 @@ const Garage = () => {
       <AdminRentCarNav />
       <Container className="flex-grow-1 mt-4">
         <Row className="mb-3">
-          <Col md={2}>
+          <Col md={1} style={{ width: "120px" }}>
             <Form.Select
               value={status}
               onChange={(e) => {
@@ -102,7 +105,7 @@ const Garage = () => {
               <option value="noIng">사용중지</option>
             </Form.Select>
           </Col>
-          <Col md={2}>
+          <Col md={1}>
             <Form.Select
               value={regionSido}
               onChange={(e) => {
@@ -120,7 +123,7 @@ const Garage = () => {
               ))}
             </Form.Select>
           </Col>
-          <Col md={2}>
+          <Col md={1} style={{ width: "150px" }}>
             <Form.Select
               value={regionSigungu}
               onChange={(e) => {
@@ -138,7 +141,7 @@ const Garage = () => {
               ))}
             </Form.Select>
           </Col>
-          <Col md={2}>
+          <Col md={1} style={{ width: "150px" }}>
             <Form.Select
               value={regionDong}
               onChange={(e) => {
@@ -153,6 +156,19 @@ const Garage = () => {
                   {item.regionDong}
                 </option>
               ))}
+            </Form.Select>
+          </Col>
+          <Col md={1} style={{ width: "200px" }}>
+            <Form.Select
+              value={searchCategory}
+              onChange={(e) => {
+                setSearchCategory(e.target.value);
+                setSearchKeyword("");
+              }}
+            >
+              <option value="">전체</option>
+              <option value="searchPostAdd">우편번호</option>
+              <option value="searchAdd">주소</option>
             </Form.Select>
           </Col>
           <Col md={2}>
@@ -195,7 +211,7 @@ const Garage = () => {
                 차고지 목록
               </Card.Header>
               <Card.Body className="p-0">
-                <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+                <div style={{ maxHeight: "800px", overflowY: "auto" }}>
                   <Table striped bordered hover className="text-center mb-0">
                     <thead>
                       <tr>

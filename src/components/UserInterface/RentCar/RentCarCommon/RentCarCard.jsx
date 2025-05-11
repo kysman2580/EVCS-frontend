@@ -17,7 +17,11 @@ const RentCarCard = ({ car }) => {
 
   return (
     <>
-      <RentCarCardContainer onClick={() => navi("/LongTermRentDetail")}>
+      <RentCarCardContainer
+        onClick={() =>
+          navi("/LongTermRentDetail", { state: { rentCarNo: car.rentCarNo } })
+        }
+      >
         {/* {car.ingHotdeal === 1 && <HotBadge>🔥 핫딜</HotBadge>} */}
         <RentCarCardImgDiv>
           <RentCarCardImg src={car.fileLoad}></RentCarCardImg>

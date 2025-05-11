@@ -55,7 +55,7 @@ const AdminHotDealRentCarEnrollForm = () => {
     const d = String(date.getDate()).padStart(2, "0");
     const h = String(date.getHours()).padStart(2, "0");
     const m = String(date.getMinutes()).padStart(2, "0");
-    return `${y}-${M}-${d} ${h}:${m}`;
+    return `${y}-${M}-${d}T${h}:${m}`;
   };
 
   const validateForm = () => {
@@ -156,7 +156,7 @@ const AdminHotDealRentCarEnrollForm = () => {
     };
 
     axios
-      .put("http://localhost/admin-hotdeals", payload, {
+      .post("http://localhost/admin-hotdeals", payload, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -254,7 +254,7 @@ const AdminHotDealRentCarEnrollForm = () => {
             <Col md={8}>
               <div
                 style={{
-                  maxHeight: "80vh",
+                  maxHeight: "50vh",
                   overflowY: "auto",
                   overflowX: "hidden",
                 }}
@@ -313,8 +313,8 @@ const AdminHotDealRentCarEnrollForm = () => {
                           <td>{r.categoryName}</td>
                           <td>{r.rentCarNo}</td>
                           <td>{r.carName}</td>
-                          <td>{r.carType}</td>
-                          <td>{r.carCompany}</td>
+                          <td>{r.carTypeName}</td>
+                          <td>{r.companyName}</td>
                           <td>{r.enrollPlace}</td>
                           <td>{r.postAdd}</td>
                           <td>{r.status}</td>

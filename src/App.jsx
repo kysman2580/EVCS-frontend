@@ -80,8 +80,6 @@ import GarageDetails from "./components/AdminInterface/RentCar/Garage/GarageDeta
 import GarageUpdateForm from "./components/AdminInterface/RentCar/Garage/GarageUpdateForm";
 import CarMap from "./components/UserInterface/RentCar/TimeRentCar/CarMap";
 
-import "./App.css";
-
 function App() {
   return (
     <>
@@ -126,7 +124,10 @@ function App() {
             <Route path="/updatePwPage" element={<UpdatePwPage />} />
 
             {/* 소셜 관련 */}
-            <Route path="/auth/kakao/callback" element={<KakaoRedirectHandler />} />
+            <Route
+              path="/auth/kakao/callback"
+              element={<KakaoRedirectHandler />}
+            />
 
             {/* 신고 관련 */}
             <Route path="/report/*" element={<Report useDummyData={true} />} />
@@ -157,7 +158,7 @@ function App() {
             <Route path="/hotRentCar" element={<HotdealRentCar />} />
             <Route path="/subRentCar" element={<SubscribeRentCar />} />
             <Route
-              path="/LongTermRentDetail"
+              path="/LongTermRentDetail/*"
               element={<LongTermRentCarDetail />}
             />
             <Route path="/longRentCar" element={<LongTermRentCar />} />
