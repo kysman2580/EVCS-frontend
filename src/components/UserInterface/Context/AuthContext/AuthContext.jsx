@@ -75,8 +75,28 @@ export const AuthProvider = ({ children }) => {
     window.location.href = "/";
   };
 
+  const cancel = () => {
+    setAuth({
+      user: {
+        email: null,
+        memberName: null,
+        memberPw: null,
+        accessToken: null,
+        refreshToken: null,
+        isAuthenticated: false,
+      },
+    });
+    localStorage.removeItem("email");
+    localStorage.removeItem("memberNo");
+    localStorage.removeItem("memberName");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    alert("회원 탈퇴가 완료 되었습니다.");
+    window.location.href = "/";
+  };
+
   return (
-    <AuthContext.Provider value={{ auth, login, logout }}>
+    <AuthContext.Provider value={{ auth, login, logout, cancel }}>
       {children}
     </AuthContext.Provider>
   );

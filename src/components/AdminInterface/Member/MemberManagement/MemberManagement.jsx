@@ -5,6 +5,7 @@ import axios from "axios";
 import AdminReportNav from "../../AdminCommon/AdminNav/AdminReportNav";
 import { MemberBanButton } from "./MemberManagement.styled";
 import RoleCell from "./RoleCell";
+import { toast } from "react-toastify";
 
 const AdminMemberManagement = () => {
     const navigate = useNavigate();
@@ -120,6 +121,23 @@ const AdminMemberManagement = () => {
         );
     };
 
+
+    const handleBanMember = (memberNo) => {
+        if (window.confirm("정말로 이 회원을 정지하시겠습니까?")) {
+            axios.post(`http://localhost:80/admin/${memberNo}/ban`)
+                .then(() => {
+                    toast.success("회원이 정지되었습니다.");
+                    // 예: window.location.reload(); 또는 상태 갱신 콜백 등
+                })
+                .catch(err => {
+                    toast.error("회원 정지에 실패했습니다.");
+                    console.error(err);
+                });
+        }
+    };
+
+
+
     return (
         <Report2>
             <AdminReportNav />
@@ -186,7 +204,7 @@ const AdminMemberManagement = () => {
                                             <RoleCell member={member} onRoleChange={handleRoleChange} />
                                             <td>{member.memberStatus}</td>
                                             <td>{member.createdAt}</td>
-                                            <td><MemberBanButton>정지</MemberBanButton></td>
+                                            <td><MemberBanButton onClick={() => handleBanMember(member.memberNo)}>정지</MemberBanButton></td>
                                         </tr>
                                     ))}
                                 </tbody>

@@ -13,8 +13,6 @@ const MyPageNav = () => {
             내 정보
           </StyledHeaderBtn>
 
-          <StyledHeaderBtn onClick={() => navi("/#")}>내 리뷰</StyledHeaderBtn>
-
           <StyledHeaderBtn onClick={() => navi("/newsMyPage")}>
             내 뉴스
           </StyledHeaderBtn>

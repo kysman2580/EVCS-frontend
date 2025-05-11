@@ -2,7 +2,7 @@
 import styled from 'styled-components';
 // 또는 다른 스타일링 라이브러리를 사용하고 있을 수 있습니다
 
-export const RoleCellContainer = styled.div`
+export const RoleCellContainer = styled.td`
   position: relative;
   cursor: pointer;
   padding: 8px;
