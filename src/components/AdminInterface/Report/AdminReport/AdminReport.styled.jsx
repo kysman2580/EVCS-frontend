@@ -89,7 +89,7 @@ export const Report2 = styled.div`
     color: #fff;
     font-weight: 500;
     padding: 12px 16px;
-    text-align: left;
+    text-align: center;
   }
 
   .report-table tbody tr:nth-child(even) {
