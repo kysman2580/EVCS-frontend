@@ -54,13 +54,13 @@ function SignUpPage() {
         setNickname(e.target.value);
     };
 
+    const validateEmail = (email) => {
+        const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+        return emailRegex.test(email);
+    };
+
     const handleSendCode = (e) => {
         e.preventDefault();
-
-        const validateEmail = (email) => {
-            const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-            return emailRegex.test(email);
-        };
 
         if (!email || !email.trim()) {
             toast.error('이메일을 입력해주세요.');
@@ -78,11 +78,10 @@ function SignUpPage() {
                 setShowVerificationInput(true);
                 setReSendCode(true);
                 setIsResendDisabled(true);
-                setResendTimer(30); // 처음 인증코드 발송 후에도 30초 타이머 설정
+                setResendTimer(30);
                 toast.success('인증번호가 발송되었습니다. 이메일을 확인해주세요.');
             })
             .catch(error => {
-                // 에러 처리
                 if (error.response) {
                     if (error.response.data.message) {
                         toast.error(error.response.data.message);
@@ -105,7 +104,7 @@ function SignUpPage() {
 
     const handleResendCode = () => {
         setIsResendDisabled(true);       // 버튼 비활성화
-        setResendTimer(30);              // 30초 타이머 시작 (60초에서 30초로 변경)
+        setResendTimer(30);              // 30초 타이머 시작
 
         axios.post('http://localhost:80/mail/resend-verification-code', { email: email })
             .then(response => {
@@ -147,14 +146,13 @@ function SignUpPage() {
     const handleSignUp = (e) => {
         e.preventDefault();
 
-        // 필요한 유효성 검사 추가
         if (!email || !password || !nickname) {
             toast.error('모든 항목을 입력해주세요.');
             return;
         }
 
-        if (!email.includes("@")) {
-            toast.error("유효한 이메일 주소를 입력해주세요.");
+        if (!validateEmail(email)) {
+            toast.error("유효한 이메일 형식이 아닙니다.");
             return;
         }
 
@@ -163,32 +161,27 @@ function SignUpPage() {
             return;
         }
 
-        // 이메일 인증 확인 (옵션)
         if (!isVerified) {
             toast.error('이메일 인증이 필요합니다.');
             return;
         }
 
-        // 회원가입 요청 데이터
         const memberData = {
             email: email,
             memberPw: password,
             memberNickname: nickname
-            // 필요한 다른 회원 정보가 있다면 추가
         };
 
-        // axios로 회원가입 요청
         axios.post('http://localhost:80/members', memberData)
             .then(response => {
                 if (response.status === 200) {
                     toast.success('회원가입이 완료되었습니다!');
-                    navi('/loginPage'); // 로그인 페이지로 이동
+                    navi('/loginPage');
                 }
             })
             .catch(error => {
                 console.error('회원가입 실패:', error);
                 if (error.response) {
-                    // 서버에서 응답을 받았으나 오류 상태 코드인 경우
                     toast.error(`회원가입 실패: ${error.response.data.message || '오류가 발생했습니다.'}`);
                 } else {
                     toast.error('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
