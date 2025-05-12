@@ -79,7 +79,7 @@ const AdminReportCom = () => {
   };
 
   const handleRowClick = (rpNo) => {
-    navigate(`/admin/adminReports/${rpNo}`);
+    navigate(`/admin/adminReportsCom/${rpNo}`);
   };
 
   const handlePrev = () => {
@@ -136,28 +136,32 @@ const AdminReportCom = () => {
                 <thead>
                   <tr>
                     <th>번호</th>
-                    <th>제목</th>
-                    <th>신고자</th>
+                    <th>내용</th>
                     <th>피의자</th>
-                    <th>신청일</th>
-                    <th>진행상황</th>
+                    <th>신고날자</th>
+                    <th>뉴스번호</th>
+                    <th>뉴스댓글번호</th>
+                    <th>상태코드</th>
                   </tr>
                 </thead>
                 <tbody>
                   {reports.map((r) => (
-                    <tr key={r.rpNo} onClick={() => handleRowClick(r.rpNo)}>
-                      <td>{r.rpNo}</td>
-                      <td className="report-title">{r.title}</td>
-                      <td>{r.memberNo}</td>
-                      <td>{r.rpMemberNo}</td>
-                      <td>{r.enrollDate}</td>
+                    <tr key={r.reNo} onClick={() => handleRowClick(r.reNo)}>
+                      <td>{r.reNo}</td>
+                      <td className="report-title">{r.reContent}</td>
+                      <td>{r.reMemberNo}</td>
+                      <td>{r.reEnrollDate}</td>
+                      <td>{r.commentGroupNo}</td>
+                      <td>{r.commentDepth}</td>
                       <td>
-                        {r.status === "Y"
+                        {r.reStatus === "Y"
                           ? "처리완료"
-                          : r.status === "N"
+                          : r.reStatus === "N"
                           ? "거부됨"
-                          : r.status === "P"
+                          : r.reStatus === "P"
                           ? "진행중"
+                          : r.reStatus === "O"
+                          ? "취소됨"
                           : "알 수 없음"}
                       </td>
                     </tr>

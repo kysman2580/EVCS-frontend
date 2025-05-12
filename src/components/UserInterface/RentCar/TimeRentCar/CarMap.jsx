@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Offcanvas from "react-bootstrap/Offcanvas";
-import "./CarMap.css"; // 필요하면 유지
+import "./CarMap.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Container, Row, Col, Button, Image } from "react-bootstrap";
 import axios from "axios";
@@ -9,6 +9,8 @@ import { useAuth } from "../../Context/AuthContext/AuthContext";
 import { H1, H3, RentBodyDiv, RentContainerDiv } from "./CarMap.styles";
 import { useNavigate, useLocation } from "react-router-dom";
 import RentCarNav from "../../Common/Nav/RentCarNav";
+import { PaymentButton } from "../LongTermRentCar/PaymentButton";
+import { InlineBadge } from "../RentCarCommon/RentCarCard.styles";
 
 const Map = styled.div`
   width: 1200px;
@@ -19,6 +21,23 @@ const Map = styled.div`
   position: relative;
   z-index: 1;
 `;
+
+const pad = (n) => (n < 10 ? "0" + n : n);
+const formatDateToLocalDateTime = (date) => {
+  return (
+    date.getFullYear() +
+    "-" +
+    pad(date.getMonth() + 1) +
+    "-" +
+    pad(date.getDate()) +
+    "T" +
+    pad(date.getHours()) +
+    ":" +
+    pad(date.getMinutes()) +
+    ":" +
+    pad(date.getSeconds())
+  );
+};
 
 const CarMap = () => {
   const location = useLocation();
@@ -36,7 +55,10 @@ const CarMap = () => {
   const [enrollPosition, setEnrollPosition] = useState([]);
   const [currentPosition, setCurrentPosition] = useState(null);
   const [selectedCar, setSelectedCar] = useState(null);
-
+  const totalMinutes = Math.round((endDate - startDate) / (1000 * 60));
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  const totalHoursDecimal = totalMinutes / 60;
   useEffect(() => {
     window.kakao.maps.load(() => {
       setLoaded(true);
@@ -57,7 +79,12 @@ const CarMap = () => {
   useEffect(() => {
     // 시간별 렌트카 정보를 조회해옴
     axios
-      .get("http://localhost/rentCar/timeRentCarInfo")
+      .get("http://localhost/rentCar/timeRentCarInfo", {
+        params: {
+          startDate: formatDateToLocalDateTime(new Date(startDate)),
+          endDate: formatDateToLocalDateTime(new Date(endDate)),
+        },
+      })
       .then((result) => {
         console.log(result.data);
         setTimeRentCarResult(result.data.timeRentCarResult);
@@ -139,46 +166,52 @@ const CarMap = () => {
       const address =
         timeRentCarResult[carsAtSamePosition[0].index]?.address || "주소 없음";
       const content = `
-        <div class="wrap">
-          <div class="info">
-            <div class="header">
-              <div style="display: flex; align-items: center; height: 15px;">
-                <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" width="16" height="16" style="margin-right: 8px;" />
-               ${address}
-              </div>
-              <div class="close" title="닫기"></div>
-            </div>
-            <div class="wrapper">
-              ${carsAtSamePosition
-                .map(
-                  ({ index }) => `
-                  <div class="customBody" >
-                    <div style="display: flex; align-items: center;">
-                      <div class="img">
-                        <img src="${
-                          timeRentCarResult[index].fileLoad
-                        }" width="60" height="40" style="object-fit: cover;" />
-                      </div>
-                      <div class="desc" style="margin-left: 10px;">
-                        <div class="carTitle">${
-                          timeRentCarResult[index].carName
-                        }</div>
-                        <div style="color: #666; font-size: 12px;">
-                          ${timeRentCarResult[
-                            index
-                          ].rentCarPrice.toLocaleString()}원
-                        </div>
-                      </div>
-                    </div>
-                    <div class="arrow" style="font-size: 20px; color: #188ceb;">›</div>
-                  </div>`
-                )
-                .join("")}
-            </div>
-          </div>
+  <div class="wrap">
+    <div class="info">
+      <div class="header">
+        <div style="display: flex; align-items: center; height: 15px;">
+          <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" width="16" height="16" style="margin-right: 8px;" />
+          ${address}
         </div>
-      `;
-
+        <div class="close" title="닫기"></div>
+      </div>
+      <div class="wrapper">
+        ${carsAtSamePosition
+          .map(({ index }) => {
+            return `
+              <div class="customBody">
+                <div style="display: flex; align-items: center;">
+                  <div class="img">
+                    <img src="${
+                      timeRentCarResult[index].fileLoad
+                    }" width="60" height="40" style="object-fit: cover;" />
+                  </div>
+                  <div class="desc" style="margin-left: 10px;">
+                    <div class="carTitle" style="font-weight: bold">
+                      ${timeRentCarResult[index].carName}
+                      ${
+                        Number(timeRentCarResult[index].ingHotdeal) === 1
+                          ? '<span style="color:red; margin-left:5px;">🔥 핫딜</span>'
+                          : ""
+                      }
+                    </div>
+                    <div style="color: #666; font-size: 12px;">
+                      ${Math.round(
+                        timeRentCarResult[index].rentCarPrice *
+                          (1 - timeRentCarResult[index].dealPercent / 100)
+                      ).toLocaleString()}원
+                    </div>
+                  </div>
+                </div>
+                <div class="arrow" style="font-size: 20px; color: #188ceb;">›</div>
+              </div>
+            `;
+          })
+          .join("")}
+      </div>
+    </div>
+  </div>
+`;
       return { latlng, content, carsAtSamePosition };
     });
 
@@ -213,6 +246,8 @@ const CarMap = () => {
             rentCarNo: timeRentCarResult[carIndex].rentCarNo,
             rentCarPrice: timeRentCarResult[carIndex].rentCarPrice,
             status: timeRentCarResult[carIndex].status,
+            ingHotdeal: timeRentCarResult[carIndex].ingHotdeal,
+            dealPercent: timeRentCarResult[carIndex].dealPercent,
           });
           handleShow();
         });
@@ -302,7 +337,6 @@ const CarMap = () => {
               <div
                 style={{ fontSize: "16px", marginBottom: "6px", color: "#555" }}
               >
-                총{" "}
                 <span
                   style={{
                     fontWeight: "bold",
@@ -310,9 +344,8 @@ const CarMap = () => {
                     color: "#007bff",
                   }}
                 >
-                  {Math.round((endDate - startDate) / (1000 * 60 * 60))}
+                  총 {hours}시간 {minutes > 0 ? `${minutes}분` : ""} 이용
                 </span>{" "}
-                시간 이용
               </div>
               <div style={{ fontSize: "14px", color: "#666" }}>
                 {startDate.toLocaleString()} ~ {endDate.toLocaleString()}
@@ -364,6 +397,11 @@ const CarMap = () => {
                 </div>
                 <div style={{ fontSize: "15px", color: "#777" }}>
                   {selectedCar?.carTypeName}
+                  {Number(selectedCar?.ingHotdeal) === 1 ? (
+                    <InlineBadge>🔥 핫딜</InlineBadge>
+                  ) : (
+                    ""
+                  )}
                 </div>
               </Col>
             </Row>
@@ -418,13 +456,22 @@ const CarMap = () => {
                     fontSize: "20px",
                   }}
                 >
-                  총 {Math.round((endDate - startDate) / (1000 * 60 * 60))}시간
-                  × {selectedCar?.rentCarPrice?.toLocaleString()}원 ={" "}
-                  {(
-                    Math.round((endDate - startDate) / (1000 * 60 * 60)) *
-                    selectedCar?.rentCarPrice
-                  ).toLocaleString()}
-                  원
+                  총 {hours}시간 {minutes > 0 ? `${minutes}분` : ""} 이용 X{" "}
+                  {selectedCar?.ingHotdeal == 1
+                    ? `${Math.round(
+                        selectedCar?.rentCarPrice *
+                          (1 - selectedCar?.dealPercent / 100)
+                      ).toLocaleString()}원 = `
+                    : `${selectedCar?.rentCarPrice?.toLocaleString()}원 = `}
+                  {selectedCar?.ingHotdeal == 1
+                    ? `${Math.round(
+                        totalHoursDecimal *
+                          (selectedCar?.rentCarPrice *
+                            (1 - selectedCar?.dealPercent / 100))
+                      ).toLocaleString()}원`
+                    : `${Math.round(
+                        totalHoursDecimal * selectedCar?.rentCarPrice
+                      ).toLocaleString()}원`}
                 </div>
               </Col>
             </Row>
@@ -432,7 +479,7 @@ const CarMap = () => {
             {/* 결제 버튼 */}
             <Row>
               <Col>
-                <Button
+                <PaymentButton
                   variant="primary"
                   className="w-100"
                   style={{
@@ -441,13 +488,16 @@ const CarMap = () => {
                     fontWeight: "bold",
                   }}
                   onClick={handlePayment}
-                >
-                  {(
+                  startDate={startDate}
+                  endDate={endDate}
+                  memberNo={localStorage.getItem("memberNo")}
+                  rentCarNo={selectedCar?.rentCarNo}
+                  amount={
                     Math.round((endDate - startDate) / (1000 * 60 * 60)) *
                     selectedCar?.rentCarPrice
-                  ).toLocaleString()}
-                  원 결제하기
-                </Button>
+                  }
+                  carName={selectedCar?.carName}
+                />
               </Col>
             </Row>
           </Container>

@@ -8,9 +8,13 @@ const AdminEventBoardDetail = () => {
   const event = location.state?.event;
   const navigate = useNavigate();
 
+  const plainContent = event?.eventContent
+    ? event.eventContent.replace(/<br\s*\/?>/gi, "\n")
+    : "";
+
   return (
     <>
-      <BoardContainerDiv style={{ height: "900px" }}>
+      <BoardContainerDiv style={{ height: "1000px" }}>
         <NoticeNav />
         <div style={{ width: "100%" }}>
           <Container className="my-5">
@@ -50,12 +54,12 @@ const AdminEventBoardDetail = () => {
                   {/* 내용 */}
                   <div className="mb-4">
                     <strong>이벤트 내용:</strong>
-                    <div
+                    <pre
                       className="border rounded p-3 mt-1 bg-light"
-                      style={{ minHeight: "300px" }}
+                      style={{ minHeight: "300px", whiteSpace: "pre-wrap" }}
                     >
-                      {event.eventContent}
-                    </div>
+                      {plainContent}
+                    </pre>
                   </div>
 
                   {/* 목록으로 돌아가기 */}

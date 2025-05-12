@@ -44,12 +44,25 @@ const ReportDetail = () => {
     fetchDetail();
   }, [rpNo]);
 
+  const payload = {
+    status: "O",
+  };
+
   const cancellation = async () => {
     if (!window.confirm("신고를 정말 취소 하시겠습니까?")) return;
     try {
-      await axios.delete(`/api/reports/${rpNo}/o`);
+      await axios.patch(
+        `http://localhost:80/api/usReports/${report.rpNo}/o`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       alert("신고가 취소 되었습니다.");
-      navigate(-1);
+      navigate(0);
     } catch (err) {
       console.error(err);
       alert("신고 취소중 오류가 발생하였습니다.");
@@ -97,7 +110,7 @@ const ReportDetail = () => {
             : report.status === "P"
             ? "진행중"
             : report.status === "O"
-            ? "취소됨됨"
+            ? "취소됨"
             : "알 수 없음"}
         </Value>
       </FieldRow>
