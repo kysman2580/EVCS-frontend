@@ -95,7 +95,7 @@ const EventBoard = () => {
 
   return (
     <>
-      <BoardContainerDiv>
+      <BoardContainerDiv style={{ height :"900px"}}>
         <NoticeNav />
         <div style={{ width: "100%" }}>
           <div

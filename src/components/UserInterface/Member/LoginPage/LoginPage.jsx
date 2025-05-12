@@ -123,9 +123,7 @@ function LoginPage() {
 
                 <StyledSocialDiv>
                     <StyledSocialImg onClick={handleKakaoLogin} src="/images/kakao_login_button.png" />
-                    <StyledNaverButton>
-                        <Styled_N id="Big_N">N</Styled_N> 네이버 로그인
-                    </StyledNaverButton>
+
                 </StyledSocialDiv>
 
 

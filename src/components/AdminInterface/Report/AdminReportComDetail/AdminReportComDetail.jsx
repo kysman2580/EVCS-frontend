@@ -135,7 +135,7 @@ const AdminReportComDetail = () => {
       <ButtonGroup>
         <BackButton onClick={() => navigate(-1)}>뒤로가기</BackButton>
         <div>
-          {report.reStatus === "P" && (
+          {report.reStatus === "g" && (
             <>
               <ActionButton onClick={refusal}>거부</ActionButton>
               <ActionButton onClick={approval}>승인</ActionButton>
