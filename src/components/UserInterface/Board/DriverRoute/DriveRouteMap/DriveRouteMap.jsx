@@ -188,8 +188,6 @@ function DriveRouteMap({ mapUrl }) {
   const handleSaveImage = () => {
     const passListStr = passList.join("_");
 
-    console.log(passListStr);
-
     const url =
       `https://apis.openapi.sk.com/tmap/routeStaticMap?appKey=j9dvm8U8CF6BqckQanXn090Mb30d9b4b8aeOXvaO` +
       `&startX=${positions[0].lon}&startY=${positions[0].lat}` +
