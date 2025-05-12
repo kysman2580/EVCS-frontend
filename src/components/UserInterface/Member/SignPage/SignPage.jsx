@@ -11,21 +11,28 @@ import {
     StyledSignUpButton,
     VerificationWrapper,
     VerifyButton,
+    ReSendCodeButton,
+    DisableSendCodeButton,
 } from "../LoginPage/LoginPage.styles"
 import { useNavigate } from "react-router-dom";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import { toast } from "react-toastify";
 
 function SignUpPage() {
     const navi = useNavigate();
     const [showVerificationInput, setShowVerificationInput] = useState(false);
+    const [showReSendCode, setReSendCode] = useState(false);
+    const [isResendDisabled, setIsResendDisabled] = useState(false);
     const [email, setEmail] = useState('');
     const [code, setCode] = useState('');
     const [isVerified, setIsVerified] = useState(false);
     // 추가 상태
     const [password, setPassword] = useState('');
     const [nickname, setNickname] = useState('');
+
+    // 타이머 설정 (30초로 변경)
+    const [resendTimer, setResendTimer] = useState(0);
 
     // 이메일 입력 핸들러
     const handleEmailChange = (e) => {
@@ -42,7 +49,6 @@ function SignUpPage() {
         setPassword(e.target.value);
     };
 
-
     // 닉네임 입력 핸들러
     const handleNicknameChange = (e) => {
         setNickname(e.target.value);
@@ -51,28 +57,71 @@ function SignUpPage() {
     const handleSendCode = (e) => {
         e.preventDefault();
 
+        const validateEmail = (email) => {
+            const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+            return emailRegex.test(email);
+        };
+
         if (!email || !email.trim()) {
-            alert('이메일을 입력해주세요.');
+            toast.error('이메일을 입력해주세요.');
             return;
         }
 
-        axios.post('http://localhost:80/mail/send', {
-            email: email
-        })
+        if (!validateEmail(email)) {
+            toast.error("유효한 이메일 형식이 아닙니다.");
+            return;
+        }
+
+        axios.post('http://localhost:80/mail/send', { email: email })
             .then(response => {
                 console.log('인증코드 발송 성공:', response.data);
                 setShowVerificationInput(true);
+                setReSendCode(true);
+                setIsResendDisabled(true);
+                setResendTimer(30); // 처음 인증코드 발송 후에도 30초 타이머 설정
                 toast.success('인증번호가 발송되었습니다. 이메일을 확인해주세요.');
             })
             .catch(error => {
-                console.error('인증코드 발송 실패:', error);
-                toast.error('인증코드 발송에 실패했습니다. 다시 시도해주세요.');
+                // 에러 처리
+                if (error.response) {
+                    if (error.response.data.message) {
+                        toast.error(error.response.data.message);
+                    } else {
+                        toast.error('인증코드 발송에 실패했습니다. 다시 시도해주세요.');
+                    }
+                }
+            });
+    };
+
+    useEffect(() => {
+        let timer;
+        if (resendTimer > 0) {
+            timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
+        } else if (resendTimer === 0) {
+            setIsResendDisabled(false);
+        }
+        return () => clearTimeout(timer);
+    }, [resendTimer]);
+
+    const handleResendCode = () => {
+        setIsResendDisabled(true);       // 버튼 비활성화
+        setResendTimer(30);              // 30초 타이머 시작 (60초에서 30초로 변경)
+
+        axios.post('http://localhost:80/mail/resend-verification-code', { email: email })
+            .then(response => {
+                console.log('인증코드 재전송 성공:', response.data);
+                toast.success('인증코드가 재전송되었습니다. 이메일을 확인해주세요.');
+            })
+            .catch(error => {
+                console.error('인증코드 재전송 실패:', error);
+                toast.error('재전송에 실패했습니다. 다시 시도해주세요.');
+                setIsResendDisabled(false);  // 실패 시 다시 활성화
+                setResendTimer(0);
             });
     };
 
     const handleVerify = (e) => {
         e.preventDefault();
-
 
         if (!code || !code.trim()) {
             toast.error('인증코드를 입력해주세요.');
@@ -104,6 +153,16 @@ function SignUpPage() {
             return;
         }
 
+        if (!email.includes("@")) {
+            toast.error("유효한 이메일 주소를 입력해주세요.");
+            return;
+        }
+
+        if (password.length < 4 || password.length > 20) {
+            toast.error("비밀번호는 4자 이상, 20자 이하로 입력해주세요.");
+            return;
+        }
+
         // 이메일 인증 확인 (옵션)
         if (!isVerified) {
             toast.error('이메일 인증이 필요합니다.');
@@ -121,7 +180,7 @@ function SignUpPage() {
         // axios로 회원가입 요청
         axios.post('http://localhost:80/members', memberData)
             .then(response => {
-                if (response.status === 201) {
+                if (response.status === 200) {
                     toast.success('회원가입이 완료되었습니다!');
                     navi('/loginPage'); // 로그인 페이지로 이동
                 }
@@ -155,13 +214,22 @@ function SignUpPage() {
                             autoComplete="username"
                             placeholder="이메일"
                         />
-                        <SendCodeButton
+                        <DisableSendCodeButton
                             type="button"
                             onClick={handleSendCode}
-                            disabled={isVerified}
+                            disabled={isVerified || isResendDisabled}
                         >
                             인증코드
-                        </SendCodeButton>
+                        </DisableSendCodeButton>
+
+                        {showReSendCode && (
+                            <ReSendCodeButton
+                                onClick={handleResendCode}
+                                disabled={isResendDisabled}
+                            >
+                                {isResendDisabled ? `재전송(${resendTimer.toString().padStart(2, '0')}초)` : '재전송'}
+                            </ReSendCodeButton>
+                        )}
                     </EmailInputWrapper>
 
                     {showVerificationInput && (
@@ -193,7 +261,7 @@ function SignUpPage() {
                         autoComplete="new-password"
                         placeholder="비밀번호"
                     />
-                    
+
                     <StyledInput
                         className="nickname"
                         type="text"

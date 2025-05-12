@@ -17,27 +17,65 @@ import {
   DeleteButtonWrap,
 } from "../../Member/Mypage/MyPage.styles";
 import { useNavigate } from "react-router-dom";
-import { use, useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../Context/AuthContext/AuthContext";
 import { toast } from "react-toastify";
-import RatingGauge from "./RatingGauge";
+import { useEffect, useState } from "react";
 
 const MyPage = () => {
-  const { auth } = useAuth();
-  const userRating = 3.7; // 임시 값, 나중에 지우형한테 값 받아와야함.
-  const navi = useNavigate();
+  const { auth, cancel } = useAuth();
+  const navigate = useNavigate();
+  const [shouldRedirect, setShouldRedirect] = useState(false);
+
+  // 리다이렉트를 위한 useEffect
+  useEffect(() => {
+    if (shouldRedirect) {
+      // 직접 window.location을 사용하여 강제 리다이렉트
+      window.location.href = "/";
+    }
+  }, [shouldRedirect]);
+
+  const handleDeleteAccount = async () => {
+    if (window.confirm("정말로 회원 탈퇴를 하시겠습니까?")) {
+      try {
+        const response = await axios.post('http://localhost:80/admin/delete', {}, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          }
+        });
+
+        toast.success("회원 탈퇴가 완료되었습니다.");
+
+        // 로컬 스토리지 토큰 직접 제거
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        // 추가로 저장된 다른 사용자 관련 데이터가 있다면 모두 삭제
+
+        // AuthContext의 logout 함수 호출
+        cancel();
+
+        // 리다이렉트 트리거 (여러 방법 동시에 시도)
+        setShouldRedirect(true);
+        navigate("/", { replace: true });
+
+
+      } catch (error) {
+        console.error('회원 탈퇴 실패 : ', error);
+        toast.error(error.response?.data?.message || "회원 탈퇴에 실패했습니다.");
+      }
+    }
+  };
 
   return (
     <MyPageDiv>
       <MyPageNav />
-      <Form>
+      <Form onSubmit={(e) => e.preventDefault()}>
         <TitleDiv>
           <TitleH1>내 정보</TitleH1>
         </TitleDiv>
 
         <InputGroup>
-          {auth.user.isAuthenticated && (
+          {auth.user && auth.user.isAuthenticated && (
             <>
               <InputWrap>
                 <InputLabel>닉네임</InputLabel>
@@ -45,17 +83,19 @@ const MyPage = () => {
                   id="name"
                   type="text"
                   name="nickName"
-                  value={auth.user.memberName}
+                  value={auth.user.memberName || ""}
+                  readOnly
                 />
               </InputWrap>
 
               <InputWrap>
                 <InputLabel>이메일</InputLabel>
                 <StyledInput
-                  id="name"
+                  id="email"
                   type="text"
                   name="email"
-                  value={auth.user.email}
+                  value={auth.user.email || ""}
+                  readOnly
                 />
               </InputWrap>
 
@@ -64,31 +104,20 @@ const MyPage = () => {
                   비밀번호
                   <ChangeButton
                     type="button"
-                    onClick={() => navi("/changePasswordPage")}
+                    onClick={() => navigate("/changePasswordPage")}
                   >
                     수정
                   </ChangeButton>
                 </InputLabel>
               </InputWrapByPassword>
-
-              <InputWrap>
-                <InputLabel>ㅇㅅㅇ</InputLabel>
-                <StyledInput id="name" type="text" />
-              </InputWrap>
             </>
           )}
 
-          <SubmitWrapDiv>
-            <SubmitButton>정보 수정</SubmitButton>
-          </SubmitWrapDiv>
           <DeleteButtonWrap>
-            <DeleteButton>회원 탈퇴</DeleteButton>
+            <DeleteButton type="button" onClick={handleDeleteAccount}>회원 탈퇴</DeleteButton>
           </DeleteButtonWrap>
         </InputGroup>
       </Form>
-      <RatingDiv>
-        <RatingGauge rating={userRating} />
-      </RatingDiv>
     </MyPageDiv>
   );
 };

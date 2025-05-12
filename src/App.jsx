@@ -25,6 +25,10 @@ import Report from "./components/UserInterface/Report/Report/Report";
 import AdminReport from "./components/AdminInterface/Report/AdminReport/AdminReport";
 import ReportDetail from "./components/UserInterface/Report/ReportDetail/ReportDetail";
 import AdminReportDetail from "./components/AdminInterface/Report/AdminReportDetail/AdminReportDetail";
+import ReportComments from "./components/UserInterface/Report/ReportComments/ReportComments";
+import ReportComDetail from "./components/UserInterface/Report/ReportCommentsDetail/ReportComDetail";
+import AdminReportCom from "./components/AdminInterface/Report/AdminReportCom/AdminReportCom";
+import AdminReportComDetail from "./components/AdminInterface/Report/AdminReportComDetail/AdminReportComDetail";
 
 /* 게시판 페이지 관련 */
 import UserNotice from "./components/UserInterface/Board/Notice/UserNotice";
@@ -77,6 +81,7 @@ import GarageEnrollForm from "./components/AdminInterface/RentCar/Garage/GarageE
 import GarageDetails from "./components/AdminInterface/RentCar/Garage/GarageDetails";
 import GarageUpdateForm from "./components/AdminInterface/RentCar/Garage/GarageUpdateForm";
 import CarMap from "./components/UserInterface/RentCar/TimeRentCar/CarMap";
+import MemberManagement from "./components/AdminInterface/Member/MemberManagement/MemberManagement";
 import PaymentsSuccess from "./components/UserInterface/RentCar/LongTermRentCar/PaymentsSuccess";
 import PaymentFail from "./components/UserInterface/RentCar/LongTermRentCar/PaymentFail";
 import MyReservationList from "./components/UserInterface/Member/MyReservationList/MyReservationList";
@@ -140,6 +145,14 @@ function App() {
               path="/reports/:rpNo"
               element={<ReportDetail useDummyData={true} />}
             />
+            <Route
+              path="/reportCom/*"
+              element={<ReportComments useDummyData={true} />}
+            />
+            <Route
+              path="/reportsCom/:rpNo"
+              element={<ReportComDetail useDummyData={true} />}
+            />
 
             {/* 뉴스 관련 */}
             <Route path="/newsMain" element={<NewsMain />} />
@@ -167,6 +180,9 @@ function App() {
           <Route path="/admin" element={<AdminRoute />}>
             <Route element={<AdminLayout />}>
               <Route path="main" element={<AdminMain />} />
+
+              {/* 회원 관리 */}
+              <Route path="memberManagement" element={<MemberManagement />} />
 
               {/* 렌트카 관련 */}
               <Route path="insertCar" element={<InsertCar />}></Route>
@@ -226,6 +242,14 @@ function App() {
               <Route
                 path="/admin/adminReports/:rpNo"
                 element={<AdminReportDetail useDummyData={true} />}
+              />
+              <Route
+                path="/admin/adminReportCom/*"
+                element={<AdminReportCom useDummyData={true} />}
+              />
+              <Route
+                path="/admin/adminReportsCom/:rpNo"
+                element={<AdminReportComDetail useDummyData={true} />}
               />
 
               {/* 뉴스 관련 */}

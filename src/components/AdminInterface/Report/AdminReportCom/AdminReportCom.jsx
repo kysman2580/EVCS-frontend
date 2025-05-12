@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Report2, Report3 } from "./AdminReport.styled";
+import { Report2, Report3 } from "./AdminReportCom.styled";
 import axios from "axios";
 import AdminReportNav from "../../AdminCommon/AdminNav/AdminReportNav";
 
-const AdminReport = () => {
+const AdminReportCom = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("accessToken");
 
@@ -32,7 +32,7 @@ const AdminReport = () => {
         page: page,
         size: 10,
       };
-      const response = await axios.get("http://localhost:80/api/reports", {
+      const response = await axios.get("http://localhost:80/api/amReportsCom", {
         params,
         headers: {
           Authorization: `Bearer ${token}`,
@@ -79,7 +79,7 @@ const AdminReport = () => {
   };
 
   const handleRowClick = (rpNo) => {
-    navigate(`/admin/adminReports/${rpNo}`);
+    navigate(`/admin/adminReportsCom/${rpNo}`);
   };
 
   const handlePrev = () => {
@@ -94,7 +94,7 @@ const AdminReport = () => {
     <Report2>
       <AdminReportNav />
       <Report3>
-        <h2>관리자용 게시글 신고 내역</h2>
+        <h2>관리자용 댓글 신고 내역</h2>
 
         <div className="report-filters">
           <input
@@ -136,29 +136,31 @@ const AdminReport = () => {
                 <thead>
                   <tr>
                     <th>번호</th>
-                    <th>제목</th>
-                    <th>신고자</th>
+                    <th>내용</th>
                     <th>피의자</th>
-                    <th>신청일</th>
-                    <th>진행상황</th>
+                    <th>신고날자</th>
+                    <th>뉴스번호</th>
+                    <th>뉴스댓글번호</th>
+                    <th>상태코드</th>
                   </tr>
                 </thead>
                 <tbody>
                   {reports.map((r) => (
-                    <tr key={r.rpNo} onClick={() => handleRowClick(r.rpNo)}>
-                      <td>{r.rpNo}</td>
-                      <td className="report-title">{r.title}</td>
-                      <td>{r.memberNo}</td>
-                      <td>{r.rpMemberNo}</td>
-                      <td>{r.enrollDate}</td>
+                    <tr key={r.reNo} onClick={() => handleRowClick(r.reNo)}>
+                      <td>{r.reNo}</td>
+                      <td className="report-title">{r.reContent}</td>
+                      <td>{r.reMemberNo}</td>
+                      <td>{r.reEnrollDate}</td>
+                      <td>{r.commentGroupNo}</td>
+                      <td>{r.commentDepth}</td>
                       <td>
-                        {r.status === "Y"
+                        {r.reStatus === "Y"
                           ? "처리완료"
-                          : r.status === "N"
+                          : r.reStatus === "N"
                           ? "거부됨"
-                          : r.status === "P"
+                          : r.reStatus === "P"
                           ? "진행중"
-                          : r.status === "O"
+                          : r.reStatus === "O"
                           ? "취소됨"
                           : "알 수 없음"}
                       </td>
@@ -195,4 +197,4 @@ const AdminReport = () => {
   );
 };
 
-export default AdminReport;
+export default AdminReportCom;

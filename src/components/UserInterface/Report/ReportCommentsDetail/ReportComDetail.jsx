@@ -9,10 +9,10 @@ import {
   ActionButton,
   BackButton,
   FieldRow2,
-} from "./ReportDetail.styled";
+} from "./ReportComDetail.styled";
 import axios from "axios";
 
-const ReportDetail = () => {
+const ReportComDetail = () => {
   const { rpNo } = useParams();
   const navigate = useNavigate();
 
@@ -26,7 +26,7 @@ const ReportDetail = () => {
     const fetchDetail = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:80/api/usReports/${id}`,
+          `http://localhost:80/api/usReportsCom/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -45,14 +45,14 @@ const ReportDetail = () => {
   }, [rpNo]);
 
   const payload = {
-    status: "O",
+    reStatus: "O",
   };
 
   const cancellation = async () => {
     if (!window.confirm("신고를 정말 취소 하시겠습니까?")) return;
     try {
       await axios.patch(
-        `http://localhost:80/api/usReports/${report.rpNo}/o`,
+        `http://localhost:80/api/usReportsCom/${report.reNo}/o`,
         payload,
         {
           headers: {
@@ -82,37 +82,36 @@ const ReportDetail = () => {
 
   return (
     <DetailContainer>
-      <h2>게시판 신고 상세보기 (#{report.rpNo})</h2>
-
-      <FieldRow>
-        <Label>제목</Label>
-        <Value>{report.title}</Value>
-      </FieldRow>
+      <h2>댓글 신고 상세보기 (#{report.reNo})</h2>
       <FieldRow>
         <Label>신고자</Label>
         <Value>{report.memberNo}</Value>
       </FieldRow>
       <FieldRow>
         <Label>피의자</Label>
-        <Value>{report.rpMemberNo}</Value>
+        <Value>{report.reMemberNo}</Value>
       </FieldRow>
       <FieldRow>
         <Label>신청일</Label>
-        <Value>{report.enrollDate}</Value>
+        <Value>{report.reEnrollDate}</Value>
       </FieldRow>
       <FieldRow>
         <Label>진행상황</Label>
         <Value>
-          {report.status === "Y"
+          {report.reStatus === "Y"
             ? "처리완료"
-            : report.status === "N"
+            : report.reStatus === "N"
             ? "거부됨"
-            : report.status === "P"
+            : report.reStatus === "P"
             ? "진행중"
-            : report.status === "O"
+            : report.reStatus === "O"
             ? "취소됨"
             : "알 수 없음"}
         </Value>
+      </FieldRow>
+      <FieldRow>
+        <Label>신고 내용</Label>
+        <Value>{report.reContent}</Value>
       </FieldRow>
 
       {report.content && (
@@ -122,28 +121,10 @@ const ReportDetail = () => {
         </FieldRow2>
       )}
 
-      {report.fileLink && (
-        <FieldRow>
-          <Label>첨부파일</Label>
-          <Value>
-            <img
-              src={report.fileLink}
-              alt="첨부이미지"
-              style={{
-                width: 500,
-                height: 500,
-                objectFit: "cover",
-                borderRadius: 4,
-              }}
-            />
-          </Value>
-        </FieldRow>
-      )}
-
       <ButtonGroup>
         <BackButton onClick={() => navigate(-1)}>뒤로가기</BackButton>
         <div>
-          {report.status === "P" && (
+          {report.reStatus === "P" && (
             <>
               <ActionButton onClick={cancellation}>신고 취소</ActionButton>
             </>
@@ -154,4 +135,4 @@ const ReportDetail = () => {
   );
 };
 
-export default ReportDetail;
+export default ReportComDetail;

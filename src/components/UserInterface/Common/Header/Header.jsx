@@ -53,7 +53,7 @@ const Header = () => {
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      navigate("/admin/main");
+      navigate("/admin/memberManagement");
     } catch (err) {
       toast.error(
         err.response?.status === 403
