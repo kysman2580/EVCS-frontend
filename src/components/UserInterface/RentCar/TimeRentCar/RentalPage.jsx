@@ -26,6 +26,7 @@ const RentalPage = () => {
     0,
     0
   );
+
   // YYYY-MM-DD HH:mm 포맷 헬퍼 (로컬 타임존 기준)
   const formatLocalDateTime = (date) => {
     const y = date.getFullYear();
@@ -39,6 +40,10 @@ const RentalPage = () => {
   const [startDate, setStartDate] = useState(currentTime);
   const [endDate, setEndDate] = useState(currentTime);
 
+  const totalMinutes = Math.round((endDate - startDate) / (1000 * 60));
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
   const handleEndDate = (date) => {
     if (date <= startDate) {
       alert("반납 시각은 대여 시각보다 늦어야 합니다.");
@@ -47,6 +52,10 @@ const RentalPage = () => {
     setEndDate(date);
   };
   const handleConfirm = () => {
+    if (endDate <= startDate) {
+      alert("대여시간을 다시 설정해주세요");
+      return;
+    }
     navi("/rentCarMap", {
       state: {
         startDate: formatLocalDateTime(startDate),
@@ -143,7 +152,7 @@ const RentalPage = () => {
                 color: "#007bff",
               }}
             >
-              총 {Math.round((endDate - startDate) / (1000 * 60 * 60))}시간 이용
+              총 {hours}시간 {minutes > 0 ? `${minutes}분` : ""} 이용
             </div>
           </div>
 
