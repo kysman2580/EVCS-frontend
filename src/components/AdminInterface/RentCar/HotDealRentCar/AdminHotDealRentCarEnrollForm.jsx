@@ -23,6 +23,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 const AdminHotDealRentCarEnrollForm = () => {
+  const ENV_URL = window.ENV?.API_URL || `http://localhost:2580`;
   const navigate = useNavigate();
   // API 데이터
   const [rentCarInfo, setRentCarInfo] = useState([]);
@@ -83,7 +84,7 @@ const AdminHotDealRentCarEnrollForm = () => {
   // 1) 데이터 로드
   useEffect(() => {
     axios
-      .get("http://localhost/admin-hotdeals/cars", {
+      .get(`${ENV_URL}/admin-hotdeals/cars`, {
         params: {
           useStatus: useStatus,
           carCategory: carCategory,
@@ -125,7 +126,7 @@ const AdminHotDealRentCarEnrollForm = () => {
   // 4) 검색 실행
   const handleSearch = () => {
     axios
-      .get("http://localhost/admin-hotdeals/cars", {
+      .get(`${ENV_URL}/admin-hotdeals/cars`, {
         params: {
           useStatus: useStatus,
           carCategory: carCategory,
@@ -156,7 +157,7 @@ const AdminHotDealRentCarEnrollForm = () => {
     };
 
     axios
-      .post("http://localhost/admin-hotdeals", payload, {
+      .post(`${ENV_URL}/admin-hotdeals`, payload, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

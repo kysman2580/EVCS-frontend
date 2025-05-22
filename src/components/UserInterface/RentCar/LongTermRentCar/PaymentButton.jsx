@@ -31,6 +31,7 @@ export function PaymentButton({
   carName,
   selectedPeriod,
 }) {
+  const ENV_URL = window.ENV?.API_URL || `http://localhost:2580`;
   const rentalTime = formatDateToLocalDateTime(new Date(startDate));
   const returnTime = formatDateToLocalDateTime(new Date(endDate));
 
@@ -55,7 +56,7 @@ export function PaymentButton({
     try {
       // ✅ 버튼 누를 때만 createOrder 실행
       const response = await axios.post(
-        "http://localhost/api/orders",
+        `${ENV_URL}/api/orders`,
         {
           memberNo,
           rentCarNo,

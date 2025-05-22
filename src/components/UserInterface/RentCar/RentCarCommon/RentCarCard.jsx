@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 
 const RentCarCard = ({ car }) => {
   const navi = useNavigate();
+  const URL = window.API_URL;
 
   const originalMonthlyPrice = car.rentCarPrice;
 

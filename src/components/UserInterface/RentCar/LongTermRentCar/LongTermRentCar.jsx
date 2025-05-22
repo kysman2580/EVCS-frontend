@@ -22,6 +22,7 @@ import axios from "axios";
 const BATCH = 10;
 
 const LongTermRentCar = () => {
+  const ENV_URL = window.ENV?.API_URL || `http://localhost:2580`;
   const [rentCars, setRentCars] = useState([]); // 백엔드에서 받아온 전체 리스트
   const [visibleCount, setVisibleCount] = useState(10); // 한 번에 보여줄 개수
 
@@ -33,7 +34,7 @@ const LongTermRentCar = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost/user-rentcars/category/2`)
+      .get(`${ENV_URL}/user-rentcars/category/2`)
       .then((res) => {
         console.log(res.data);
         setRentCars(res.data);

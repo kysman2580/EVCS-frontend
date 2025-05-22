@@ -11,6 +11,7 @@ import DatePicker from "react-datepicker";
 import axios from "axios";
 
 const AdminEventBoardEnrollForm = () => {
+  const ENV_URL = window.ENV?.API_URL || `http://localhost:2580`;
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const navigate = useNavigate();
@@ -79,7 +80,7 @@ const AdminEventBoardEnrollForm = () => {
     console.log("endDate : ", endDate);
 
     axios
-      .post("http://localhost/admin-events", formData, {
+      .post(`${ENV_URL}/admin-events`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

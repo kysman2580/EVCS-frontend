@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const AdminEventBoard = () => {
+  const ENV_URL = window.ENV?.API_URL || `http://localhost:2580`;
   const navigate = useNavigate();
   const [category, setCategory] = useState("eventName");
   const [ingCategory, setIngCategory] = useState("allEvent");
@@ -31,7 +32,7 @@ const AdminEventBoard = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost/admin-events", {
+      .get(`${ENV_URL}/admin-events`, {
         params: { page, category, ingCategory, searchKeyword },
       })
       .then((res) => {
@@ -45,7 +46,7 @@ const AdminEventBoard = () => {
   const handleSearch = () => {
     setPage(1);
     axios
-      .get("http://localhost/admin-events", {
+      .get(`${ENV_RUL}/admin-events`, {
         params: { page, category, ingCategory, searchKeyword },
       })
       .then((res) => {
