@@ -17,9 +17,11 @@ function Notice() {
   const [currentPage, setCurrentPage] = useState(pageFromQuery); // 페이지 상태 설정
   const noticesPerPage = 5;
 
+  const backendUrl = window.ENV?.API_URL || `http://localhost:80`;
+
   useEffect(() => {
     axios
-      .get("http://localhost/notices")
+      .get(`${backendUrl}/notices`)
       .then((res) => setNotices(res.data))
       .catch((err) => console.error(err));
   }, []);

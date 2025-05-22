@@ -13,6 +13,8 @@ import {
 import axios from "axios";
 
 const ReportDetail = () => {
+  const apiUrl = window.ENV?.API_URL || "http://localhost:80";
+
   const { rpNo } = useParams();
   const navigate = useNavigate();
 
@@ -25,14 +27,11 @@ const ReportDetail = () => {
     const id = Number(rpNo);
     const fetchDetail = async () => {
       try {
-        const { data } = await axios.get(
-          `http://localhost:80/api/usReports/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const { data } = await axios.get(`${apiUrl}/api/usReports/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setReport(data);
       } catch (err) {
         setError("권한이 부족합니다.");
@@ -51,16 +50,12 @@ const ReportDetail = () => {
   const cancellation = async () => {
     if (!window.confirm("신고를 정말 취소 하시겠습니까?")) return;
     try {
-      await axios.patch(
-        `http://localhost:80/api/usReports/${report.rpNo}/o`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await axios.patch(`${apiUrl}/api/usReports/${report.rpNo}/o`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
       alert("신고가 취소 되었습니다.");
       navigate(0);
     } catch (err) {

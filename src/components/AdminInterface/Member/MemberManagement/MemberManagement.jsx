@@ -24,6 +24,8 @@ const AdminMemberManagement = () => {
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
 
+    const apiUrl = window.ENV?.API_URL || "http://localhost:80";
+
     const fetchMembers = useCallback(async () => {
         setLoading(true);
         setError(null);
@@ -35,7 +37,7 @@ const AdminMemberManagement = () => {
                 page: page,
                 size: 10,
             };
-            const response = await axios.get("http://localhost:80/api/admin/management/members", {
+            const response = await axios.get(`${apiUrl}/api/admin/management/members`, {
                 params,
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -124,7 +126,7 @@ const AdminMemberManagement = () => {
 
     const handleBanMember = (memberNo) => {
         if (window.confirm("정말로 이 회원을 정지하시겠습니까?")) {
-            axios.post(`http://localhost:80/admin/${memberNo}/ban`)
+            axios.post(`${apiUrl}/admin/${memberNo}/ban`)
                 .then(() => {
                     toast.success("회원이 정지되었습니다.");
                     // 예: window.location.reload(); 또는 상태 갱신 콜백 등

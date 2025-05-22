@@ -9,7 +9,7 @@ import { Report2, Report3 } from "../Report/AdminReport/AdminReport.styled";
 import CommunityNav from "../AdminCommon/AdminNav/AdminComunityNav";
 import { Button } from "react-bootstrap";
 
-const backendUrl = "http://localhost:80";
+const backendUrl = window.ENV?.API_URL || `http://localhost:80`;
 
 const NewsAdminPage = () => {
   const navigate = useNavigate();

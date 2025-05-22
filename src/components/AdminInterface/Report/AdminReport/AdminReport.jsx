@@ -5,6 +5,8 @@ import axios from "axios";
 import AdminReportNav from "../../AdminCommon/AdminNav/AdminReportNav";
 
 const AdminReport = () => {
+  const apiUrl = window.ENV?.API_URL || "http://localhost:80";
+
   const navigate = useNavigate();
   const token = localStorage.getItem("accessToken");
 
@@ -32,7 +34,7 @@ const AdminReport = () => {
         page: page,
         size: 10,
       };
-      const response = await axios.get("http://localhost:80/api/reports", {
+      const response = await axios.get(`${apiUrl}/api/reports`, {
         params,
         headers: {
           Authorization: `Bearer ${token}`,

@@ -13,9 +13,11 @@ function NoticeDetail() {
   const [notice, setNotice] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
+  const backendUrl = window.ENV?.API_URL || `http://localhost:80`;
+
   useEffect(() => {
     axios
-      .get(`http://localhost/notices/${id}`)
+      .get(`${backendUrl}/notices/${id}`)
       .then((res) => setNotice(res.data))
       .catch(() => alert("공지사항을 불러올 수 없습니다."));
   }, [id]);
@@ -27,7 +29,7 @@ function NoticeDetail() {
 
   const handleUpdate = () => {
     axios
-      .put(`http://localhost/notices/${id}`, {
+      .put(`${backendUrl}/notices/${id}`, {
         id: parseInt(id),
         noticeTitle: notice.noticeTitle,
         noticeWriter: notice.noticeWriter,
@@ -43,7 +45,7 @@ function NoticeDetail() {
   const handleDelete = () => {
     if (window.confirm("정말 삭제하시겠습니까?")) {
       axios
-        .delete(`http://localhost/notices/${id}`)
+        .delete(`${backendUrl}/notices/${id}`)
         .then(() => {
           alert("삭제되었습니다.");
           navigate(`/admin/notice?page=${page}`); // 삭제 후 동일한 페이지로 돌아감
