@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const EventBoard = () => {
+  const ENV_URL = window.ENV?.API_URL || `http://localhost:2580`;
   const navigate = useNavigate();
   const [events, setEvents] = useState([]);
   const [page, setPage] = useState(1);
@@ -29,7 +30,7 @@ const EventBoard = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost/user-events", {
+      .get(`${ENV_URL}/user-events`, {
         params: { page },
       })
       .then((res) => {
@@ -95,7 +96,7 @@ const EventBoard = () => {
 
   return (
     <>
-      <BoardContainerDiv>
+      <BoardContainerDiv style={{ height: "900px" }}>
         <NoticeNav />
         <div style={{ width: "100%" }}>
           <div

@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const GarageUpdateForm = () => {
+  const ENV_URL = window.ENV?.API_URL || `http://localhost:2580`;
   const navigate = useNavigate();
   const location = useLocation();
   const garage = location.state?.garage;
@@ -85,7 +86,7 @@ const GarageUpdateForm = () => {
     };
 
     axios
-      .put(`http://localhost/admin-garages/${garage.garageNo}`, garageData, {
+      .put(`${ENV_URL}/admin-garages/${garage.garageNo}`, garageData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -105,7 +106,7 @@ const GarageUpdateForm = () => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
     axios
-      .delete(`http://localhost/admin-garages/${garage.garageNo}`)
+      .delete(`${ENV_URL}/admin-garages/${garage.garageNo}`)
       .then(() => {
         alert("차고지가 삭제되었습니다.");
         navigate("/admin/garagePage", { replace: true });

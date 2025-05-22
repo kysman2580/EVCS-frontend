@@ -15,6 +15,7 @@ import axios from "axios";
 import { RentContainerDiv } from "../../../UserInterface/RentCar/RentCarCommon/RentCar.styles";
 
 const Garage = () => {
+  const ENV_URL = window.ENV?.API_URL || `http://localhost:2580`;
   const navigate = useNavigate();
   const [regionSido, setRegionSido] = useState("");
   const [regionSigungu, setRegionSigungu] = useState("");
@@ -49,7 +50,7 @@ const Garage = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost/admin-garages", {
+      .get(`${ENV_URL}/admin-garages`, {
         params: {
           regionSido,
           regionSigungu,
@@ -69,7 +70,7 @@ const Garage = () => {
 
   const handleSearch = () => {
     axios
-      .get("http://localhost/admin-garages", {
+      .get(`${ENV_URL}/admin-garages`, {
         params: {
           regionSido,
           regionSigungu,

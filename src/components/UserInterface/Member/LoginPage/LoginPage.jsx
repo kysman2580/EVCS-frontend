@@ -47,7 +47,6 @@ function LoginPage() {
             email: email,
             memberPw: password
         }
-
         axios.post('http://localhost:80/auth/login', loginData)
             .then(response => {
                 console.log("로그인 응답 데이터:", response.data);
@@ -58,23 +57,18 @@ function LoginPage() {
                 window.location.href = "/";
             })
             .catch(error => {
-                // 서버에서 반환된 응답이 있을 경우 처리
                 if (error.response) {
-                    // 400번 오류 처리 (예: 계정이 잠금 상태인 경우)
                     if (error.response.status === 400) {
                         const errorMessage = error.response.data.message;
                         toast.error(errorMessage || "로그인 실패");
                     }
-                    // 401번 오류 처리 (예: 인증 실패)
                     else if (error.response.status === 401) {
                         toast.error("아이디 또는 비밀번호를 잘못 입력하셨습니다.");
                     }
-                    // 기타 상태 코드 처리
                     else {
                         toast.error(error.response.data.message || "알 수 없는 오류가 발생했습니다.");
                     }
                 }
-                // 서버 응답이 없을 경우
                 else {
                     toast.error('알 수 없는 오류가 발생했습니다.');
                 }
@@ -129,9 +123,7 @@ function LoginPage() {
 
                 <StyledSocialDiv>
                     <StyledSocialImg onClick={handleKakaoLogin} src="/images/kakao_login_button.png" />
-                    <StyledNaverButton>
-                        <Styled_N id="Big_N">N</Styled_N> 네이버 로그인
-                    </StyledNaverButton>
+
                 </StyledSocialDiv>
 
 
