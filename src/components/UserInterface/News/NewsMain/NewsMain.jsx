@@ -12,7 +12,9 @@ import {
   formatDate,
 } from "./NewsItemComponents";
 
-const NewsMain = ({ backendUrl = window.ENV.API_URL }) => {
+const NewsMain = ({
+  backendUrl = window.ENV?.API_URL || `http://localhost:80`,
+}) => {
   const navigate = useNavigate();
 
   const [query, setQuery] = useState("전기차");

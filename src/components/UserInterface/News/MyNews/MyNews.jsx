@@ -6,7 +6,7 @@ import MyPageNav from "../../Common/Nav/MyPageNav";
 import { MyPageDiv } from "../../Member/Mypage/MyPage.styles";
 import * as S from "../../News/NewsMain/NewsMain.styles";
 
-const backendUrl = window.ENV.API_URL;
+const backendUrl = window.ENV?.API_URL || `http://localhost:80`;
 
 const MyNews = () => {
   const [searchParams, setSearchParams] = useSearchParams();
