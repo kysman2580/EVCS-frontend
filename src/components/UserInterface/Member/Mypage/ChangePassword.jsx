@@ -24,10 +24,10 @@ import { useAuth } from "../../Context/AuthContext/AuthContext";
 
 const ChangePasswordPage = () => {
     const navi = useNavigate();
-
     const [currentPassword, setCurrentPassWord] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmNewPassword, setConfirmNewPassword] = useState("");
+    const apiUrl = window.ENV?.API_URL || "http://localhost:80";
 
     const { auth } = useAuth();
 
@@ -75,7 +75,7 @@ const ChangePasswordPage = () => {
             confirmNewPassword: confirmNewPassword
         }
 
-        axios.post('http://localhost:80/members/changePassword', changePw, {
+        axios.post(`${apiUrl}/members/changePassword`, changePw, {
             headers: {
                 Authorization: `Bearer ${auth.user.accessToken}`
             }
