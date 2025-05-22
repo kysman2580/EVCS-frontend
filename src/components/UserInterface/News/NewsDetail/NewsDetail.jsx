@@ -7,7 +7,7 @@ import axios from "axios";
 import { useAuth } from "../../Context/AuthContext/AuthContext";
 import CommentSection from "./CommentSection";
 
-const NewsDetail = ({ backendUrl = "http://localhost:80" }) => {
+const NewsDetail = ({ backendUrl = window.ENV.API_URL }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { title, description, pubDate, imageUrl, originallink, query } =
@@ -127,6 +127,7 @@ const NewsDetail = ({ backendUrl = "http://localhost:80" }) => {
     );
     updateStatus();
   };
+
   const handleHate = async () => {
     if (!token) return alert("로그인 후 이용해주세요.");
     await axios.post(
@@ -136,6 +137,7 @@ const NewsDetail = ({ backendUrl = "http://localhost:80" }) => {
     );
     updateStatus();
   };
+
   const handleBookmark = async () => {
     if (!token) return alert("로그인 후 이용해주세요.");
     await axios.post(
@@ -149,6 +151,7 @@ const NewsDetail = ({ backendUrl = "http://localhost:80" }) => {
     });
     setBookmarked(r.data);
   };
+
   const handleBlock = () => {
     if (!auth?.user || !article) return alert("로그인 후 이용 가능합니다.");
     navigate("/reportingPage", {
