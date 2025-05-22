@@ -12,9 +12,11 @@ function UserNoticeDetail() {
 
   const [notice, setNotice] = useState(null);
 
+  const backendUrl = window.ENV?.API_URL || `http://localhost:80`;
+
   useEffect(() => {
     axios
-      .get(`http://localhost/notices/${id}`)
+      .get(`${backendUrl}/notices/${id}`)
       .then((res) => setNotice(res.data))
       .catch(() => alert("공지사항을 불러올 수 없습니다."));
   }, [id]);

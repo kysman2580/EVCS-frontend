@@ -13,10 +13,11 @@ function UserNotice() {
   const [currentPage, setCurrentPage] = useState(1);
   const noticesPerPage = 5;
   const [notices, setNotices] = useState([]);
+  const backendUrl = window.ENV?.API_URL || `http://localhost:80`;
 
   useEffect(() => {
     axios
-      .get("http://localhost/notices")
+      .get(`${backendUrl}/notices`)
       .then((res) => setNotices(res.data))
       .catch((err) => console.error("공지사항 불러오기 실패:", err));
   }, []);
