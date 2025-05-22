@@ -26,11 +26,11 @@ const MyPage = () => {
   const { auth, cancel } = useAuth();
   const navigate = useNavigate();
   const [shouldRedirect, setShouldRedirect] = useState(false);
+  const apiUrl = window.ENV?.API_URL || "http://localhost:80";
 
-  // 리다이렉트를 위한 useEffect
+
   useEffect(() => {
     if (shouldRedirect) {
-      // 직접 window.location을 사용하여 강제 리다이렉트
       window.location.href = "/";
     }
   }, [shouldRedirect]);
@@ -38,7 +38,7 @@ const MyPage = () => {
   const handleDeleteAccount = async () => {
     if (window.confirm("정말로 회원 탈퇴를 하시겠습니까?")) {
       try {
-        const response = await axios.post('http://localhost:80/admin/delete', {}, {
+        await axios.post(`${apiUrl}/admin/delete`, {}, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           }

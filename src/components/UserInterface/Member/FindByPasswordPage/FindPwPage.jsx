@@ -24,6 +24,7 @@ const FindByPwPage = () => {
     const [code, setCode] = useState("");
     const [showCodeInput, setShowCodeInput] = useState(false);
     const [isVerified, setIsVerified] = useState(false); // ✅ 인증 성공 여부 추가
+    const apiUrl = window.ENV?.API_URL || "http://localhost:80";
 
 
     const validateEmail = (email) => {
@@ -48,8 +49,9 @@ const FindByPwPage = () => {
             return;
         }
 
-        axios.post('http://localhost:80/mail/password-reset', data)
+        axios.post(`${apiUrl}/mail/password-reset`, data)
             .then(response => {
+                console.log(response.data);
                 toast.success('인증코드 전송 성공!');
                 setShowCodeInput(true);
             })
@@ -82,8 +84,9 @@ const FindByPwPage = () => {
             code: code
         }
 
-        axios.post('http://localhost:80/mail/password-verify', verify)
+        axios.post(`${apiUrl}/mail/password-verify`, verify)
             .then(response => {
+                console.log(response.data)
                 toast.success('인증 성공!');
                 setIsVerified(true); // ✅ 인증 성공 시 상태 변경
             })
