@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import {
@@ -26,7 +26,7 @@ const InsertCar = () => {
   const carCompany = location.state?.carCompany;
   const carType = location.state?.carType;
   const [imagePreview, setImagePreview] = useState(car?.fileLoad);
-
+  const apiUrl = window.ENV?.API_URL || "http://localhost:80";
   const [form, setForm] = useState({
     carNo: car.carNo,
     carName: car.carName,
@@ -64,7 +64,6 @@ const InsertCar = () => {
 
   const handleUpdate = (e) => {
     e.preventDefault();
-    console.log(form);
 
     const formData = new FormData();
     formData.append("carNo", form.carNo);
@@ -76,37 +75,32 @@ const InsertCar = () => {
     formData.append("image", form.image);
 
     axios
-      .post("http://localhost/car/update", formData, {
+      .post(`${apiUrl}/car/update`, formData, {
         headers: {
           "content-Type": "multipart/form-data",
         },
       })
       .then((result) => {
-        console.log("등록된 데이터:", result);
         alert("차량이 수정되었습니다.");
         setDisabled(true);
       })
       .catch((error) => {
-        console.log(error);
         alert("오류");
       });
   };
 
   const handleDelete = (e) => {
-    console.log(form);
     axios
-      .post("http://localhost/car/delete", form, {
+      .post(`${apiUrl}/car/delete`, form, {
         headers: {
           "content-Type": "application/json",
         },
       })
       .then((result) => {
-        console.log("삭제된 데이터:", result);
         alert("차량이 삭제되었습니다.");
         navi("/admin/carManagement");
       })
       .catch((error) => {
-        console.log(error);
         alert("오류");
       });
   };

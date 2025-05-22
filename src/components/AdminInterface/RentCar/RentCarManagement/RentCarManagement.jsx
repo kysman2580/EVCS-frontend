@@ -21,10 +21,10 @@ const RentCarManagement = () => {
   const [carInfo, setCarInfo] = useState([]);
   const [rentCarInfo, setRentCarInfo] = useState([]);
   const [useStatus, setUseStatus] = useState("");
-
+  const apiUrl = window.ENV?.API_URL || "http://localhost:80";
   useEffect(() => {
     axios
-      .get(`http://localhost/rentCar/${currentPage}`, {
+      .get(`${apiUrl}/rentCar/${currentPage}`, {
         params: {
           useStatus, // 사용중인지 아닌지
           category, // 카테고리
@@ -74,7 +74,7 @@ const RentCarManagement = () => {
   const handleSearch = () => {
     axios
       .get(
-        `http://localhost/rentCar/${currentPage}`,
+        `${apiUrl}/rentCar/${currentPage}`,
         {
           params: {
             useStatus, // 사용중인지 아닌지

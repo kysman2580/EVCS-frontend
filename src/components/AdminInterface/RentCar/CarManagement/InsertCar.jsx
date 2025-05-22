@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import {
@@ -21,7 +21,7 @@ const InsertCar = () => {
   const location = useLocation();
   const carCompanys = location.state?.carCompany;
   const carTypes = location.state?.carType;
-
+  const apiUrl = window.ENV?.API_URL || "http://localhost:80";
   const [imagePreview, setImagePreview] = useState(null);
   const navi = useNavigate();
 
@@ -89,7 +89,7 @@ const InsertCar = () => {
     formData.append("image", form.image);
 
     axios
-      .post("http://localhost/car/insert", formData, {
+      .post(`${apiUrl}/car/insert`, formData, {
         headers: {
           "content-Type": "multipart/form-data",
         },

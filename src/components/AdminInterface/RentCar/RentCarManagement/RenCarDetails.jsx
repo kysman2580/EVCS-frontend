@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
@@ -19,7 +19,6 @@ import {
   RentContainerDiv,
   RentBodyDiv,
 } from "../AdminRentCarCommon/AdminRentCar.styles";
-import RentCarManagement from "./RentCarManagement";
 
 const RentCarDetails = () => {
   const location = useLocation();
@@ -42,7 +41,7 @@ const RentCarDetails = () => {
     status,
     categoryNo,
   } = location.state;
-
+  const apiUrl = window.ENV?.API_URL || "http://localhost:80";
   const [optionList, setOptionList] = useState([]); // 전체 옵션 목록
   const [selectedOptions, setSelectedOptions] = useState([]); // 체크된 옵션 번호
 
@@ -95,7 +94,7 @@ const RentCarDetails = () => {
   useEffect(() => {
     if (!addressModal) return;
     axios
-      .get("http://localhost/admin-garages", {
+      .get(`${apiUrl}/admin-garages`, {
         params: {
           regionSido,
           regionSigungu,
@@ -121,7 +120,7 @@ const RentCarDetails = () => {
   const handleRegionSearch = () => {
     // 모달 열려있을 때 같은 effect 를 강제 실행
     axios
-      .get("http://localhost/admin-garages", {
+      .get(`${apiUrl}/admin-garages`, {
         params: {
           regionSido,
           regionSigungu,
@@ -139,7 +138,7 @@ const RentCarDetails = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost/car/image/${carName}`)
+      .get(`${apiUrl}/car/image/${carName}`)
       .then((result) => {
         console.log(result.data);
         setImagePreview(result.data.fileLoad);
@@ -153,7 +152,7 @@ const RentCarDetails = () => {
     console.log("렌트카 번호 확인: ", rentCarNo);
 
     axios
-      .get("http://localhost/rentCar/rentCaroptions", {
+      .get(`${apiUrl}/rentCar/rentCaroptions`, {
         params: { rentCarNo: rentCarNo },
       })
       .then((res) => {
@@ -170,7 +169,7 @@ const RentCarDetails = () => {
 
     // 전체 옵션 목록은 따로 불러오기
     axios
-      .get("http://localhost/rentCar/options")
+      .get(`${apiUrl}/rentCar/options`)
       .then((res) => {
         console.log("전체 옵션 목록: ", res.data);
         setOptionList(res.data); // 전체 옵션 [{optionNo, optionName}, ...]
@@ -222,7 +221,7 @@ const RentCarDetails = () => {
     }
 
     axios
-      .post("http://localhost/rentCar/update", {
+      .post(`${apiUrl}/rentCar/update`, {
         ...form,
         optionNos: selectedOptions,
       })
@@ -240,7 +239,7 @@ const RentCarDetails = () => {
   const handleDelete = (e) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
     axios
-      .post("http://localhost/rentCar/delete", form, {
+      .post(`${apiUrl}/rentCar/delete`, form, {
         headers: {
           "content-Type": "application/json",
         },

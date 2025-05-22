@@ -15,6 +15,7 @@ import {
 import { StyledDatePicker } from "../RentCarCommon/RentCar.styles";
 
 const RentalPage = () => {
+  const apiUrl = window.ENV?.API_URL || "http://localhost:80";
   const now = new Date();
   const navi = useNavigate();
   const currentTime = new Date(

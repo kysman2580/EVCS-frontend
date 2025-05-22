@@ -101,11 +101,11 @@ const DRBoard = () => {
   const [updateBoardNo, setUpdateBoardNo] = useState(null);
   const [editingCommentNo, setEditingCommentNo] = useState(null); // 수정 중인 댓글 번호
   const [editedContent, setEditedContent] = useState(""); // 임시 수정 값 저장
+  const apiUrl = window.ENV?.API_URL || "http://localhost:80";
 
   useEffect(() => {
     if (mapUrl !== "") {
       setOpenMapModal(false);
-    } else {
     }
   }, [mapUrl]);
 
@@ -166,11 +166,9 @@ const DRBoard = () => {
   // ----------------------게시물 조회----------------------
   useEffect(() => {
     axios
-      .get(`http://localhost/driveRouteBoard/${currentPage}`)
+      .get(`${apiUrl}/driveRouteBoard/${currentPage}`)
       .then((result) => {
         const { drBoard, drBoardImages } = result.data;
-        console.log("drBoard : ", drBoard);
-        console.log("drBoardImages : ", drBoardImages);
         if (currentPage === 1) {
           setBoards([...drBoard]);
           setBoardImages([...drBoardImages]);
@@ -188,9 +186,6 @@ const DRBoard = () => {
       });
   }, [currentPage]);
 
-  console.log("commentInfo : ", commentInfo);
-  console.log("drBoard : ", boards);
-  console.log("drBoardImages : ", boardImages);
   const clickToMore = () => {
     setCurrentPage((currentPage) => currentPage + 1);
   };
@@ -226,14 +221,13 @@ const DRBoard = () => {
     }
 
     axios
-      .post("http://localhost/driveRouteBoard/insert", formData, {
+      .post(`${apiUrl}/driveRouteBoard/insert`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${auth.user.accessToken}`,
         },
       })
       .then((result) => {
-        console.log(result.data);
         setOpenRouteModal(false);
         setBoardContent("");
         setBoardImage([]);
@@ -242,7 +236,7 @@ const DRBoard = () => {
         setSrcMap("");
         alert("게시물이 등록되었습니다.");
         axios
-          .get("http://localhost/driveRouteBoard/1", {
+          .get(`${apiUrl}/driveRouteBoard/1`, {
             headers: {
               Authorization: `Bearer ${auth.user.accessToken}`,
             },
@@ -253,7 +247,7 @@ const DRBoard = () => {
             setBoardImages([...drBoardImages]);
             setCurrentPage(1); // 페이지 초기화
 
-            return axios.get("http://localhost/driveRouteBoard/selectLikes", {
+            return axios.get(`${apiUrl}/driveRouteBoard/selectLikes`, {
               headers: {
                 Authorization: `Bearer ${auth.user.accessToken}`,
               },
@@ -326,14 +320,13 @@ const DRBoard = () => {
     }
 
     axios
-      .post("http://localhost/driveRouteBoard/update", formData, {
+      .post(`${apiUrl}/driveRouteBoard/update`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${auth.user.accessToken}`,
         },
       })
       .then((result) => {
-        console.log(result.data);
         setOpenRouteModal(false);
         setBoardContent("");
         setBoardImage([]);
@@ -342,7 +335,7 @@ const DRBoard = () => {
         setSrcMap("");
         alert("게시물이 수정되었습니다.");
         axios
-          .get("http://localhost/driveRouteBoard/1", {
+          .get(`${apiUrl}/driveRouteBoard/1`, {
             headers: {
               Authorization: `Bearer ${auth.user.accessToken}`,
             },
@@ -353,7 +346,7 @@ const DRBoard = () => {
             setBoardImages([...drBoardImages]);
             setCurrentPage(1); // 페이지 초기화
 
-            return axios.get("http://localhost/driveRouteBoard/selectLikes", {
+            return axios.get(`${apiUrl}/driveRouteBoard/selectLikes`, {
               headers: {
                 Authorization: `Bearer ${auth.user.accessToken}`,
               },
@@ -372,7 +365,7 @@ const DRBoard = () => {
   const handleDelete = (boardNo) => {
     if (window.confirm("정말 삭제하시겠습니까?")) {
       axios
-        .delete(`http://localhost/driveRouteBoard/delete/${boardNo}`, {
+        .delete(`${apiUrl}/driveRouteBoard/delete/${boardNo}`, {
           headers: {
             Authorization: `Bearer ${auth.user.accessToken}`,
           },
@@ -380,7 +373,7 @@ const DRBoard = () => {
         .then((result) => {
           alert("게시물이 삭제되었습니다.");
           axios
-            .get("http://localhost/driveRouteBoard/1", {
+            .get(`${apiUrl}/driveRouteBoard/1`, {
               headers: {
                 Authorization: `Bearer ${auth.user.accessToken}`,
               },
@@ -391,7 +384,7 @@ const DRBoard = () => {
               setBoardImages([...drBoardImages]);
               setCurrentPage(1); // 페이지 초기화
 
-              return axios.get("http://localhost/driveRouteBoard/selectLikes", {
+              return axios.get(`${apiUrl}/driveRouteBoard/selectLikes`, {
                 headers: {
                   Authorization: `Bearer ${auth.user.accessToken}`,
                 },
@@ -411,7 +404,7 @@ const DRBoard = () => {
     if (!commentTargetBoard) return;
     axios
       .get(
-        `http://localhost/driveRouteComment/${commentTargetBoard.boardNo}/${currentCommentPage}`,
+        `${apiUrl}/driveRouteComment/${commentTargetBoard.boardNo}/${currentCommentPage}`,
         {
           headers: {
             Authorization: `Bearer ${auth.user.accessToken}`,
@@ -435,7 +428,7 @@ const DRBoard = () => {
   // ----------------------댓글 추가----------------------
   const handleComment = () => {
     axios
-      .post("http://localhost/driveRouteComment/insert", comment, {
+      .post(`${apiUrl}/driveRouteComment/insert`, comment, {
         headers: {
           Authorization: `Bearer ${auth.user.accessToken}`,
         },
@@ -445,7 +438,7 @@ const DRBoard = () => {
         // 댓글 재조회 - 1페이지로 초기화
         setCurrentCommentPage(1);
         axios
-          .get(`http://localhost/driveRouteComment/${comment.boardNo}/1`, {
+          .get(`${apiUrl}/driveRouteComment/${comment.boardNo}/1`, {
             headers: {
               Authorization: `Bearer ${auth.user.accessToken}`,
             },
@@ -467,7 +460,7 @@ const DRBoard = () => {
   const handleDeleteComment = (commentNo) => {
     if (window.confirm("정말 삭제하시겠습니까?")) {
       axios
-        .delete(`http://localhost/driveRouteComment/delete/${commentNo}`, {
+        .delete(`${apiUrl}/driveRouteComment/delete/${commentNo}`, {
           headers: {
             Authorization: `Bearer ${auth.user.accessToken}`,
           },
@@ -479,7 +472,7 @@ const DRBoard = () => {
           setCurrentCommentPage(1);
           axios
             .get(
-              `http://localhost/driveRouteComment/${commentTargetBoard.boardNo}/1`,
+              `${apiUrl}/driveRouteComment/${commentTargetBoard.boardNo}/1`,
               {
                 headers: {
                   Authorization: `Bearer ${auth.user.accessToken}`,
@@ -504,7 +497,7 @@ const DRBoard = () => {
   const handleUpdateComment = (commentNo) => {
     axios
       .put(
-        "http://localhost/driveRouteComment/update",
+        `${apiUrl}/driveRouteComment/update`,
         {
           commentContent: editedContent,
           commentNo: commentNo,
@@ -521,14 +514,11 @@ const DRBoard = () => {
         // 댓글 재조회
         setCurrentCommentPage(1);
         axios
-          .get(
-            `http://localhost/driveRouteComment/${commentTargetBoard.boardNo}/1`,
-            {
-              headers: {
-                Authorization: `Bearer ${auth.user.accessToken}`,
-              },
-            }
-          )
+          .get(`${apiUrl}/driveRouteComment/${commentTargetBoard.boardNo}/1`, {
+            headers: {
+              Authorization: `Bearer ${auth.user.accessToken}`,
+            },
+          })
           .then((res) => {
             const drComment = res.data.drComment;
             setCommentInfo(drComment);
@@ -548,7 +538,7 @@ const DRBoard = () => {
   */
   useEffect(() => {
     axios
-      .get("http://localhost/driveRouteBoard/selectLikes", {
+      .get(`${apiUrl}/driveRouteBoard/selectLikes`, {
         headers: {
           Authorization: `Bearer ${auth.user.accessToken}`,
         },
@@ -564,7 +554,7 @@ const DRBoard = () => {
 
   const handleLikeBtn = (boardNo) => {
     axios
-      .get(`http://localhost/driveRouteBoard/likes/${boardNo}`, {
+      .get(`${apiUrl}/driveRouteBoard/likes/${boardNo}`, {
         headers: {
           Authorization: `Bearer ${auth.user.accessToken}`,
         },
@@ -580,7 +570,7 @@ const DRBoard = () => {
         setBoardLikesInfo((prev) => [...prev, { boardNo }]);
 
         axios
-          .get("http://localhost/driveRouteBoard/selectLikes", {
+          .get(`${apiUrl}/driveRouteBoard/selectLikes`, {
             headers: {
               Authorization: `Bearer ${auth.user.accessToken}`,
             },
@@ -599,7 +589,7 @@ const DRBoard = () => {
   };
   const handleLikeCancelBtn = (boardNo) => {
     axios
-      .delete(`http://localhost/driveRouteBoard/likesCancel/${boardNo}`, {
+      .delete(`${apiUrl}/driveRouteBoard/likesCancel/${boardNo}`, {
         headers: {
           Authorization: `Bearer ${auth.user.accessToken}`,
         },
@@ -619,7 +609,7 @@ const DRBoard = () => {
           prev.filter((item) => item.boardNo !== boardNo)
         );
         axios
-          .get("http://localhost/driveRouteBoard/selectLikes", {
+          .get(`${apiUrl}/driveRouteBoard/selectLikes`, {
             headers: {
               Authorization: `Bearer ${auth.user.accessToken}`,
             },

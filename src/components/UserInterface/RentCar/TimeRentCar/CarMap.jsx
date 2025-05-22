@@ -40,6 +40,7 @@ const formatDateToLocalDateTime = (date) => {
 };
 
 const CarMap = () => {
+  const apiUrl = window.ENV?.API_URL || "http://localhost:80";
   const location = useLocation();
   const startDate = new Date(location.state.startDate);
   const endDate = new Date(location.state.endDate);
@@ -65,8 +66,6 @@ const CarMap = () => {
     });
   }, []);
 
-  console.log("startDate", startDate);
-  console.log("endDate", endDate);
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
@@ -79,14 +78,13 @@ const CarMap = () => {
   useEffect(() => {
     // 시간별 렌트카 정보를 조회해옴
     axios
-      .get("http://localhost/rentCar/timeRentCarInfo", {
+      .get(`${apiUrl}/rentCar/timeRentCarInfo`, {
         params: {
           startDate: formatDateToLocalDateTime(new Date(startDate)),
           endDate: formatDateToLocalDateTime(new Date(endDate)),
         },
       })
       .then((result) => {
-        console.log(result.data);
         setTimeRentCarResult(result.data.timeRentCarResult);
         const enrollPlaceDatas = result.data.timeRentCarResult.map(
           (item) => item.enrollPlace
@@ -279,7 +277,7 @@ const CarMap = () => {
     console.log("결제하기 버튼 클릭됨");
 
     axios
-      .post("http://localhost/reservation/insert", {
+      .post(`${apiUrl}/reservation/insert`, {
         memberNo: memberNo,
         rentCarNo: selectedCar.rentCarNo,
         categoryName: selectedCar.categoryName,
