@@ -15,6 +15,7 @@ import {
 } from "./IntegratedReportingPage.styled";
 
 const IntegratedReportingPage = () => {
+  const apiUrl = window.ENV?.API_URL || "http://localhost:80";
   const { boardInfo, reporter, reported } = useLocation().state || {};
   const navigate = useNavigate();
 
@@ -39,7 +40,7 @@ const IntegratedReportingPage = () => {
     };
 
     try {
-      const res = await fetch("http://localhost:80/api/integrated-reports", {
+      const res = await fetch(`${apiUrl}/api/integrated-reports`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

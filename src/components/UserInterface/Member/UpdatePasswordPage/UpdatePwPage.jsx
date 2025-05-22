@@ -5,15 +5,11 @@ import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import {
     FindContainer,
-    FindTitle,
     FindSubtitle,
     FindForm,
     FindInput,
     FindButton,
-    VerifyButton,
     FindLogoImg,
-    VerifyField,
-    AuthenticationBtn,
 } from "../../Member/FindByPasswordPage/FindPwPage.styles"
 
 
@@ -23,6 +19,7 @@ const UpdatePwPage = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const location = useLocation();
     const email = location.state?.email;
+    const apiUrl = window.ENV?.API_URL || "http://localhost:80";
 
     console.log("넘겨받은 이메일:", email);
 
@@ -63,8 +60,9 @@ const UpdatePwPage = () => {
             confirmPassword: confirmPassword
         }
 
-        axios.post('http://localhost:80/mail/password/update', updatePw)
+        axios.post(`${apiUrl}/mail/password/update`, updatePw)
             .then(response => {
+                console.log(response.data);
                 toast.success('비밀번호 변경 성공!!');
                 navi("/")
             })

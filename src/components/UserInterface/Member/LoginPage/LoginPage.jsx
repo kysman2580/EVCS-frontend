@@ -11,8 +11,6 @@ import {
     StyledButtonDiv,
     StyledSocialDiv,
     StyledSocialImg,
-    StyledNaverButton,
-    Styled_N
 } from "./LoginPage.styles"
 import "./LoginPage.css"
 import { useNavigate } from "react-router-dom";
@@ -20,7 +18,6 @@ import { useState } from 'react';
 import axios from "axios";
 import { useAuth } from "../../Context/AuthContext/AuthContext";
 import { toast } from 'react-toastify';
-import { useEffect } from "react";
 
 
 
@@ -30,6 +27,7 @@ function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { login } = useAuth();
+    const apiUrl = window.ENV?.API_URL || "http://localhost:80";
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
@@ -47,7 +45,11 @@ function LoginPage() {
             email: email,
             memberPw: password
         }
+<<<<<<< HEAD
         axios.post('http://localhost:80/auth/login', loginData)
+=======
+        axios.post(`${apiUrl}/auth/login`, loginData)
+>>>>>>> 19a6be2de737ddee9e138d68a55b3f2f142e0fa2
             .then(response => {
                 console.log("로그인 응답 데이터:", response.data);
                 const { email, memberName, memberNo, refreshToken, accessToken } = response.data;
@@ -78,7 +80,7 @@ function LoginPage() {
 
 
     const handleKakaoLogin = () => {
-        window.location.href = "http://localhost:80/auth/login/kakao";
+        window.location.href = `${apiUrl}/auth/login/kakao`;
     }
 
 

@@ -8,9 +8,11 @@ function NoticeWrite() {
   const [content, setContent] = useState("");
   const navigate = useNavigate();
 
+  const backendUrl = window.ENV?.API_URL || `http://localhost:80`;
+
   const handleSave = () => {
     axios
-      .post(`http://localhost/notices`, {
+      .post(`${backendUrl}/notices`, {
         noticeTitle: title,
         noticeContent: content,
         noticeWriter: writer,

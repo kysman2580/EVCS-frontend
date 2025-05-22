@@ -6,6 +6,8 @@ import axios from "axios";
 import MyPageNav from "../../../UserInterface/Common/Nav/MyPageNav";
 
 const ReportComments = () => {
+  const apiUrl = window.ENV?.API_URL || "http://localhost:80";
+
   const navigate = useNavigate();
   const { auth } = useAuth();
   const memberNo = auth.user.memberNo; // 사용자 번호로 필터링
@@ -36,7 +38,7 @@ const ReportComments = () => {
         page,
         size: 10,
       };
-      const response = await axios.get("http://localhost:80/api/usReportsCom", {
+      const response = await axios.get(`${apiUrl}/api/usReportsCom`, {
         params,
         headers: {
           Authorization: `Bearer ${token}`,

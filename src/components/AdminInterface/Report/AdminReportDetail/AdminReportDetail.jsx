@@ -13,6 +13,8 @@ import {
 import axios from "axios";
 
 const AdminReportDetail = () => {
+  const apiUrl = window.ENV?.API_URL || "http://localhost:80";
+
   const { rpNo } = useParams();
   console.log("rpNo param:", rpNo);
   const navigate = useNavigate();
@@ -27,14 +29,11 @@ const AdminReportDetail = () => {
     const id = Number(rpNo);
     const fetchDetail = async () => {
       try {
-        const { data } = await axios.get(
-          `http://localhost:80/api/reports/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const { data } = await axios.get(`${apiUrl}/api/reports/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setReport(data);
         console.log("신고 상세 데이터:", data);
       } catch (err) {

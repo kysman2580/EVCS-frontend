@@ -6,7 +6,6 @@ import {
     StyledImg,
     StyledInputContainer,
     StyledButtonDiv,
-    SendCodeButton,
     EmailInputWrapper,
     StyledSignUpButton,
     VerificationWrapper,
@@ -15,7 +14,7 @@ import {
     DisableSendCodeButton,
 } from "../LoginPage/LoginPage.styles"
 import { useNavigate } from "react-router-dom";
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -30,6 +29,7 @@ function SignUpPage() {
     // 추가 상태
     const [password, setPassword] = useState('');
     const [nickname, setNickname] = useState('');
+    const apiUrl = window.ENV?.API_URL || "http://localhost:80";
 
     // 타이머 설정 (30초로 변경)
     const [resendTimer, setResendTimer] = useState(0);
@@ -72,7 +72,7 @@ function SignUpPage() {
             return;
         }
 
-        axios.post('http://localhost:80/mail/send', { email: email })
+        axios.post(`${apiUrl}/mail/send`, { email: email })
             .then(response => {
                 console.log('인증코드 발송 성공:', response.data);
                 setShowVerificationInput(true);
@@ -106,7 +106,7 @@ function SignUpPage() {
         setIsResendDisabled(true);       // 버튼 비활성화
         setResendTimer(30);              // 30초 타이머 시작
 
-        axios.post('http://localhost:80/mail/resend-verification-code', { email: email })
+        axios.post(`${apiUrl}/mail/resend-verification-code`, { email: email })
             .then(response => {
                 console.log('인증코드 재전송 성공:', response.data);
                 toast.success('인증코드가 재전송되었습니다. 이메일을 확인해주세요.');
@@ -127,7 +127,7 @@ function SignUpPage() {
             return;
         }
 
-        axios.post('http://localhost:80/mail/verify', {
+        axios.post(`${apiUrl}/mail/verify`, {
             email: email,
             code: code
         })
@@ -172,7 +172,11 @@ function SignUpPage() {
             memberNickname: nickname
         };
 
+<<<<<<< HEAD
         axios.post('http://localhost:80/members', memberData)
+=======
+        axios.post(`${apiUrl}/members`, memberData)
+>>>>>>> 19a6be2de737ddee9e138d68a55b3f2f142e0fa2
             .then(response => {
                 if (response.status === 200) {
                     toast.success('회원가입이 완료되었습니다!');
