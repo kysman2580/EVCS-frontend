@@ -13,6 +13,8 @@ import {
 import axios from "axios";
 
 const ReportComDetail = () => {
+  const apiUrl = window.ENV?.API_URL || "http://localhost:80";
+
   const { rpNo } = useParams();
   const navigate = useNavigate();
 
@@ -25,14 +27,11 @@ const ReportComDetail = () => {
     const id = Number(rpNo);
     const fetchDetail = async () => {
       try {
-        const { data } = await axios.get(
-          `http://localhost:80/api/usReportsCom/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const { data } = await axios.get(`${apiUrl}/api/usReportsCom/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setReport(data);
       } catch (err) {
         setError("권한이 부족합니다.");
@@ -52,7 +51,7 @@ const ReportComDetail = () => {
     if (!window.confirm("신고를 정말 취소 하시겠습니까?")) return;
     try {
       await axios.patch(
-        `http://localhost:80/api/usReportsCom/${report.reNo}/o`,
+        `${apiUrl}/api/usReportsCom/${report.reNo}/o`,
         payload,
         {
           headers: {
