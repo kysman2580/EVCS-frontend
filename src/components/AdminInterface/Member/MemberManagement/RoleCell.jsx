@@ -12,6 +12,7 @@ import {
 const RoleCell = ({ member, onRoleChange }) => {
     const [showOptions, setShowOptions] = useState(false);
     const [loading, setLoading] = useState(false);
+    const apiUrl = window.ENV?.API_URL || "http://localhost:80";
 
     const handleRoleClick = () => {
         setShowOptions(!showOptions);
@@ -27,7 +28,7 @@ const RoleCell = ({ member, onRoleChange }) => {
             setLoading(true);
             // API 호출 시 쿠키와 인증 정보를 함께 보냄
             await axios.put(
-                `http://localhost:80/api/admin/management/${member.memberNo}/role`,
+                `${apiUrl}/api/admin/management/${member.memberNo}/role`,
                 { role: newRole }, // 두 번째 인자: request body
                 {
                     headers: {
