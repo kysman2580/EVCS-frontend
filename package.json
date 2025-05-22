@@ -15,7 +15,7 @@
     "@mui/icons-material": "^7.0.2",
     "@mui/material": "^7.0.2",
     "@react-google-maps/api": "^2.20.6",
-    "@tosspayments/tosspayments-sdk": "^2.3.4",
+    "@tosspayments/tosspayments-sdk": "^2.3.5",
     "axios": "^1.8.4",
     "bootstrap": "^5.3.5",
     "date-fns": "^4.1.0",

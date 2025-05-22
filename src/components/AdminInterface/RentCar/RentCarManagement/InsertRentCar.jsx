@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
@@ -19,7 +19,6 @@ import {
   RentContainerDiv,
   RentBodyDiv,
 } from "../AdminRentCarCommon/AdminRentCar.styles";
-import { add } from "date-fns";
 
 const InsertRentCar = () => {
   const navi = useNavigate();
@@ -53,10 +52,10 @@ const InsertRentCar = () => {
 
   const [options, setOptions] = useState([]); // 전체 옵션 목록
   const [selectedOptions, setSelectedOptions] = useState([]); // 선택된 옵션번호 배열
-
+  const apiUrl = window.ENV?.API_URL || "http://localhost:80";
   useEffect(() => {
     axios
-      .get("http://localhost/rentCar/options") // 옵션 목록 불러오기
+      .get(`${apiUrl}/rentCar/options`) // 옵션 목록 불러오기
       .then((res) => {
         console.log("옵션들 : ", res.data);
         setOptions(res.data); // [{ optionNo: 1, optionName: '네비' }, ...]
@@ -88,7 +87,7 @@ const InsertRentCar = () => {
   useEffect(() => {
     if (!addressModal) return;
     axios
-      .get("http://localhost/admin-garages", {
+      .get(`${apiUrl}/admin-garages`, {
         params: {
           regionSido,
           regionSigungu,
@@ -114,7 +113,7 @@ const InsertRentCar = () => {
   const handleRegionSearch = () => {
     // 모달 열려있을 때 같은 effect 를 강제 실행
     axios
-      .get("http://localhost/admin-garages", {
+      .get(`${apiUrl}/admin-garages`, {
         params: {
           regionSido,
           regionSigungu,
@@ -132,7 +131,7 @@ const InsertRentCar = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost/rentCar/category")
+      .get(`${apiUrl}/rentCar/category`)
       .then((result) => {
         console.log(result.data);
         setCategory(result.data.categoryInfo);
@@ -142,7 +141,7 @@ const InsertRentCar = () => {
       });
 
     axios
-      .get("http://localhost/rentCar/carInfo")
+      .get(`${apiUrl}/rentCar/carInfo`)
       .then((res) => {
         console.log("res.data : ", res.data);
         const data = res.data.carInfoResult.map((item, idx) => ({
@@ -212,7 +211,7 @@ const InsertRentCar = () => {
       return;
     }
     axios
-      .post("http://localhost/rentCar/insert", {
+      .post(`${apiUrl}/rentCar/insert`, {
         rentCarNo: form.rentCarNo,
         categoryNo: form.categoryNo,
         companyNo: form.carCompanyNo,

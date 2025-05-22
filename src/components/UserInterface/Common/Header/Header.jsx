@@ -22,7 +22,7 @@ const Header = () => {
   const navigate = useNavigate();
   const { auth, logout } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
-
+  const apiUrl = window.ENV?.API_URL || "http://localhost:80";
   const checkAdminRole = useCallback(async () => {
     const token = auth.user?.accessToken;
     if (!token) {
@@ -30,7 +30,7 @@ const Header = () => {
       return;
     }
     try {
-      const { data } = await axios.get("http://localhost:80/admin/user/info", {
+      const { data } = await axios.get(`${apiUrl}/admin/user/info`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setIsAdmin(!!data.isAdmin);
@@ -49,7 +49,7 @@ const Header = () => {
     if (!token) return;
     try {
       await axios.post(
-        "http://localhost:80/admin",
+        `${apiUrl}/admin`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -19,7 +19,7 @@ const CarManagement = () => {
   const [carCompany, setCarCompany] = useState([]);
   const [carCompanyNo, setCarCompanyNo] = useState("");
   const [carInfo, setCarInfo] = useState([]);
-
+  const apiUrl = window.ENV?.API_URL || "http://localhost:80";
   useEffect(() => {
     axios
       .get(`http://localhost/car`, {
@@ -50,7 +50,6 @@ const CarManagement = () => {
         },
       })
       .then((result) => {
-        console.log(result.data);
         setCarInfo(result.data.carInfo);
         setCarCompany(result.data.carCompanyInfo);
         setCarType(result.data.carTypeInfo);
