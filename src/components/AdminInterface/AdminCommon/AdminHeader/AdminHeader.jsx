@@ -18,7 +18,7 @@ const AdminHeader = () => {
     <StyledHeaderDiv>
       {/* Top Bar: Logo + User Interface Button */}
       <StyledHeaderTop>
-        <StyledLogoDiv onClick={() => navigate("/admin/main")}>
+        <StyledLogoDiv onClick={() => navigate("/admin/memberManagement")}>
           <LogoImage src="/images/hourRent.png" alt="Logo" />
           <LogoText style={{ color: "#b5b6b7" }}>전기충만</LogoText>
         </StyledLogoDiv>
