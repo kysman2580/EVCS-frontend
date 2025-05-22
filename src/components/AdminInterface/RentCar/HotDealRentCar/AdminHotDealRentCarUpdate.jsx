@@ -22,6 +22,7 @@ import {
 } from "../AdminRentCarCommon/AdminRentCar.styles";
 
 const AdminHotDealRentCarUpdate = () => {
+  const ENV_URL = window.ENV?.API_URL || `http://localhost:2580`;
   const navigate = useNavigate();
   const location = useLocation();
   const hotdeal = location.state?.hotdeal;
@@ -66,7 +67,7 @@ const AdminHotDealRentCarUpdate = () => {
   // 1) 데이터 로드
   useEffect(() => {
     axios
-      .get("http://localhost/admin-hotdeals/hotdealCars", {
+      .get(`${ENV_URL}/admin-hotdeals/hotdealCars`, {
         params: {
           hotdealNo: hotdeal.hotdealNo,
           useStatus: useStatus,
@@ -100,7 +101,7 @@ const AdminHotDealRentCarUpdate = () => {
 
   const handleSearch = () => {
     axios
-      .get("http://localhost/admin-hotdeals/cars", {
+      .get(`${ENV_URL}/admin-hotdeals/cars`, {
         params: {
           hotdealNo: hotdeal.hotdealNo,
           useStatus,
@@ -123,7 +124,7 @@ const AdminHotDealRentCarUpdate = () => {
       carNos: Object.keys(selectedCars).filter((id) => selectedCars[id]),
     };
     axios
-      .put(`http://localhost/admin-hotdeals/${hotdeal.hotdealNo}`, payload, {
+      .put(`${ENV_URL}/admin-hotdeals/${hotdeal.hotdealNo}`, payload, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -149,7 +150,7 @@ const AdminHotDealRentCarUpdate = () => {
   const handleDelete = () => {
     if (!window.confirm("정말 이 핫딜을 삭제하시겠습니까?")) return; // 취소 시 종료
     axios
-      .delete(`http://localhost/admin-hotdeals/${hotdeal.hotdealNo}`, {
+      .delete(`${ENV_URL}/admin-hotdeals/${hotdeal.hotdealNo}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },

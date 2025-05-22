@@ -21,6 +21,7 @@ const calculateEndDate = (start, monthsToAdd) => {
 };
 
 const LongTermRentCarDetail = () => {
+  const ENV_URL = window.ENV?.API_URL || `http://localhost:2580`;
   const location = useLocation();
   const rentCarNo = location.state?.rentCarNo;
   const [startDate, setStartDate] = useState(new Date());
@@ -56,7 +57,7 @@ const LongTermRentCarDetail = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost/rentCar/options`)
+      .get(`${ENV_URL}/rentCar/options`)
       .then((res) => {
         setOptionList(res.data); // [{ optionNo:1, optionName: "내비게이션" }, ... ]
       })
@@ -69,7 +70,7 @@ const LongTermRentCarDetail = () => {
       return;
     }
     axios
-      .get(`http://localhost/rentCar/rentCaroptions`, {
+      .get(`${ENV_URL}/rentCar/rentCaroptions`, {
         params: { rentCarNo: rentCarNo },
       })
       .then((res) => {
@@ -80,7 +81,7 @@ const LongTermRentCarDetail = () => {
       .catch(console.error);
 
     axios
-      .get(`http://localhost/user-rentcars/${rentCarNo}`)
+      .get(`${ENV_URL}/user-rentcars/${rentCarNo}`)
       .then((res) => {
         setCar(res.data);
       })

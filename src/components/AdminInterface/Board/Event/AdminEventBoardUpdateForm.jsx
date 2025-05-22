@@ -11,6 +11,7 @@ import DatePicker from "react-datepicker";
 import axios from "axios";
 
 const AdminEventBoardUpdateForm = () => {
+  const ENV_URL = window.ENV?.API_URL || `http://localhost:2580`;
   const location = useLocation();
   const event = location.state?.event;
   const navigate = useNavigate();
@@ -83,7 +84,7 @@ const AdminEventBoardUpdateForm = () => {
     }
 
     axios
-      .put(`http://localhost/admin-events/${event.eventNo}`, formData, {
+      .put(`${ENV_URL}/admin-events/${event.eventNo}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -103,7 +104,7 @@ const AdminEventBoardUpdateForm = () => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
     axios
-      .delete(`http://localhost/admin-events/${event.eventNo}`)
+      .delete(`${ENV_URL}/admin-events/${event.eventNo}`)
       .then(() => {
         alert("이벤트가 삭제되었습니다.");
         navigate("/admin/adminEventBoard", { replace: true });

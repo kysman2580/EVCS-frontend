@@ -23,6 +23,7 @@ import "./AdminHotDealRentCar.css";
 import axios from "axios";
 
 const AdminHotDealRentCar = () => {
+  const ENV_URL = window.ENV?.API_URL || `http://localhost:2580`;
   const navigate = useNavigate();
 
   const [ingCategory, setIngCategory] = useState("all"); // all | ing | noIng
@@ -58,7 +59,7 @@ const AdminHotDealRentCar = () => {
     }
 
     axios
-      .get("http://localhost/admin-hotdeals", { params: params })
+      .get(`${ENV_URL}/admin-hotdeals`, { params: params })
       .then((res) => {
         console.log(res.data);
         setHotdealList(res.data.hotdealList);
@@ -80,7 +81,7 @@ const AdminHotDealRentCar = () => {
     if (endDate) params.endDate = formatLocalDate(endDate);
 
     axios
-      .get("http://localhost/admin-hotdeals", {
+      .get(`${ENV_URL}/admin-hotdeals`, {
         params,
       })
       .then((res) => {

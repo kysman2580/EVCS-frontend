@@ -8,6 +8,7 @@ import axios from "axios";
 
 const GarageEnrollForm = () => {
   const navigate = useNavigate();
+  const ENV_URL = window.ENV?.API_URL || `http://localhost:2580`;
 
   const [addressInfo, setAddressInfo] = useState({
     allAddress: "",
@@ -73,7 +74,7 @@ const GarageEnrollForm = () => {
 
     console.log("garageData : ", garageData);
     axios
-      .post("http://localhost/admin-garages", garageData, {
+      .post(`${ENV_URL}/admin-garages`, garageData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

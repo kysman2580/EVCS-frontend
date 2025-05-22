@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 const PaymentsSuccess = () => {
+  const ENV_URL = window.ENV?.API_URL || `http://localhost:2580`;
   const navigate = useNavigate();
   const location = useLocation();
   const query = new URLSearchParams(location.search);
@@ -19,7 +20,7 @@ const PaymentsSuccess = () => {
     const confirmPayment = async () => {
       try {
         await axios.post(
-          "http://localhost/api/payments/confirm",
+          `${ENV_URL}/api/payments/confirm`,
           { paymentKey, orderId, amount },
           {
             headers: {
@@ -30,7 +31,7 @@ const PaymentsSuccess = () => {
         setLoading(false);
       } catch (err) {
         await axios.post(
-          "http://localhost/api/payments/fail",
+          `${ENV_URL}/api/payments/fail`,
           {
             paymentKey,
             orderId,
